@@ -15,14 +15,14 @@ connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
 });
 
 exports.newSession = function(location, menuUrl, notes, callback) {
-    connection.query("INSERT INTO lunches.sessions (location, menuUrl, notes, time) VALUES (?, ?, ?, NOW());", [location, menuUrl, notes], function(err, result) {
+    connection.query("INSERT INTO funch.sessions (location, menuUrl, notes, time) VALUES (?, ?, ?, NOW());", [location, menuUrl, notes], function(err, result) {
         if (err) throw err;
         callback(result.insertId);
     });
 }
 
 exports.sessions = function(callback) {
-    connection.query("SELECT * FROM lunches.sessions;", function(err, results) {
+    connection.query("SELECT * FROM funch.sessions;", function(err, results) {
         if (err) throw err;
         callback(results);
     });
