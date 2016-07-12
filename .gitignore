@@ -38,3 +38,5 @@ jspm_packages
 
 # Jetbrains tools
 .idea
+
+backend/config.json
