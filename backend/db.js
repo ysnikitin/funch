@@ -1,11 +1,13 @@
 var mysql = require('mysql');
 
+var config = require("./config");
+
 var connection = mysql.createConnection({
-    host     : '127.0.0.1',
-    port     : 3306,
-    user     : 'root',
-    password : 'pikachu',
-    database : 'funch'
+    host     : config.mysql_host,
+    port     : config.mysql_port,
+    user     : config.mysql_username,
+    password : config.mysql_password,
+    database : config.mysql_schema
 });
 
 connection.connect();
