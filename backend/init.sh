@@ -1,2 +1,9 @@
-npm install -g express
-npm install -g express-generator
+npm install express
+npm install express-generator
+npm install serve-favicon
+npm install mysql
+npm install morgan
+npm install ejs
+npm install debug
+npm install cookie-parser
+npm install body-parser
