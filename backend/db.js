@@ -13,19 +13,98 @@ var connection = mysql.createConnection({
 connection.connect();
 
 connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
-    if (err) throw err;
+    if (err) throw "Cannot connect to MySQL!";
 });
 
-exports.newSession = function(location, menuUrl, notes, callback) {
-    connection.query("INSERT INTO funch.sessions (location, menuUrl, notes, time) VALUES (?, ?, ?, NOW());", [location, menuUrl, notes], function(err, result) {
-        if (err) throw err;
-        callback(result.insertId);
-    });
+var fitlerOneRow = function(rows) {
+    return rows.length > 0 ? rows[0] : {};
 }
 
-exports.sessions = function(callback) {
-    connection.query("SELECT * FROM funch.sessions;", function(err, results) {
-        if (err) throw err;
-        callback(results);
-    });
+var convertCommaDelimToArray = function(commaDelim) {
+    return commaDelim.split(',');
 }
+
+module.exports = {
+
+    restaurants : function(callback, next) {
+        connection.query("SELECT * FROM funch.restaurants;", function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
+            }
+        });
+    },
+
+    restaurant : function(id, callback, next) {
+        connection.query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(fitlerOneRow(results));
+            }
+        });
+    },
+
+    restaurantFavorites : function(callback, next) {
+        connection.query("SELECT f.* " +
+        "FROM funch.restaurants f " +
+        "JOIN funch.lunches l ON l.restaurantId = f.id " +
+        "GROUP BY l.id " +
+        "ORDER BY COUNT(*) DESC " +
+        "LIMIT 5;", function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
+            }
+        });
+    },
+
+    updateRestaurant : function(id, params, callback, next) {
+
+        if(params.length === 0) {
+            return false;
+        }
+
+        var first = true;
+        var queryValues = [];
+        var setClause = "";
+        for(var param in params) {
+            if (!first) {
+                params += ", ";
+            }
+            setClause += param + " = ?";
+            first = false;
+            queryValues.push(params[param]);
+        }
+        queryValues.push(id);
+        connection.query("UPDATE funch.restaurants SET " + setClause + " WHERE id = ? ", queryValues, function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.changedRows === 1);
+            }
+        });
+    },
+
+    lunch : function(id, callback, next) {
+        connection.query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
+        "FROM funch.lunches l " +
+        "JOIN funch.duty d ON l.id = d.lunchId " +
+        "WHERE l.id = 1 " +
+        "GROUP BY l.id;", [id], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                var row = fitlerOneRow(results);
+                row['onduty'] = convertCommaDelimToArray(row['onduty']);
+                callback(row);
+            }
+        });
+    },
+
+
+}
+
+
