@@ -1,56 +1,108 @@
 <div class="rt-create">
-    <div class="pagetitle">What's for lunch?</div>
+    <ul class="progress-indicator">
+        <li ng-class="{'completed': vm.step > 1, 'active': vm.step === 1}">
+            <span class="bubble"></span> 1. RESTAURANT
+        </li>
+        <li ng-class="{'completed': vm.step > 2, 'active': vm.step === 2}">
+            <span class="bubble"></span> 2. ORDER SPECS
+        </li>
+        <li ng-class="{'completed': vm.step > 3, 'active': vm.step === 3}">
+            <span class="bubble"></span> 3. OTHER DETAILS
+        </li>
+        <li ng-class="{'completed': vm.step > 4, 'active': vm.step === 4}">
+            <span class="bubble"></span> 4. INVITES
+        </li>
+    </ul>
 
-    <div class="row form">
-        <div class="col-xs-6">
-            <div class="section">
-                <label class="sectionlabel" for="rest">1. Choose a Restaurant</label>
-                <div class="form-group">
-                    <div class="sectioncontent">
-                        <div class="picks">
-                            <div class="pick">Pauli's</div>
-                            <div class="pick">Bonapita</div>
-                            <div class="pick">Piperi</div>
-                            <div class="pick">Uno Due Go</div>
-                            <div class="pick">Zo's</div>
-                        </div>
-                        <div class="clear"></div>
+    <div class="form section" ng-show="vm.step === 1">
+        <label class="sectionlabel" for="rest">What's for Lunch?</label>
+        <div class="form-group">
+            <div class="sectioncontent">
+                <div class="picks">
+                    <div class="pick">Pauli's</div>
+                    <div class="pick">Bonapita</div>
+                    <div class="pick">Piperi</div>
+                    <div class="pick">Uno Due Go</div>
+                    <div class="pick">Zo's</div>
+                    <div class="pick">Hererras</div>
+                </div>
+                <div class="clear"></div>
 
-                        <label>Something else...</label>
+                <label>Something else...</label>
+                <div class="row">
+                    <div class="col-xs-6">
                         <input type="text" class="form-control" placeholder="Restuarant">
                         <input type="text" class="form-control" placeholder="Menu Link">
                     </div>
+                    <div class="col-xs-6">
+                        <input type="text" class="form-control" placeholder="Address">
+                        <input type="text" class="form-control" placeholder="Phone">
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="sectionnext">
+            <div class="next" ng-click="vm.next()">
+                Next
+            </div>
+        </div>
+    </div>
 
-            <div class="section">
-                <label class="sectionlabel" for="rest">2. Settle the Details</label>
+    <div class="form section" ng-show="vm.step === 2">
+        <label class="sectionlabel" for="rest">Order Specifications</label>
+        <div class="row">
+            <div class="col-xs-6">
                 <div class="form-group">
                     <div class="sectioncontent">
                         <label>Order Limit</label>
                         <rzslider rz-slider-model="vm.limit.value" rz-slider-options="vm.limit.options"></rzslider>
                     </div>
                 </div>
+            </div>
+            <div class="col-xs-6">
                 <div class="form-group">
-                    <div class="sectioncontent">
-                        <label>Notes</label>
-                        <textarea class="form-control"></textarea>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="sectioncontent">
+                    <div class="sectioncontent" style="padding-left: 50px;">
                         <label>Orders In By...</label>
                         <input ui-timepicker ng-model="vm.lunch.stoptime" class="form-control" style="width: 200px"></textarea>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xs-1"></div>
-        <div class="col-xs-5">
-            <div class="section">
-                <label class="sectionlabel" for="rest">3. Who's Invited?</label>
-                <div class="form-group">
-                    <div class="sectioncontent">
+
+        <div class="sectionnext">
+            <div class="prev" ng-click="vm.prev()">
+                Back
+            </div>
+            <div class="next" ng-click="vm.next()">
+                Next
+            </div>
+        </div>
+    </div>
+
+    <div class="form section" ng-show="vm.step === 3">
+        <label class="sectionlabel" for="rest">Other Details</label>
+        <div class="form-group">
+            <div class="sectioncontent">
+                <label>Notes</label>
+                <textarea class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="sectionnext">
+            <div class="prev" ng-click="vm.prev()">
+                Back
+            </div>
+            <div class="next" ng-click="vm.next()">
+                Next
+            </div>
+        </div>
+    </div>
+
+    <div class="form section" ng-show="vm.step === 4">
+        <label class="sectionlabel" for="rest">Who's Invited?</label>
+        <div class="form-group">
+            <div class="sectioncontent">
+                <div class="row">
+                    <div class="col-xs-4">
                         <div class="invites">
                             <div class="invites-person" ng-repeat="name in vm.names">
                                 <span class="fa-stack fa-lg">
@@ -62,24 +114,27 @@
                                 </span>
                             </div>
                         </div>
-
+                    </div>
+                    <div class="col-xs-7">
                         <div class="invites-guests">
                             <label>We have guests...</label>
-                            <input type="text" class="form-control" placeholder="Guest e-mail">
-                            <div class="invites-guests-more">
-                                <i class="fa fa-plus"></i>
+                            <div style="width: 300px">
+                                <input type="text" class="form-control" placeholder="Guest e-mail">
+                                <div class="invites-guests-more">
+                                    <i class="fa fa-plus"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="start">
-                Start Lunch Session
+            <div class="sectionnext">
+                <div class="prev" ng-click="vm.prev()">
+                    Back
+                </div>
+                <div class="next" ng-click="vm.create()">
+                    Start Lunch
+                </div>
             </div>
         </div>
     </div>

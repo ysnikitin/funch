@@ -4,7 +4,9 @@ angular.module('funch').config(function ($stateProvider, $urlRouterProvider, $lo
     $stateProvider
         .state('home', {
             url: '/',
-            templateUrl: 'src/routes/home/home.html'
+            templateUrl: 'src/routes/home/home.html',
+            controller: 'HomeCtrl',
+            controllerAs: 'vm'
         })
         .state('main', {
             abstract: true,

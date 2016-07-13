@@ -11,7 +11,8 @@ gulp.task('inject', function () {
         conf.path.tmp('routes.js'),
         conf.path.tmp('templateCacheHtml.js'),
         conf.path.tmp('components/**/*.js'),
-        conf.path.tmp('routes/**/*.js')
+        conf.path.tmp('routes/**/*.js'),
+        conf.path.tmp('directives/**/*.js'),
     ]);
 
     const injectOptions = {

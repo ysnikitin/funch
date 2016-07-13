@@ -11,9 +11,18 @@
                         Got a hunch about lunch?  What about brunch?<br />What shall we munch, what shall we crunch?
                     </div>
 
-                    <div class="actions">
-                        <div class="btn-start" ui-sref="create">
+                    <div class="actions" ng-show="!vm.activeLunch">
+                        <div class="btn-start" ui-sref="main.create">
                             TAKE ORDERS
+                        </div>
+                    </div>
+
+                    <div class="feedme" ng-show="vm.activeLunch">
+                        <div class="takingorders">
+                            Now taking orders for <strong>July 15th</strong>...
+                        </div>
+                        <div class="btn-start" ui-sref="main.lunch">
+                            FEED ME
                         </div>
                     </div>
                 </div>
@@ -23,7 +32,7 @@
     <div class="section-intro">
         <div class="text-center">
             <div class="subtitle">
-                Friday lunches, <strong>reimagined</strong>
+                Friday lunches, <acme-malarkey extra-values="['REIMAGINED', 'REVISITED', 'REVITALIZED', 'REJUVINATED']"></acme-malarkey>
             </div>
 
             <div class="process">
@@ -68,5 +77,8 @@
                 <div class="clear"></div>
             </div>
         </div>
+    </div>
+    <div class="section-authors">
+        A Retrovation by <span>MD</span> <em class="text-muted">(frontend)</em>, <span>JN</span> <em class="text-muted">(backend)</em>, and <span>BS</span> <em class="text-muted">(analytics)</em>.
     </div>
 </div>

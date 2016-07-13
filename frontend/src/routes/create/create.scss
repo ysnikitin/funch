@@ -1,4 +1,8 @@
 .rt-create {
+    .progress-indicator {
+        margin-top: 30px;
+    }
+
     .form {
         padding-top: 40px;
 
@@ -15,28 +19,53 @@
         }
 
         .section {
-            margin-bottom: 75px;
+            margin: 0 auto;
         }
 
         .sectionlabel {
             font-size: 25px;
+            padding-bottom: 10px;
         }
 
         .sectioncontent {
-            padding: 0 20px;
+            padding: 0;
+        }
+
+        .sectionnext {
+            padding-top: 50px;
+            text-align: center;
+
+            .next {
+                @extend .btn-brand;
+                display: inline-block;
+                width: 180px;
+                margin: 0 10px;
+                padding: 15px;
+                border-radius: 30px;
+            }
+
+            .prev {
+                @extend .btn-secondary;
+                display: inline-block;
+                width: 180px;
+                margin: 0 10px;
+                padding: 15px;
+                border-radius: 30px;
+            }
         }
 
         .picks {
             padding: 15px 0 20px 0;
+            text-align: center;
 
             .pick {
                 display: inline-block;
                 padding: 20px;
-                border: 1px solid white;
+                border: 1px solid #999;
                 margin-right: 15px;
                 margin-bottom: 20px;
                 text-align: center;
-                color: white;
+                color: #999;
                 width: 150px;
                 transition: 200ms background;
                 cursor: pointer;
@@ -55,7 +84,7 @@
         }
 
         .invites {
-            max-height: 500px;
+            max-height: 300px;
             overflow: auto;
 
             .invites-person {
@@ -66,7 +95,7 @@
         }
 
         .invites-guests {
-            margin-top: 40px;
+            padding-left: 30px;
 
             .invites-guests-more {
                 text-align: right;

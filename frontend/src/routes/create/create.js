@@ -1,6 +1,16 @@
 angular.module('funch').controller('CreateCtrl', function () {
     var vm = this;
 
+    vm.step = 1;
+
+    vm.next = function () {
+        vm.step++;
+    };
+
+    vm.prev = function () {
+        vm.step--;
+    };
+
     vm.limit = {
         value: 8,
         options: {

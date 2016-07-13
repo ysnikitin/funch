@@ -23,6 +23,16 @@
             padding-top: 75px;
         }
 
+        .feedme {
+            padding-top: 75px;
+
+            .takingorders {
+                text-transform: uppercase;
+                padding-bottom: 10px;
+                font-size: 20px;
+            }
+        }
+
         .btn-start {
             background: #82cc31;
             border: 1px solid #82cc31;
@@ -75,6 +85,17 @@
                 padding-left: 10px;
                 padding-right: 10px;
             }
+        }
+    }
+
+    .section-authors {
+        margin-top: 80px;
+        color: white;
+        text-align: center;
+        font-size: 20px;
+
+        span {
+            color: $brand-color;
         }
     }
 }

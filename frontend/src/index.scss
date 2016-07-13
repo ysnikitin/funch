@@ -6,6 +6,7 @@ $brand-color-dark: darken(#82cc31, 5%);
 body {
     background-color: #222;
     font-family: 'Muli', sans-serif;
+    margin-bottom: 150px;
 }
 
 .pagetitle {
@@ -29,12 +30,30 @@ body {
     }
 }
 
+.btn-secondary {
+    background-color: transparent;
+    border: 2px solid #444;
+    color: #444;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #444;
+        color: #fff;
+    }
+}
+
 input,
 textarea {
     background: #333 !important;
     color: #fff !important;
     border-color: #4e4e4e !important;
     border-radius: 0px !important;
+    padding: 11px 17px !important;
+    font-size: 18px !important;
+    font-weight: 300 !important;
+    height: inherit !important;
 }
 
 label {
