@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var secure = require('./secure');
+var cors = require('cors');
 
 var routes = require('./routes/index');
 
@@ -27,13 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // register routes
 app.use('/', routes);
 
-// CORS
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
+// cors for mike
+app.use(cors());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
