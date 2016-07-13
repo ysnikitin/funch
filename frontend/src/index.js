@@ -1,3 +1,5 @@
 angular.module('funch', [
-    'ui.router'
+    'ui.router',
+    'rzModule',
+    'ui.timepicker'
 ]);

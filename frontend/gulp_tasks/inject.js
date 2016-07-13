@@ -7,10 +7,12 @@ const conf = require('../conf/gulp.conf');
 
 gulp.task('inject', function () {
     const injectScripts = gulp.src([
-        conf.path.tmp('**/*.js'),
-        `!${conf.path.tmp('**/*.spec.js')}`
-    ])
-    .pipe(angularFilesort()).on('error', conf.errorHandler('AngularFilesort'));
+        conf.path.tmp('index.js'),
+        conf.path.tmp('routes.js'),
+        conf.path.tmp('templateCacheHtml.js'),
+        conf.path.tmp('components/**/*.js'),
+        conf.path.tmp('routes/**/*.js')
+    ]);
 
     const injectOptions = {
         ignorePath: [conf.paths.src, conf.paths.tmp],

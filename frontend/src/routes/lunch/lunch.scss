@@ -1,0 +1,131 @@
+.rt-lunch {
+    color: #fff;
+
+    .duty {
+        color: #999;
+        font-size: 18px;
+        padding-top: 10px;
+        text-align: right;
+    }
+
+    .lunch {
+        margin-top: 50px;
+
+        .countdown {
+            vertical-align: bottom;
+            text-align: right;
+            padding-right: 20px;
+
+            .set {
+                padding-right: 10px;
+
+                &:last-child {
+                    padding-right: 0;
+                }
+
+                .primary {
+                    color: white;
+                    font-size: 40px;
+                }
+
+                .secondary {
+                    color: #999;
+                    font-size: 20px;
+                    padding-left: 2px;
+                }
+            }
+        }
+
+        .countdown-left {
+            padding-right: 20px;
+            font-size: 18px;
+            color: #999;
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        .toolbar {
+            margin-top: 75px;
+            color: #fff;
+            text-align: right;
+
+            .toolbar-item {
+                text-transform: uppercase;
+                font-size: 18px;
+                margin-bottom: 20px;
+                padding: 20px;
+                cursor: pointer;
+
+                span {
+                    vertical-align: middle;
+                    padding-right: 20px;
+                }
+
+                i {
+                    font-size: 40px;
+                    vertical-align: middle;
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                &:hover {
+                    background-color: #fff;
+                    color: #222;
+                }
+            }
+        }
+
+        .restaurant {
+            .name {
+                font-size: 40px;
+            }
+
+            .details {
+                font-size: 18px;
+                color: #999;
+            }
+        }
+
+        .myorder {
+            margin-top: 50px;
+
+            .row {
+                margin-bottom: 5px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            .myorder-save {
+                @extend .btn-brand;
+                width: 100px;
+                padding: 5px;
+                border-radius: 20px;
+                margin-top: 10px;
+                float: right;
+            }
+        }
+
+        .allorders {
+            margin-top: 50px;
+
+            .table-striped>tbody>tr:nth-of-type(odd) {
+                background-color: #333;
+            }
+
+            table {
+                th, td {
+                    border: none;
+                }
+
+                th {
+                    font-weight: bold;
+                    text-transform: uppercase;
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,46 @@
+@import url(https://fonts.googleapis.com/css?family=Muli:400,300,300italic,400italic);
+
+$brand-color: #82cc31;
+$brand-color-dark: darken(#82cc31, 5%);
+
 body {
-    background-color: white;
+    background-color: #222;
+    font-family: 'Muli', sans-serif;
+}
+
+.pagetitle {
+    font-size: 30px;
+    color: #fff;
+}
+
+.clear {
+    clear: both;
+}
+
+.btn-brand {
+    background-color: $brand-color;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $brand-color-dark;
+    }
+}
+
+input,
+textarea {
+    background: #333 !important;
+    color: #fff !important;
+    border-color: #4e4e4e !important;
+    border-radius: 0px !important;
+}
+
+label {
+    color: white;
+    font-size: 17px;
+    margin-bottom: 15px;
 }
 
 // inject

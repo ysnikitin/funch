@@ -1,0 +1,87 @@
+.rt-create {
+    .form {
+        padding-top: 40px;
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        input {
+            margin-bottom: 15px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .section {
+            margin-bottom: 75px;
+        }
+
+        .sectionlabel {
+            font-size: 25px;
+        }
+
+        .sectioncontent {
+            padding: 0 20px;
+        }
+
+        .picks {
+            padding: 15px 0 20px 0;
+
+            .pick {
+                display: inline-block;
+                padding: 20px;
+                border: 1px solid white;
+                margin-right: 15px;
+                margin-bottom: 20px;
+                text-align: center;
+                color: white;
+                width: 150px;
+                transition: 200ms background;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: white;
+                    color: #222;
+                }
+            }
+        }
+
+        .rzslider .rz-bubble,
+        .rzslider .rz-bubble.rz-limit {
+            color: white;
+            padding: 8px 3px;
+        }
+
+        .invites {
+            max-height: 500px;
+            overflow: auto;
+
+            .invites-person {
+                .name {
+                    color: white;
+                }
+            }
+        }
+
+        .invites-guests {
+            margin-top: 40px;
+
+            .invites-guests-more {
+                text-align: right;
+                color: white;
+            }
+        }
+    }
+
+    .start {
+        @extend .btn-brand;
+
+        margin-top: 50px;
+        margin-bottom: 100px;
+        padding: 30px;
+        font-size: 19px;
+        border-radius: 50px;
+    }
+}

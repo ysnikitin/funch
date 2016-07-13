@@ -1,0 +1,117 @@
+<div class="rt-lunch">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="pagetitle">May I Take Your Order?</div>
+        </div>
+        <div class="col-xs-6">
+            <div class="duty">This lunch is brought to you in part by <strong>JN</strong> and <strong>MD</strong></div>
+        </div>
+    </div>
+
+    <div class="lunch">
+        <div class="row">
+            <div class="col-xs-3">
+                <div class="countdown">
+                    <span class="set">
+                        <span class="primary">8</span><span class="secondary">h</span>
+                    </span>
+                    <span class="set">
+                        <span class="primary">25</span><span class="secondary">m</span>
+                    </span>
+                    <span class="set">
+                        <span class="primary">14</span><span class="secondary">s</span>
+                    </span>
+                </div>
+                <div class="countdown-left">
+                    left to order
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-item">
+                        <span>Menu</span><i class="fa fa-fw fa-file" aria-hidden="true"></i>
+                    </div>
+                    <div class="toolbar-item">
+                        <span>Favs</span><i class="fa fa-fw fa-heart" aria-hidden="true" style="color: #d86f6f"></i>
+                    </div>
+                    <div class="toolbar-item">
+                        <span>History</span><i class="fa fa-fw fa-history" aria-hidden="true" style="color: #eaea7c"></i>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-item">
+                        <span>MORE TIME</span><i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
+                    </div>
+                    <div class="toolbar-item">
+                        <span>INVITE GUEST</span><i class="fa fa-fw fa-user" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-1"></div>
+            <div class="col-xs-8">
+                <div class="restaurant">
+                    <div class="name">Piperi Mediterannean Grill</div>
+                    <div class="details">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                14 School Street, Boston MA
+                            </div>
+                            <div class="col-xs-6">
+                                617.123.4567
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="myorder">
+                    <form>
+                        <div class="form-group">
+                            <label>MY ORDER <span class="text-muted">(max 2)</span></label>
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <input type="text" class="form-control" placeholder="Name" />
+                                </div>
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" placeholder="Order" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <input type="text" class="form-control" placeholder="Name" />
+                                </div>
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" placeholder="Order" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 text-right">
+                                    <div class="myorder-save">
+                                        Save
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="allorders">
+                    <label>ALL ORDERS <span class="text-muted">(6 of 8 orders have been placed)</span></label>
+                    <table class="table table-striped">
+                        <tr ng-repeat="order in vm.orders">
+                            <td class="col-xs-2 text-center">
+                                <strong>{{order.name}}</strong>
+                            </td>
+                            <td class="col-xs-10">
+                                <span ng-show="order.order">
+                                    {{order.order}}
+                                </span>
+                                <span ng-show="!order.order">
+                                    <em class="text-muted">No order placed...</em>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

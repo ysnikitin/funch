@@ -1,0 +1,86 @@
+<div class="rt-create">
+    <div class="pagetitle">What's for lunch?</div>
+
+    <div class="row form">
+        <div class="col-xs-6">
+            <div class="section">
+                <label class="sectionlabel" for="rest">1. Choose a Restaurant</label>
+                <div class="form-group">
+                    <div class="sectioncontent">
+                        <div class="picks">
+                            <div class="pick">Pauli's</div>
+                            <div class="pick">Bonapita</div>
+                            <div class="pick">Piperi</div>
+                            <div class="pick">Uno Due Go</div>
+                            <div class="pick">Zo's</div>
+                        </div>
+                        <div class="clear"></div>
+
+                        <label>Something else...</label>
+                        <input type="text" class="form-control" placeholder="Restuarant">
+                        <input type="text" class="form-control" placeholder="Menu Link">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <label class="sectionlabel" for="rest">2. Settle the Details</label>
+                <div class="form-group">
+                    <div class="sectioncontent">
+                        <label>Order Limit</label>
+                        <rzslider rz-slider-model="vm.limit.value" rz-slider-options="vm.limit.options"></rzslider>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="sectioncontent">
+                        <label>Notes</label>
+                        <textarea class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="sectioncontent">
+                        <label>Orders In By...</label>
+                        <input ui-timepicker ng-model="vm.lunch.stoptime" class="form-control" style="width: 200px"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-1"></div>
+        <div class="col-xs-5">
+            <div class="section">
+                <label class="sectionlabel" for="rest">3. Who's Invited?</label>
+                <div class="form-group">
+                    <div class="sectioncontent">
+                        <div class="invites">
+                            <div class="invites-person" ng-repeat="name in vm.names">
+                                <span class="fa-stack fa-lg">
+                                  <i class="fa fa-circle fa-stack-2x"></i>
+                                  <i class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                </span>
+                                <span class="name">
+                                    {{name}}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="invites-guests">
+                            <label>We have guests...</label>
+                            <input type="text" class="form-control" placeholder="Guest e-mail">
+                            <div class="invites-guests-more">
+                                <i class="fa fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="start">
+                Start Lunch Session
+            </div>
+        </div>
+    </div>
+</div>
