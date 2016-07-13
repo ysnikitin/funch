@@ -8,7 +8,8 @@ var cfg = {
     'mysql_password' : undefined,
     'mysql_schema' : undefined,
     'mysql_host' : undefined,
-    'mysql_port' : undefined
+    'mysql_port' : undefined,
+    'hmac_secret' : undefined
 };
 
 var other = {};
