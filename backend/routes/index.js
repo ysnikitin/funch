@@ -157,6 +157,12 @@ router.get('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
   }, next);
 });
 
+router.get('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {
+  db.order(req.params.lid, req.params.oid, function(results) {
+    res.json(results);
+  }, next);
+});
+
 // DELETE
 
 router.delete('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {

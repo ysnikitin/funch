@@ -26,7 +26,7 @@ connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
     if (err) throw "Cannot connect to MySQL!";
 });
 
-var fitlerOneRow = function(rows) {
+var filterOneRow = function(rows) {
     return rows.length > 0 ? rows[0] : {};
 }
 
@@ -61,7 +61,7 @@ module.exports = {
             if(err) {
                 next(err);
             } else {
-                callback(fitlerOneRow(results));
+                callback(filterOneRow(results));
             }
         });
     },
@@ -127,7 +127,7 @@ module.exports = {
             if(err) {
                 next(err);
             } else {
-                var row = fitlerOneRow(results);
+                var row = filterOneRow(results);
                 row['onduty'] = convertCommaDelimToArray(row['onduty']);
                 callback(row);
             }
@@ -291,7 +291,7 @@ module.exports = {
                 next(err);
             } else {
                 convertTinyIntToBool(results, 'perm');
-                callback(fitlerOneRow(results));
+                callback(filterOneRow(results));
             }
         });
     },
@@ -333,6 +333,16 @@ module.exports = {
                 next(err);
             } else {
                 callback(results);
+            }
+        });
+    },
+
+    order : function(lid, oid, callback, next) {
+        connection.query("SELECT * FROM funch.orders WHERE lunchId =? AND id = ?; ", [lid, oid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(filterOneRow(results));
             }
         });
     },
