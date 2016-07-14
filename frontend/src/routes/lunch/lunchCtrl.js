@@ -1,4 +1,4 @@
-angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsSvc, Favorites, $interval, $stateParams, $state, $q) {
+angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsSvc, Favorites, $interval, $stateParams, $state, $q, GuestInvite, toastr) {
     var vm = this;
 
     var code = angular.fromJson(atob($stateParams.code));
@@ -6,14 +6,24 @@ angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsS
     var userId = code.userId;
 
     var refreshCountdown = function () {
-        var stoptime = moment('07-15-2016 10:45:00');
-        var curtime = moment();
-        var duration = moment.duration((stoptime - curtime), 'milliseconds');
+        var stoptime = moment(vm.lunch.stoptime).valueOf();
+        var curtime = moment().valueOf();
+
+        var s = stoptime - curtime;
+
+        vm.timeWarning = (s <= 1800000);
+
+        var ms = s % 1000;
+        s = (s - ms) / 1000;
+        var secs = s % 60;
+        s = (s - secs) / 60;
+        var mins = s % 60;
+        var hrs = (s - mins) / 60;
 
         vm.countdown = {
-            h: duration.hours(),
-            m: duration.minutes(),
-            s: duration.seconds()
+            h: hrs,
+            m: mins,
+            s: secs
         };
     };
 
@@ -43,12 +53,25 @@ angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsS
         });
     };
 
+    vm.openInviteGuests = function () {
+        GuestInvite.open(vm.lunch);
+    };
+
     vm.cancelLunch = function () {
         if (confirm('Are you sure you want to cancel lunch?  This action cannot be undone.  All orders will be lost, along with most hopes and dreams.')) {
             vm.lunch.destroy().then(function () {
                 $state.go('home');
             });
         }
+    };
+
+    vm.moreTime = function () {
+        var newtime = moment(vm.lunch.stoptime).add(15, 'minutes').toISOString();
+
+        vm.lunch.stoptime = newtime;
+        vm.lunch.save();
+
+        toastr.success('Added another 15 minutes to the order due date.');
     };
 
     vm.orders = [{
@@ -86,24 +109,12 @@ angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsS
 
     defers.push(LunchSvc.get(lunchId).then(function (l) {
         vm.lunch = l;
+    }));
 
-        var stoptime = moment(vm.lunch.stoptime);
-        var curtime = moment();
-        var duration = moment.duration((stoptime - curtime) * 1000, 'milliseconds');
-
-        vm.countdown = {
-            h: duration.hours(),
-            m: duration.minutes(),
-            s: duration.seconds()
-        };
-
+    $q.all(defers).then(function () {
         refreshCountdown();
         $interval(function () {
             refreshCountdown();
         }, 1000);
-    }));
-
-    $q.all(defers).then(function () {
-
     });
 });

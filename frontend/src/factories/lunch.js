@@ -31,5 +31,9 @@ angular.module('funch').factory('Lunch', function ($http) {
         return $http.delete('/lunch/' + this.id);
     };
 
+    L.prototype.inviteGuest = function (guest) {
+        return $http.post('/lunch/' + this.id + '/email', guest);
+    };
+
     return L;
 });

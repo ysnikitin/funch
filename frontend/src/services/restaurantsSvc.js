@@ -24,4 +24,8 @@ angular.module('funch').service('RestaurantsSvc', function ($http, Restaurant) {
             return r;
         });
     };
+
+    this.create = function (r) {
+        return $http.post('/restaurants', r);
+    };
 });
