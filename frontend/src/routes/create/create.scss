@@ -22,6 +22,16 @@
             margin: 0 auto;
         }
 
+        .reset-restaurant {
+            color: #fff;
+            cursor: pointer;
+
+            &:hover {
+                color: #fff;
+                text-decoration: none;
+            }
+        }
+
         .sectionlabel {
             font-size: 25px;
             padding-bottom: 10px;
@@ -99,6 +109,8 @@
             overflow: auto;
 
             .invites-person {
+                cursor: pointer;
+                
                 .name {
                     color: white;
                 }

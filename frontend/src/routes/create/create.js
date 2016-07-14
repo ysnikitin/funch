@@ -1,4 +1,4 @@
-angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Restaurant, Lunch) {
+angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Restaurant, Lunch, UserSvc) {
     var vm = this;
 
     vm.step = 1;
@@ -14,7 +14,6 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
     vm.otherLabel = 'Something else...';
 
     vm.limit = {
-        value: 8,
         options: {
             floor: 5,
             ceil: 20,
@@ -36,22 +35,48 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
         time: '10:30'
     };
 
+    vm.pickRestaurant = function (r) {
+        vm.restaurant = r;
+        var good = ['Good choice!', 'Sounds good...', 'Delicious!', 'Can\'t wait to eat...'];
+        vm.otherLabel = good[Math.floor(Math.random() * good.length)];
+        vm.disableRestaurantFields = true;
+    };
+
+    vm.resetRestaurant = function () {
+        vm.restaurant = new Restaurant();
+        vm.disableRestaurantFields = false;
+    };
+
+    vm.create = function () {
+        vm.lunch.stoptime = vm.due.date + ' ' + vm.due.time;
+
+        console.log('rest', vm.restaurant);
+        console.log('create', vm.lunch);
+    };
+
+
+    vm.restaurant = new Restaurant();
+    vm.lunch = new Lunch({
+        limit: 8
+    });
+
     vm.restaurants = [];
     RestaurantsSvc.getAll().then(function (r) {
-        console.log(r);
         vm.restaurants = r;
     });
 
-    vm.restaurant = new Restaurant();
+    vm.users = [];
+    UserSvc.getAll().then(function (u) {
+        u = u.map(function (z) {
+            z.onduty = false;
+            return z;
+        });
+        vm.users = u;
+    });
 
-    vm.pickRestaurant = function (r) {
-        vm.restaurant = r;
-
-        var good = ['Good choice!', 'Sounds good...', 'Delicious!', 'Can\'t wait to eat...'];
-        vm.otherLabel = good[Math.floor(Math.random() * good.length)];
+    vm.toggleOnDuty = function (user) {
+        user.onduty = !user.onduty; 
     };
-
-    vm.lunch = new Lunch({});
 
     vm.names = [
         'Aaron Panzer',

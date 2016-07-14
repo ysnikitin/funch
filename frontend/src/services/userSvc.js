@@ -1,4 +1,4 @@
-angular.module('funch').service('UserSvc', function (User) {
+angular.module('funch').service('UserSvc', function ($http, User) {
     this.get = function (id) {
         return $http.get('/user/' + id).then(function (d) {
             return new User(d.data);

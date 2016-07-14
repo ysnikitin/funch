@@ -1,4 +1,23 @@
 .rt-home {
+    .section-top {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        padding: 20px;
+        color: #fff;
+
+        a {
+            color: #fff;
+            cursor: pointer;
+
+            &:hover {
+                color: #fff;
+                text-decoration: none;
+            }
+        }
+    }
+
     .section-splash {
         background-image: url('assets/food.jpg');
         background-size: cover;
