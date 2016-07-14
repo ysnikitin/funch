@@ -104,7 +104,7 @@ module.exports = {
             if (!first) {
                 params += ", ";
             }
-            setClause += param + " = ?";
+            setClause += "`" + param + "` = ?";
             first = false;
             queryValues.push(params[param]);
         }
@@ -380,6 +380,34 @@ module.exports = {
                 next(err);
             } else {
                 callback(result.affectedRows > 0);
+            }
+        });
+    },
+
+    orderUpdate : function(lid, oid, params, callback, next) {
+
+        if(Object.keys(params).length === 0) {
+            callback(false);
+        }
+
+        var first = true;
+        var queryValues = [];
+        var setClause = "";
+        for(var param in params) {
+            if (!first) {
+                params += ", ";
+            }
+            setClause += "`" + param + "` = ?";
+            first = false;
+            queryValues.push(params[param]);
+        }
+        queryValues.push(oid);
+        queryValues.push(lid);
+        connection.query("UPDATE funch.orders SET " + setClause + " WHERE id = ? and lunchId = ?", queryValues, function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.changedRows > 0);
             }
         });
     },
