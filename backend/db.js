@@ -408,7 +408,7 @@ module.exports = {
         var setClause = "";
         for(var param in params) {
             if (!first) {
-                params += ", ";
+                setClause += ", ";
             }
             setClause += "`" + param + "` = ?";
             first = false;
