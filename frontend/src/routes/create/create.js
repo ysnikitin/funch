@@ -38,6 +38,7 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
 
     vm.restaurants = [];
     RestaurantsSvc.getAll().then(function (r) {
+        console.log(r);
         vm.restaurants = r;
     });
 

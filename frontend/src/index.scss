@@ -67,5 +67,11 @@ label {
     margin-bottom: 15px;
 }
 
+@media print {
+    .noprint {
+        display: none;
+    }
+}
+
 // inject
 // endinject

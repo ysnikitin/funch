@@ -19,7 +19,7 @@ angular.module('funch').config(function ($stateProvider, $urlRouterProvider, $lo
             controllerAs: 'vm'
         })
         .state('main.lunch', {
-            url: '/lunch',
+            url: '/lunch/:code',
             templateUrl: 'src/routes/lunch/lunch.html',
             controller: 'LunchCtrl',
             controllerAs: 'vm'

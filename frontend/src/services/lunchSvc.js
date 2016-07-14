@@ -1,4 +1,4 @@
-angular.module('funch').service('LunchSvc', function (Lunch) {
+angular.module('funch').service('LunchSvc', function ($http, Lunch) {
     this.get = function (id) {
         return $http.get('/lunch/' + id).then(function (d) {
             return new Lunch(d.data);
@@ -17,7 +17,11 @@ angular.module('funch').service('LunchSvc', function (Lunch) {
 
     this.getActive = function () {
         return $http.get('/lunch/active').then(function (d) {
-            return new Lunch(d.data);
+            if (d.data.id) {
+                return new Lunch(d.data);
+            } else {
+                return undefined;
+            }
         });
     };
 });

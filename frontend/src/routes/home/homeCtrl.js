@@ -1,5 +1,8 @@
-angular.module('funch').controller('HomeCtrl', function () {
+angular.module('funch').controller('HomeCtrl', function (LunchSvc) {
     var vm = this;
 
-    vm.activeLunch = false;
+    LunchSvc.getActive().then(function (lunch) {
+        vm.activeLunch = lunch;
+        vm.activeDate = moment(vm.activeLunch.stoptime).format('MMMM Do');
+    });
 });
