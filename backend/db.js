@@ -124,7 +124,6 @@ module.exports = {
         });
     },
 
-
     lunchDelete : function(id, callback, next) {
         connection.query("DELETE FROM funch.lunches WHERE id = ?;", [id], function(err, result) {
             if(err) {
@@ -169,6 +168,16 @@ module.exports = {
 
     recommendations : function(uid, rid, callback, next) {
         connection.query("SELECT * FROM funch.recommendations WHERE userId =? AND restaurantId = ?", [uid, rid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
+            }
+        });
+    },
+
+    quickpicks : function(rid, callback, next) {
+        connection.query("SELECT * FROM funch.quickpicks WHERE restaurantId =?; ", [rid], function(err, results) {
             if(err) {
                 next(err);
             } else {

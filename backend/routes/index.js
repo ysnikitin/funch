@@ -91,6 +91,14 @@ router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', functi
   }, next);
 });
 
+// ------ QUICK PICKS
+
+router.get('/api/restaurants/:rid(\\d+)/quickpicks', function(req, res, next) {
+  db.quickpicks(req.params.rid, function(results) {
+    res.json(results);
+  }, next);
+});
+
 ////////////////////////
 
 router.get('/api/sessions', function(req, res) {
