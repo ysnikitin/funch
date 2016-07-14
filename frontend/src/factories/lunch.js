@@ -3,20 +3,42 @@ angular.module('funch').factory('Lunch', function ($http) {
         for (var k in def) {
             this[k] = def[k];
         }
+
+        if (this.onduty && this.onduty instanceof Array) {
+            this.onduty = this.onduty.map(function (u) {
+                return +u;
+            });
+        }
     };
 
     L.prototype.getOrders = function () {
         return $http.get('/lunch/' + this.id + '/orders').then(function (d) {
-            return d.data.data;
+            return d.data;
         });
     };
 
-    L.prototype.makeOrder = function (orders) {
-        return $http.post('/lunch/' + this.id + '/orders', orders);
+    L.prototype.getOrder = function (orderId) {
+        return $http.get('/lunch/' + this.id + '/orders/' + orderId).then(function (d) {
+            return d.data;
+        });
+    };
+
+    L.prototype.makeOrder = function (order) {
+        return $http.post('/lunch/' + this.id + '/orders', order).then(function (d) {
+            return d.data;
+        });
     };
 
     L.prototype.updateOrder = function (order) {
-        return $http.put('/lunch/' + this.id + '/orders/' + order.id, order);
+        var id = order.id;
+
+        delete order.ordertime;
+        delete order.lunchId;
+        delete order.id;
+
+        return $http.put('/lunch/' + this.id + '/orders/' + id, order).then(function (d) {
+            return d.data;
+        });
     };
 
     L.prototype.destroyOrder = function (order) {
