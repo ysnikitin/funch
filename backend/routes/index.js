@@ -79,7 +79,7 @@ router.post('/api/user', function(req, res, next) {
 
 // ------ RECOMMENDATIONS
 
-router.get('/api/user/:uid(\\d+)/restaurant/:rid(\\d+)/recommendations', function(req, res, next) {
+router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', function(req, res, next) {
   db.recommendations(req.params.uid, req.params.rid, function(results) {
     res.json(results);
   }, next);
