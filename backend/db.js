@@ -26,7 +26,7 @@ connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
     if (err) throw "Cannot connect to MySQL!";
 });
 
-var fitlerOneRow = function(rows) {
+var filterOneRow = function(rows) {
     return rows.length > 0 ? rows[0] : {};
 }
 
@@ -61,7 +61,7 @@ module.exports = {
             if(err) {
                 next(err);
             } else {
-                callback(fitlerOneRow(results));
+                callback(filterOneRow(results));
             }
         });
     },
@@ -102,9 +102,9 @@ module.exports = {
         var setClause = "";
         for(var param in params) {
             if (!first) {
-                params += ", ";
+                setClause += ", ";
             }
-            setClause += param + " = ?";
+            setClause += "`" + param + "` = ?";
             first = false;
             queryValues.push(params[param]);
         }
@@ -127,7 +127,7 @@ module.exports = {
             if(err) {
                 next(err);
             } else {
-                var row = fitlerOneRow(results);
+                var row = filterOneRow(results);
                 row['onduty'] = convertCommaDelimToArray(row['onduty']);
                 callback(row);
             }
@@ -261,7 +261,7 @@ module.exports = {
         var hasOnDuty = false;
         for(var param in params) {
             if (!first) {
-                params += ", ";
+                setClause += ", ";
             }
             if(param === 'onduty') {
                 if(Object.keys(params).length === 1) {
@@ -291,7 +291,7 @@ module.exports = {
                 next(err);
             } else {
                 convertTinyIntToBool(results, 'perm');
-                callback(fitlerOneRow(results));
+                callback(filterOneRow(results));
             }
         });
     },
@@ -337,6 +337,16 @@ module.exports = {
         });
     },
 
+    order : function(lid, oid, callback, next) {
+        connection.query("SELECT * FROM funch.orders WHERE lunchId =? AND id = ?; ", [lid, oid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(filterOneRow(results));
+            }
+        });
+    },
+
     orders : function(lid, callback, next) {
         connection.query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid], function(err, results) {
             if(err) {
@@ -351,6 +361,9 @@ module.exports = {
         var params = [];
         var first = true;
         var query = "INSERT INTO funch.orders (`order`, userId, lunchId, ordertime) VALUES ";
+        if(Array.isArray(body) === false) {
+            body = [body];
+        }
         for(var dindx in body) {
             var order = body[dindx];
             if(order.order === undefined || order.userId === undefined) {
@@ -369,7 +382,45 @@ module.exports = {
             if(err) {
                 next(err);
             } else {
-                callback(result.changedRows);
+                callback({"id" : result.insertId});
+            }
+        });
+    },
+
+    orderDelete : function(lid, oid, callback, next) {
+        connection.query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.affectedRows > 0);
+            }
+        });
+    },
+
+    orderUpdate : function(lid, oid, params, callback, next) {
+
+        if(Object.keys(params).length === 0) {
+            callback(false);
+        }
+
+        var first = true;
+        var queryValues = [];
+        var setClause = "";
+        for(var param in params) {
+            if (!first) {
+                setClause += ", ";
+            }
+            setClause += "`" + param + "` = ?";
+            first = false;
+            queryValues.push(params[param]);
+        }
+        queryValues.push(oid);
+        queryValues.push(lid);
+        connection.query("UPDATE funch.orders SET " + setClause + ", ordertime = NOW() WHERE id = ? and lunchId = ?", queryValues, function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.changedRows > 0);
             }
         });
     },

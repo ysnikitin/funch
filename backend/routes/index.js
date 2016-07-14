@@ -157,11 +157,33 @@ router.get('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
   }, next);
 });
 
+router.get('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {
+  db.order(req.params.lid, req.params.oid, function(results) {
+    res.json(results);
+  }, next);
+});
+
+// DELETE
+
+router.delete('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {
+  db.orderDelete(req.params.lid, req.params.oid, function(result) {
+    res.json(result);
+  }, next);
+});
+
 // POST
 
 router.post('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
   db.ordersInsert(req.params.id, req.body, function(results) {
     res.json(results);
+  }, next);
+});
+
+// PUT
+
+router.put('/api/lunch/:lid/orders/:oid(\\d+)', function(req, res, next) {
+  db.orderUpdate(req.params.lid, req.params.oid, req.body, function(result) {
+    res.json(result);
   }, next);
 });
 
