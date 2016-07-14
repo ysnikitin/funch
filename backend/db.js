@@ -31,7 +31,7 @@ var fitlerOneRow = function(rows) {
 
 var convertCommaDelimToArray = function(commaDelim) {
     if(commaDelim === undefined || commaDelim.length === 0) {
-        return [];
+        return undefined;
     } else {
         return commaDelim.split(',');
     }
