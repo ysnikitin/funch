@@ -27,7 +27,7 @@ router.get('/api/restaurants/favorites', function(req, res, next) {
 // PUT
 
 router.put('/api/restaurants/:id', function(req, res, next) {
-  db.updateRestaurant(req.params.id, req.body, function(result) {
+  db.restaurantUpdate(req.params.id, req.body, function(result) {
     res.json(result);
   }, next);
 });
@@ -38,6 +38,24 @@ router.put('/api/restaurants/:id', function(req, res, next) {
 
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
   db.lunch(req.params.id, function(results) {
+    res.json(results);
+  }, next);
+});
+
+// DELETE
+
+router.delete('/api/lunch/:id(\\d+)', function(req, res, next) {
+  db.lunchDelete(req.params.id, function(result) {
+    res.json(result);
+  }, next);
+});
+
+// ------ USERS
+
+// GET
+
+router.get('/api/user', function(req, res, next) {
+  db.users(function(results) {
     res.json(results);
   }, next);
 });

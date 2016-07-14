@@ -24,6 +24,12 @@ var convertCommaDelimToArray = function(commaDelim) {
     return commaDelim.split(',');
 }
 
+var convertTinyIntToBool = function(rows, columnName) {
+    for(var row in rows) {
+        rows[row][columnName] = (rows[row][columnName] === 1);
+    }
+}
+
 module.exports = {
 
     restaurants : function(callback, next) {
@@ -61,7 +67,7 @@ module.exports = {
         });
     },
 
-    updateRestaurant : function(id, params, callback, next) {
+    restaurantUpdate : function(id, params, callback, next) {
 
         if(params.length === 0) {
             return false;
@@ -100,6 +106,27 @@ module.exports = {
                 var row = fitlerOneRow(results);
                 row['onduty'] = convertCommaDelimToArray(row['onduty']);
                 callback(row);
+            }
+        });
+    },
+
+    lunchDelete : function(id, callback, next) {
+        connection.query("DELETE FROM funch.lunches WHERE id = ?;", [id], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.affectedRows === 1);
+            }
+        });
+    },
+
+    users : function(callback, next) {
+        connection.query("SELECT * FROM funch.users", function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                convertTinyIntToBool(results, 'perm');
+                callback(results);
             }
         });
     },
