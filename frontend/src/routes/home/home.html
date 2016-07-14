@@ -19,10 +19,7 @@
 
                     <div class="feedme" ng-show="vm.activeLunch">
                         <div class="takingorders">
-                            Now taking orders for <strong>July 15th</strong>...
-                        </div>
-                        <div class="btn-start" ui-sref="main.lunch">
-                            FEED ME
+                            Now taking orders for <strong>{{vm.activeDate}}</strong>... <em>check your e-mail!</em>
                         </div>
                     </div>
                 </div>
@@ -79,6 +76,6 @@
         </div>
     </div>
     <div class="section-authors">
-        A Retrovation by <span>MD</span> <em class="text-muted">(frontend)</em>, <span>JN</span> <em class="text-muted">(backend)</em>, and <span>BS</span> <em class="text-muted">(analytics)</em>.
+        A Retrovation by <span>MD</span> <em class="text-muted">(frontend)</em> and <span>JN</span> <em class="text-muted">(backend)</em>.
     </div>
 </div>

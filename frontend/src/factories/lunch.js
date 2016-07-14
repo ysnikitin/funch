@@ -1,4 +1,4 @@
-angular.module('funch').factory('Lunch', function () {
+angular.module('funch').factory('Lunch', function ($http) {
     var L = function (def) {
         for (var k in def) {
             this[k] = def[k];
