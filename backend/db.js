@@ -249,6 +249,34 @@ module.exports = {
         });
     },
 
+    lunchUpdate : function(id, params, callback, next) {
+
+        if(params.length === 0) {
+            return false;
+        }
+
+        var first = true;
+        var queryValues = [];
+        var setClause = "";
+        for(var param in params) {
+            if (!first) {
+                params += ", ";
+            }
+            setClause += "`" + param + "` = ?";
+            first = false;
+            queryValues.push(params[param]);
+        }
+        queryValues.push(id);
+        connection.query("UPDATE funch.lunches SET " + setClause + " WHERE id = ? ", queryValues, function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.changedRows === 1);
+            }
+        });
+
+    },
+
     user : function(id, callback, next) {
         connection.query("SELECT * FROM funch.users WHERE id = ?;", [id], function(err, results) {
             if(err) {

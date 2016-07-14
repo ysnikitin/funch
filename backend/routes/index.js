@@ -91,6 +91,13 @@ router.post('/api/lunch/:id(\\d+)/email', function(req, res, next) {
   }, next);
 });
 
+// PUT
+
+router.put('/api/lunch/:id', function(req, res, next) {
+  db.lunchUpdate(req.params.id, req.body, function(result) {
+    res.json(result);
+  }, next);
+});
 
 // ------ USERS
 
