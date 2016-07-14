@@ -55,6 +55,8 @@
                 margin-bottom: 20px;
                 padding: 20px;
                 cursor: pointer;
+                display: block;
+                color: #fff;
 
                 span {
                     vertical-align: middle;
@@ -73,6 +75,7 @@
                 &:hover {
                     background-color: #fff;
                     color: #222;
+                    text-decoration: none;
                 }
             }
         }
