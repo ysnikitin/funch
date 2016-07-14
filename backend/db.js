@@ -166,7 +166,7 @@ module.exports = {
                                     }
                                 })
                             }
-                            callback({"id: ": newLunchId});
+                            callback({"id": newLunchId});
                         }
                         if(onduty.length === 0) {
                             emailUsers();
@@ -200,6 +200,30 @@ module.exports = {
             });
         }
         this.users(after, next);
+    },
+
+    lunchEmail : function(lid, name, email, initials, callback, next) {
+        var emailUser = function(newUserId) {
+            var code = encodeURIComponent(btoa(JSON.stringify({
+                "lunchId": lid,
+                "userId": newUserId
+            })));
+            var mailOptions = {
+                from: "Funch Bunch", // sender address
+                to: email, // list of receivers
+                subject: 'Funch Is Here', // Subject line
+                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    return console.log(error);
+                } else {
+                    console.log('Message sent: ' + info.response);
+                }
+            })
+            callback({"id": newUserId });
+        }
+        this.usersAdd(name, email, false, initials, emailUser, next);
     },
 
     lunchDelete : function(id, callback, next) {
