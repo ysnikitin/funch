@@ -351,6 +351,9 @@ module.exports = {
         var params = [];
         var first = true;
         var query = "INSERT INTO funch.orders (`order`, userId, lunchId, ordertime) VALUES ";
+        if(Array.isArray(body) === false) {
+            body = [body];
+        }
         for(var dindx in body) {
             var order = body[dindx];
             if(order.order === undefined || order.userId === undefined) {
