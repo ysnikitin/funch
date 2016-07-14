@@ -93,8 +93,8 @@ module.exports = {
 
     restaurantUpdate : function(id, params, callback, next) {
 
-        if(params.length === 0) {
-            return false;
+        if(Object.keys(params).length === 0) {
+            callback(false);
         }
 
         var first = true;
@@ -251,16 +251,24 @@ module.exports = {
 
     lunchUpdate : function(id, params, callback, next) {
 
-        if(params.length === 0) {
-            return false;
+        if(Object.keys(params).length === 0) {
+            callback(false);
         }
 
         var first = true;
         var queryValues = [];
         var setClause = "";
+        var hasOnDuty = false;
         for(var param in params) {
             if (!first) {
                 params += ", ";
+            }
+            if(param === 'onduty') {
+                if(Object.keys(params).length === 1) {
+                    callback(false);
+                }
+                hasOnDuty = true;
+                continue;
             }
             setClause += "`" + param + "` = ?";
             first = false;
