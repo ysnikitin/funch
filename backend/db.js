@@ -153,7 +153,7 @@ module.exports = {
         var mytime = mtime.format("YYYY-MM-DD HH:mm:ss")
         // call is active
         var after = function(retUsers) {
-            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes, limit) VALUES(?, NOW(), ?, ?, ?); ", [rid, mytime, notes, limit], function (err, result) {
+            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes, `limit`) VALUES(?, NOW(), ?, ?, ?); ", [rid, mytime, notes, limit], function (err, result) {
                 if (err) {
                     next(err);
                 } else {
@@ -272,7 +272,7 @@ module.exports = {
     },
 
     usersAdd : function(name, email, perm, initials, callback, next) {
-        connection.query("INSERT INTO funch.users (name, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials], function(err, result) {
+        connection.query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials], function(err, result) {
             if(err) {
                 next(err);
             } else {
@@ -300,6 +300,44 @@ module.exports = {
             }
         });
     },
+
+    orders : function(lid, callback, next) {
+        connection.query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
+            }
+        });
+    },
+
+    ordersInsert : function(lid, body, callback, next) {
+        var params = [];
+        var first = true;
+        var query = "INSERT INTO funch.orders (`order`, userId, lunchId, ordertime) VALUES ";
+        for(var dindx in body) {
+            var order = body[dindx];
+            if(order.order === undefined || order.userId === undefined) {
+                continue;
+            }
+            if(!first) {
+                query += ", ";
+            }
+            query += "(?,?,?,NOW())";
+            params.push(order.order);
+            params.push(order.userId);
+            params.push(lid);
+            first = false;
+        }
+        connection.query(query, params, function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.changedRows);
+            }
+        });
+    },
+
 
 }
 

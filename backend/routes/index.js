@@ -122,6 +122,8 @@ router.post('/api/user', function(req, res, next) {
 
 // ------ RECOMMENDATIONS
 
+// GET
+
 router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', function(req, res, next) {
   db.recommendations(req.params.uid, req.params.rid, function(results) {
     res.json(results);
@@ -130,18 +132,32 @@ router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', functi
 
 // ------ QUICK PICKS
 
+// GET
+
 router.get('/api/restaurants/:rid(\\d+)/quickpicks', function(req, res, next) {
   db.quickpicks(req.params.rid, function(results) {
     res.json(results);
   }, next);
 });
 
-////////////////////////
+// ------ ORDERS
 
-router.get('/api/sessions', function(req, res) {
-  db.sessions(function(results) {
-    res.json({ sessions: results });
-  });
+// GET
+
+router.get('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
+  db.orders(req.params.id, function(results) {
+    res.json(results);
+  }, next);
 });
+
+// POST
+
+router.post('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
+  db.ordersInsert(req.params.id, req.body, function(results) {
+    res.json(results);
+  }, next);
+});
+
+////////////////////////
 
 module.exports = router;
