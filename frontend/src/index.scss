@@ -45,7 +45,8 @@ body {
 }
 
 input,
-textarea {
+textarea,
+select {
     background: #333 !important;
     color: #fff !important;
     border-color: #4e4e4e !important;
@@ -54,6 +55,10 @@ textarea {
     font-size: 18px !important;
     font-weight: 300 !important;
     height: inherit !important;
+}
+
+select {
+    height: 49px !important;
 }
 
 label {

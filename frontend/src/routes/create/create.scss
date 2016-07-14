@@ -74,6 +74,17 @@
                     background-color: white;
                     color: #222;
                 }
+
+                &.active {
+                    background-color: $brand-color !important;
+                    border: 1px solid $brand-color !important;
+                    color: #fff !important;
+
+                    &:hover {
+                        background-color: $brand-color;
+                        color: #fff;
+                    }
+                }
             }
         }
 
