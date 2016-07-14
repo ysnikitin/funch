@@ -120,6 +120,17 @@ module.exports = {
         });
     },
 
+    user : function(id, callback, next) {
+        connection.query("SELECT * FROM funch.users WHERE id = ?;", [id], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                convertTinyIntToBool(results, 'perm');
+                callback(fitlerOneRow(results));
+            }
+        });
+    },
+
     users : function(callback, next) {
         connection.query("SELECT * FROM funch.users WHERE perm = 1;", function(err, results) {
             if(err) {

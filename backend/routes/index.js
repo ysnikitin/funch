@@ -60,6 +60,12 @@ router.get('/api/user', function(req, res, next) {
   }, next);
 });
 
+router.get('/api/user/:id(\\d+)', function(req, res, next) {
+  db.user(req.params.id, function(results) {
+    res.json(results);
+  }, next);
+});
+
 // POST
 
 router.post('/api/user', function(req, res, next) {
