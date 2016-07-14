@@ -372,7 +372,7 @@ module.exports = {
             if(err) {
                 next(err);
             } else {
-                callback(result.changedRows);
+                callback({"id" : result.insertId});
             }
         });
     },
