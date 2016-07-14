@@ -234,8 +234,8 @@ module.exports = {
         });
     },
 
-    usersAdd : function(name, email, perm, callback, next) {
-        connection.query("INSERT INTO funch.users (name, email, perm) VALUES (?,?,?);", [name, email, perm], function(err, result) {
+    usersAdd : function(name, email, perm, initials, callback, next) {
+        connection.query("INSERT INTO funch.users (name, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials], function(err, result) {
             if(err) {
                 next(err);
             } else {

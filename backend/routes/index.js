@@ -92,7 +92,8 @@ router.post('/api/user', function(req, res, next) {
   var name = req.body.name;
   var email = req.body.email;
   var perm = req.body.perm;
-  db.usersAdd(name, email, perm, function(result) {
+  var initials = req.body.initials;
+  db.usersAdd(name, email, perm, initials, function(result) {
     res.json(result);
   }, next);
 });
