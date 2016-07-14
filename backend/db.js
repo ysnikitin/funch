@@ -30,8 +30,8 @@ var fitlerOneRow = function(rows) {
 }
 
 var convertCommaDelimToArray = function(commaDelim) {
-    if(commaDelim === undefined || commaDelim.length === 0) {
-        return undefined;
+    if(commaDelim === null) {
+        return [];
     } else {
         return commaDelim.split(',');
     }
@@ -110,7 +110,7 @@ module.exports = {
     lunch : function(id, callback, next) {
         connection.query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
         "FROM funch.lunches l " +
-        "JOIN funch.duty d ON l.id = d.lunchId " +
+        "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
         "WHERE l.id = 1 " +
         "GROUP BY l.id;", [id], function(err, results) {
             if(err) {
