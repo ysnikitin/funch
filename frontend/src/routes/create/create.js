@@ -1,6 +1,8 @@
 angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Restaurant, Lunch, LunchSvc, UserSvc, $q, toastr, $state) {
     var vm = this;
 
+    vm.ready = false;
+    vm.creating = false;
     vm.step = 1;
 
     vm.next = function () {
@@ -17,7 +19,6 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
         options: {
             floor: 5,
             ceil: 20,
-            step: 0.5,
             hideLimitLabels: true,
             translate: function (v) {
                 return '$' + v;
@@ -49,6 +50,11 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
     };
 
     vm.create = function () {
+        if (vm.creating) {
+            return;
+        }
+
+        vm.creating = true;
         var timespl = vm.due.time.split(':');
 
         vm.lunch.stoptime = moment(vm.due.date).hour(+timespl[0]).minute(+timespl[1]);
@@ -61,9 +67,13 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
         var ensureRest = $q.defer();
 
         if (!vm.restaurant.id) {
-            RestaurantsSvc.create(vm.restuarant).then(function (r) {
-                vm.restuarant = r;
+            RestaurantsSvc.create(vm.restaurant).then(function (r) {
+                return RestaurantsSvc.get(r.id);
+            }).then(function (rest) {
+                vm.restaurant = rest;
                 ensureRest.resolve();
+            }).catch(function () {
+                ensureRest.reject();
             });
         } else {
             ensureRest.resolve();
@@ -71,44 +81,28 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
 
         ensureRest.promise.then(function () {
             vm.lunch.restaurantId = vm.restaurant.id;
-            LunchSvc.create(vm.lunch).then(function (lunch) {
-                var currentUser = vm.users.filter(function (u) {
-                    return u.iscurrent;
-                })[0];
+            return LunchSvc.create(vm.lunch);
+        }).then(function (lunch) {
+            var currentUser = vm.users.filter(function (u) {
+                return u.iscurrent;
+            })[0];
 
-                var code = btoa(JSON.stringify({
-                    lunchId: lunch.id,
-                    userId: currentUser.id
-                }));
+            var code = btoa(JSON.stringify({
+                lunchId: lunch.id,
+                userId: currentUser.id
+            }));
 
-                toastr.success('Lunch session created!');
+            toastr.success('Lunch session created!');
+            vm.creating = false;
 
-                $state.go('main.lunch', {
-                    code: code
-                });
+            $state.go('main.lunch', {
+                code: code
             });
+        }).catch(function () {
+            vm.creating = false;
+            toastr.error('There was a problem creating your lunch session.');
         });
     };
-
-
-    vm.restaurant = new Restaurant();
-    vm.lunch = new Lunch({
-        limit: 8
-    });
-
-    vm.restaurants = [];
-    RestaurantsSvc.getAll().then(function (r) {
-        vm.restaurants = r;
-    });
-
-    vm.users = [];
-    UserSvc.getAll().then(function (u) {
-        u = u.map(function (z) {
-            z.onduty = false;
-            return z;
-        });
-        vm.users = u;
-    });
 
     vm.toggleOnDuty = function (user) {
         user.onduty = !user.onduty;
@@ -126,41 +120,29 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
         }
     };
 
-    vm.names = [
-        'Aaron Panzer',
-        'Adam Kernander',
-        'Arthur Fisher',
-        'Bennett Fisher',
-        'Bill Hines',
-        'Brian Simmons',
-        'Bryan Long',
-        'Chris Muth',
-        'David Mason',
-        'Gabe Rivera',
-        'Jarvis Lee',
-        'Jen Morris',
-        'Jenny Zhao',
-        'Jeremy Nikitin',
-        'Jim Johnson',
-        'Joe Dorfman',
-        'Joel Travis',
-        'John Marco',
-        'Justin Peczkowski',
-        'Kalyana Vattikuti',
-        'Lacey Kloster',
-        'Larry Simpson',
-        'Leah Puklin',
-        'Mark Cormier',
-        'Maryette Haggerty Perrault',
-        'Matt McDaniel',
-        'Mike Deroche',
-        'Mike Kaplan',
-        'Paul Gagne',
-        'Seamus Reynolds',
-        'Shobin Uralil',
-        'Stephen Mannhard',
-        'Tina Dietrich',
-        'Torey Stapleton',
-        'W.H.Gaasch'
-    ];
+
+    vm.restaurant = new Restaurant();
+    vm.lunch = new Lunch({
+        limit: 8
+    });
+
+    var defers = [];
+
+    vm.restaurants = [];
+    defers.push(RestaurantsSvc.getAll().then(function (r) {
+        vm.restaurants = r;
+    }));
+
+    vm.users = [];
+    defers.push(UserSvc.getAll().then(function (u) {
+        u = u.map(function (z) {
+            z.onduty = false;
+            return z;
+        });
+        vm.users = u;
+    }));
+
+    $q.all(defers).then(function () {
+        vm.ready = true;
+    });
 });

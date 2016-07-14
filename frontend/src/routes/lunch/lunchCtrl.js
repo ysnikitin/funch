@@ -1,15 +1,27 @@
-angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsSvc, Favorites, $interval, $stateParams, $state, $q, GuestInvite, toastr) {
+angular.module('funch').controller('LunchCtrl', function ($scope, LunchSvc, RestaurantsSvc, Favorites, $interval, $stateParams, $state, $q, GuestInvite, UserSvc, toastr) {
     var vm = this;
 
     var code = angular.fromJson(atob($stateParams.code));
     var lunchId = code.lunchId;
     var userId = code.userId;
 
+    vm.ready = false;
+    vm.locked = false;
+    vm.userMap = {};
+    vm.processingOrder = false;
+
     var refreshCountdown = function () {
         var stoptime = moment(vm.lunch.stoptime).valueOf();
         var curtime = moment().valueOf();
 
         var s = stoptime - curtime;
+
+        if (s < 1) {
+            $interval.cancel(vm.countdownInterval)
+            vm.locked = true;
+        } else {
+            vm.locked = false;
+        }
 
         vm.timeWarning = (s <= 1800000);
 
@@ -28,7 +40,6 @@ angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsS
     };
 
     vm.myorder = {
-        name: '',
         order: ''
     };
 
@@ -45,10 +56,7 @@ angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsS
         var m = Favorites.open(vm.restaurant.id);
         m.result.then(function (result) {
             if (result) {
-                vm.myorder = {
-                    name: 'MD',
-                    order: result
-                };
+                vm.myorder.order = result;
             }
         });
     };
@@ -74,47 +82,103 @@ angular.module('funch').controller('LunchCtrl', function (LunchSvc, RestaurantsS
         toastr.success('Added another 15 minutes to the order due date.');
     };
 
-    vm.orders = [{
-        name: 'MD',
-        order: 'Cheeseburger and fries'
-    },{
-        name: 'JN',
-        order: 'Nothing if it\'s Bonapita'
-    },{
-        name: 'AK',
-        order: 'Caesar salad'
-    },{
-        name: 'McD',
-        order: 'Anything but tomatoes'
-    }, {
-        name: 'AF',
-        order: undefined
-    }, {
-        name: 'SR',
-        order: undefined
-    }, {
-        name: 'TS',
-        order: 'Pepperoni pizza'
-    }, {
-        name: 'JM',
-        order: 'Boars Head sandwhich'
-    }];
+    vm.saveMyOrder = function () {
+        if (vm.processingOrder) {
+            return;
+        }
 
+        vm.processingOrder = true;
+        vm.myorder.userId = userId;
+
+        var pr;
+        if (!vm.myorder.id) {
+            pr = vm.lunch.makeOrder(vm.myorder);
+        } else {
+            pr = vm.lunch.updateOrder(vm.myorder);
+        }
+
+        pr.then(function (order) {
+            if (order.id) {
+                return vm.lunch.getOrder(order.id);
+            }
+        }).then(function (o) {
+            vm.myorder = o;
+            vm.processingOrder = false;
+            getOrders();
+            toastr.success('Order saved!');
+        }).catch(function () {
+            vm.processingOrder = false;
+            toastr.error('Order could not be saved!');
+        });
+    };
+
+    vm.orders = [];
+    var getOrders = function () {
+        return vm.lunch.getOrders().then(function (o) {
+            if (o) {
+                vm.orders = _.cloneDeep(o);
+                o.forEach(function (order) {
+                    if (+order.userId === +userId) {
+                        vm.myorder = order;
+                    }
+                });
+            }
+        });
+    };
+
+    vm.onduty = '';
+    $scope.$watch(function () {
+        return vm.ondutyUsers;
+    }, function () {
+        if (vm.ondutyUsers) {
+            vm.onduty = vm.ondutyUsers.map(function (u) {
+                return u.initials;
+            }).join(', ');
+        }
+    }, true);
 
     var defers = [];
 
-    defers.push(RestaurantsSvc.get(1).then(function (r) {
-        vm.restaurant = r;
-    }));
-
     defers.push(LunchSvc.get(lunchId).then(function (l) {
         vm.lunch = l;
+
+        var dusers = UserSvc.getAll().then(function (us) {
+            vm.ondutyUsers = [];
+            us.forEach(function (u) {
+                vm.userMap[u.id] = u;
+
+                if (+u.id === +userId) {
+                    vm.user = u;
+                }
+
+                if (~vm.lunch.onduty.indexOf(u.id)) {
+                    vm.ondutyUsers.push(u);
+                }
+            });
+        });
+
+        var dorders = getOrders();
+
+        var drest = RestaurantsSvc.get(vm.lunch.restaurantId).then(function (r) {
+            vm.restaurant = r;
+        });
+
+        return $q.all([ dusers, dorders, drest ]);
     }));
+
+
+    vm.countdownInterval = undefined;
 
     $q.all(defers).then(function () {
         refreshCountdown();
-        $interval(function () {
+        vm.ready = true;
+
+        vm.countdownInterval = $interval(function () {
             refreshCountdown();
         }, 1000);
+
+        $interval(function () {
+            getOrders();
+        }, 10000);
     });
 });
