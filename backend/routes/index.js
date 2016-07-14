@@ -60,16 +60,18 @@ router.get('/api/user', function(req, res, next) {
   }, next);
 });
 
-////////////////////////
+// POST
 
-router.post('/api/newSession', function(req, res) {
-  var location = req.body.location;
-  var menuUrl = req.body.menuUrl;
-  var notes = req.body.notes;
-  db.newSession(location, menuUrl, notes, function(id) {
-    res.json({ id: id });
-  });
+router.post('/api/user', function(req, res, next) {
+  var name = req.body.name;
+  var email = req.body.email;
+  var perm = req.body.perm;
+  db.usersAdd(name, email, perm, function(result) {
+    res.json(result);
+  }, next);
 });
+
+////////////////////////
 
 router.get('/api/sessions', function(req, res) {
   db.sessions(function(results) {

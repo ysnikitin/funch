@@ -131,6 +131,16 @@ module.exports = {
         });
     },
 
+    usersAdd : function(name, email, perm, callback, next) {
+        connection.query("INSERT INTO funch.users (name, email, perm) VALUES (?,?,?);", [name, email, perm], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.insertId);
+            }
+        });
+    },
+
 
 }
 
