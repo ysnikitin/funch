@@ -4,6 +4,8 @@ angular.module('funch').controller('LunchCtrl', function ($scope, LunchSvc, Rest
     var code = angular.fromJson(atob($stateParams.code));
     var lunchId = code.lunchId;
     var userId = code.userId;
+    vm.userId = userId;
+    console.log(userId);
 
     vm.ready = false;
     vm.locked = false;
