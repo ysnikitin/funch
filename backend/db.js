@@ -374,6 +374,16 @@ module.exports = {
         });
     },
 
+    orderDelete : function(lid, oid, callback, next) {
+        connection.query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.affectedRows > 0);
+            }
+        });
+    },
+
 
 }
 
