@@ -4,7 +4,8 @@ var app = angular.module('funch', [
     'ui.timepicker',
     'ui.bootstrap',
     'toastr',
-    'angularSpinner'
+    'angularSpinner',
+    'angular-input-stars'
 ]);
 
 app.config(function ($httpProvider) {

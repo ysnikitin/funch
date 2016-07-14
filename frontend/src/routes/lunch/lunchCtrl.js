@@ -1,11 +1,10 @@
-angular.module('funch').controller('LunchCtrl', function ($scope, LunchSvc, RestaurantsSvc, Favorites, $interval, $stateParams, $state, $q, GuestInvite, UserSvc, toastr) {
+angular.module('funch').controller('LunchCtrl', function ($http, $scope, LunchSvc, RestaurantsSvc, Favorites, $interval, $stateParams, $state, $q, GuestInvite, YelpSvc, UserSvc, toastr, Suggestions) {
     var vm = this;
 
     var code = angular.fromJson(atob($stateParams.code));
     var lunchId = code.lunchId;
     var userId = code.userId;
     vm.userId = userId;
-    console.log(userId);
 
     vm.ready = false;
     vm.locked = false;
@@ -59,6 +58,17 @@ angular.module('funch').controller('LunchCtrl', function ($scope, LunchSvc, Rest
         m.result.then(function (result) {
             if (result) {
                 vm.myorder.order = result;
+                vm.saveMyOrder();
+            }
+        });
+    };
+
+    vm.openSuggestions = function () {
+        var m = Suggestions.open(vm.restaurant, vm.user);
+        m.result.then(function (result) {
+            if (result) {
+                vm.myorder.order = result;
+                vm.saveMyOrder();
             }
         });
     };
@@ -163,6 +173,22 @@ angular.module('funch').controller('LunchCtrl', function ($scope, LunchSvc, Rest
 
         var drest = RestaurantsSvc.get(vm.lunch.restaurantId).then(function (r) {
             vm.restaurant = r;
+
+            YelpSvc.search(vm.restaurant.name).then(function (d) {
+                var use;
+                for (var i = 0; i < d.length; i++) {
+                    if (~vm.restaurant.address.toLowerCase().indexOf(d[i].location.address[0].toLowerCase())) {
+                        use = d[i];
+                        break;
+                    }
+                }
+
+                vm.yelp = use;
+
+                if (vm.yelp) {
+                    vm.stars = (vm.yelp.rating / 5 * 100) + '%';
+                }
+            });
         });
 
         return $q.all([ dusers, dorders, drest ]);

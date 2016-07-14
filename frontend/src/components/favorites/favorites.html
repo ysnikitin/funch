@@ -6,10 +6,10 @@
         <table class="table">
             <tr ng-repeat="fv in vm.favorites">
                 <td class="col-xs-1">
-                    <button class="btn btn-primary" ng-click="vm.order(fv.name)">Order</button>
+                    <button class="btn btn-primary" ng-click="vm.order(fv.order)">Order</button>
                 </td>
                 <td>
-                    {{fv.name}}
+                    {{fv.order}}
                 </td>
             </tr>
             <tr ng-show="!vm.favorites || vm.favorites.length === 0">

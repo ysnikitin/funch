@@ -6,7 +6,39 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
     vm.step = 1;
 
     vm.next = function () {
-        vm.step++;
+        var valid = true;
+
+        if (vm.step === 1) {
+            if (vm.restaurant.name === '' || vm.restaurant.address === '' || vm.restaurant.menu === '' || vm.restaurant.phone === '') {
+                valid = false;
+            }
+
+            if (!vm.restaurant.name || !vm.restaurant.address || !vm.restaurant.menu || !vm.restaurant.phone) {
+                valid = false;
+            }
+        }
+
+        if (vm.step === 2) {
+            var curfound = false;
+            var ondutyfound = false;
+            vm.users.forEach(function (u) {
+                if (u.onduty) {
+                    ondutyfound = true;
+                }
+
+                if (u.iscurrent) {
+                    curfound = true;
+                }
+            });
+
+            valid = curfound && ondutyfound;
+        }
+
+        if (valid) {
+            vm.step++;
+        } else {
+            toastr.error('Looks like you forgot something on this step...')
+        }
     };
 
     vm.prev = function () {
@@ -138,6 +170,8 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
         u = u.map(function (z) {
             z.onduty = false;
             return z;
+        }).sort(function (a, b) {
+            return a.initials.charCodeAt(0) - b.initials.charCodeAt(0);
         });
         vm.users = u;
     }));

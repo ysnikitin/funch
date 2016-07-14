@@ -76,7 +76,7 @@
                 margin-bottom: 20px;
                 text-align: center;
                 color: #999;
-                width: 150px;
+                min-width: 150px;
                 transition: 200ms background;
                 cursor: pointer;
 
@@ -110,7 +110,7 @@
 
             .invites-person {
                 cursor: pointer;
-                
+
                 .name {
                     color: white;
                 }

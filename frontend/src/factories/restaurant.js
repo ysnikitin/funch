@@ -1,4 +1,4 @@
-angular.module('funch').factory('Restaurant', function () {
+angular.module('funch').factory('Restaurant', function ($http) {
     var R = function (def) {
         for (var k in def) {
             this[k] = def[k];
@@ -7,7 +7,7 @@ angular.module('funch').factory('Restaurant', function () {
 
     R.prototype.getQuickPicks = function () {
         return $http.get('/restaurants/' + this.id + '/quickpicks').then(function (d) {
-            return d.data.data;
+            return d.data;
         });
     };
 

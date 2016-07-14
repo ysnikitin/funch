@@ -15,7 +15,8 @@
     "moment": "^2.14.1",
     "angular-toastr": "^1.7.0",
     "angular-spinner": "^0.8.1",
-    "lodash": "^4.13.1"
+    "lodash": "^4.13.1",
+    "angular-input-stars-directive": "angular-input-stars#^1.5.5"
   },
   "overrides": {
     "bootstrap": {
@@ -40,7 +41,17 @@
         "fonts/fontawesome-webfont.woff2",
         "fonts/FontAwesome.otf"
       ]
+    },
+    "angular-input-stars-directive": {
+        "main": [
+            "angular-input-stars.js",
+            "angular-input-stars.css"
+        ]
     }
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "resolutions": {
+    "angular": "^1.5.0",
+    "font-awesome": "^4.6.3"
+  }
 }

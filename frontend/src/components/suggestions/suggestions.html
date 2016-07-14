@@ -1,0 +1,26 @@
+<div class="modal-suggestions">
+    <div class="modal-header">
+        <h3 class="modal-title"><strong>Suggestions</strong> for {{vm.restaurant.name}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="intro" ng-show="vm.suggestions.length > 0">We did some analytics on your previous ordering habits, and came up with this list of suggestions.</div>
+        <table class="table">
+            <tr ng-repeat="sg in vm.suggestions">
+                <td class="col-xs-1">
+                    <button class="btn btn-primary" ng-click="vm.order(sg.order)">Order</button>
+                </td>
+                <td>
+                    {{sg.order}}
+                </td>
+            </tr>
+            <tr ng-show="!vm.suggestions || vm.suggestions.length === 0">
+                <td>
+                    <div class="text-muted">No suggestions found for {{vm.restaurant.name}}.</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="vm.close()">Close</button>
+    </div>
+</div>
