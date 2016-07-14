@@ -25,6 +25,18 @@ router.get('/api/restaurants/favorites', function(req, res, next) {
   }, next);
 });
 
+// POST
+
+router.post('/api/restaurants/', function(req, res, next) {
+  var name = req.body.name;
+  var address = req.body.address;
+  var phone = req.body.phone;
+  var menu = req.body.menu;
+  db.restaurantInsert(name, address, phone, menu, function(result) {
+    res.json(result);
+  }, next);
+});
+
 // PUT
 
 router.put('/api/restaurants/:id', function(req, res, next) {
@@ -63,12 +75,29 @@ router.post('/api/lunch', function(req, res, next) {
   var restaurantId = req.body.restaurantId;
   var stoptime = req.body.stoptime;
   var notes = req.body.notes;
+  var limit = req.body.limit;
   var onduty = Array.isArray(req.body.onduty) ? req.body.onduty : JSON.parse(req.body.onduty);
-  db.lunchAdd(restaurantId, stoptime, notes, onduty, function(result) {
+  db.lunchAdd(restaurantId, stoptime, notes, onduty, limit, function(result) {
     res.json(result);
   }, next);
 });
 
+router.post('/api/lunch/:id(\\d+)/email', function(req, res, next) {
+  var name = req.body.name;
+  var email = req.body.email;
+  var initials = req.body.initials;
+  db.lunchEmail(req.params.id, name, email, initials, function(result) {
+    res.json(result);
+  }, next);
+});
+
+// PUT
+
+router.put('/api/lunch/:id', function(req, res, next) {
+  db.lunchUpdate(req.params.id, req.body, function(result) {
+    res.json(result);
+  }, next);
+});
 
 // ------ USERS
 
@@ -100,6 +129,8 @@ router.post('/api/user', function(req, res, next) {
 
 // ------ RECOMMENDATIONS
 
+// GET
+
 router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', function(req, res, next) {
   db.recommendations(req.params.uid, req.params.rid, function(results) {
     res.json(results);
@@ -108,18 +139,32 @@ router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', functi
 
 // ------ QUICK PICKS
 
+// GET
+
 router.get('/api/restaurants/:rid(\\d+)/quickpicks', function(req, res, next) {
   db.quickpicks(req.params.rid, function(results) {
     res.json(results);
   }, next);
 });
 
-////////////////////////
+// ------ ORDERS
 
-router.get('/api/sessions', function(req, res) {
-  db.sessions(function(results) {
-    res.json({ sessions: results });
-  });
+// GET
+
+router.get('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
+  db.orders(req.params.id, function(results) {
+    res.json(results);
+  }, next);
 });
+
+// POST
+
+router.post('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
+  db.ordersInsert(req.params.id, req.body, function(results) {
+    res.json(results);
+  }, next);
+});
+
+////////////////////////
 
 module.exports = router;

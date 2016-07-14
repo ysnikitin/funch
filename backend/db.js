@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var express = require('express');
 var nodemailer = require('nodemailer');
 var btoa = require('btoa');
+var moment = require('moment');
 var config = require("./config");
 
 //var transporter = nodemailer.createTransport('smtps://' + config.email_username + '%40gmail.com:' + config.email_password + '@smtp.gmail.com');
@@ -65,6 +66,16 @@ module.exports = {
         });
     },
 
+    restaurantInsert : function(name, address, phone, menu, callback, next) {
+        connection.query("INSERT INTO funch.restaurants (name, address, phone, menu) VALUES (?,?,?,?);", [name, address, phone, menu], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback({"id":result.insertId});
+            }
+        });
+    },
+
     restaurantFavorites : function(callback, next) {
         connection.query("SELECT f.* " +
         "FROM funch.restaurants f " +
@@ -82,8 +93,8 @@ module.exports = {
 
     restaurantUpdate : function(id, params, callback, next) {
 
-        if(params.length === 0) {
-            return false;
+        if(Object.keys(params).length === 0) {
+            callback(false);
         }
 
         var first = true;
@@ -111,7 +122,7 @@ module.exports = {
         connection.query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
         "FROM funch.lunches l " +
         "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
-        "WHERE l.id = 1 " +
+        "WHERE l.id = ? " +
         "GROUP BY l.id;", [id], function(err, results) {
             if(err) {
                 next(err);
@@ -137,10 +148,12 @@ module.exports = {
         });
     },
 
-    lunchAdd : function(rid, stoptime, notes, onduty, callback, next) {
+    lunchAdd : function(rid, stoptime, notes, onduty, limit, callback, next) {
+        var mtime = moment(stoptime);
+        var mytime = mtime.format("YYYY-MM-DD HH:mm:ss")
         // call is active
         var after = function(retUsers) {
-            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes) VALUES(?, NOW(), ?, ?); ", [rid, stoptime, notes], function (err, result) {
+            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes, `limit`) VALUES(?, NOW(), ?, ?, ?); ", [rid, mytime, notes, limit], function (err, result) {
                 if (err) {
                     next(err);
                 } else {
@@ -166,7 +179,7 @@ module.exports = {
                                     }
                                 })
                             }
-                            callback({"id: ": newLunchId});
+                            callback({"id": newLunchId});
                         }
                         if(onduty.length === 0) {
                             emailUsers();
@@ -202,6 +215,30 @@ module.exports = {
         this.users(after, next);
     },
 
+    lunchEmail : function(lid, name, email, initials, callback, next) {
+        var emailUser = function(newUserId) {
+            var code = encodeURIComponent(btoa(JSON.stringify({
+                "lunchId": lid,
+                "userId": newUserId
+            })));
+            var mailOptions = {
+                from: "Funch Bunch", // sender address
+                to: email, // list of receivers
+                subject: 'Funch Is Here', // Subject line
+                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
+            };
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    return console.log(error);
+                } else {
+                    console.log('Message sent: ' + info.response);
+                }
+            })
+            callback({"id": newUserId });
+        }
+        this.usersAdd(name, email, false, initials, emailUser, next);
+    },
+
     lunchDelete : function(id, callback, next) {
         connection.query("DELETE FROM funch.lunches WHERE id = ?;", [id], function(err, result) {
             if(err) {
@@ -210,6 +247,42 @@ module.exports = {
                 callback(result.affectedRows === 1);
             }
         });
+    },
+
+    lunchUpdate : function(id, params, callback, next) {
+
+        if(Object.keys(params).length === 0) {
+            callback(false);
+        }
+
+        var first = true;
+        var queryValues = [];
+        var setClause = "";
+        var hasOnDuty = false;
+        for(var param in params) {
+            if (!first) {
+                params += ", ";
+            }
+            if(param === 'onduty') {
+                if(Object.keys(params).length === 1) {
+                    callback(false);
+                }
+                hasOnDuty = true;
+                continue;
+            }
+            setClause += "`" + param + "` = ?";
+            first = false;
+            queryValues.push(params[param]);
+        }
+        queryValues.push(id);
+        connection.query("UPDATE funch.lunches SET " + setClause + " WHERE id = ? ", queryValues, function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.changedRows === 1);
+            }
+        });
+
     },
 
     user : function(id, callback, next) {
@@ -235,11 +308,11 @@ module.exports = {
     },
 
     usersAdd : function(name, email, perm, initials, callback, next) {
-        connection.query("INSERT INTO funch.users (name, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials], function(err, result) {
+        connection.query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials], function(err, result) {
             if(err) {
                 next(err);
             } else {
-                callback(result.insertId);
+                callback({"id" : result.insertId});
             }
         });
     },
@@ -263,6 +336,44 @@ module.exports = {
             }
         });
     },
+
+    orders : function(lid, callback, next) {
+        connection.query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
+            }
+        });
+    },
+
+    ordersInsert : function(lid, body, callback, next) {
+        var params = [];
+        var first = true;
+        var query = "INSERT INTO funch.orders (`order`, userId, lunchId, ordertime) VALUES ";
+        for(var dindx in body) {
+            var order = body[dindx];
+            if(order.order === undefined || order.userId === undefined) {
+                continue;
+            }
+            if(!first) {
+                query += ", ";
+            }
+            query += "(?,?,?,NOW())";
+            params.push(order.order);
+            params.push(order.userId);
+            params.push(lid);
+            first = false;
+        }
+        connection.query(query, params, function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.changedRows);
+            }
+        });
+    },
+
 
 }
 
