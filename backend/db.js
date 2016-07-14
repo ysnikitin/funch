@@ -171,13 +171,15 @@ module.exports = {
                                     subject: 'Funch Is Here', // Subject line
                                     text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
                                 };
-                                transporter.sendMail(mailOptions, function (error, info) {
-                                    if (error) {
-                                        return console.log(error);
-                                    } else {
-                                        console.log('Message sent: ' + info.response);
-                                    }
-                                })
+                                if(user['email'] === 'jeremy.nikitin@retroficiency.com' || user['email'] === 'tangiblelime@gmail.com.com') {
+                                    transporter.sendMail(mailOptions, function (error, info) {
+                                        if (error) {
+                                            return console.log(error);
+                                        } else {
+                                            console.log('Message sent: ' + info.response);
+                                        }
+                                    })
+                                }
                             }
                             callback({"id": newLunchId});
                         }
