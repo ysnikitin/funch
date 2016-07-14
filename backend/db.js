@@ -65,6 +65,16 @@ module.exports = {
         });
     },
 
+    restaurantInsert : function(name, address, phone, menu, callback, next) {
+        connection.query("INSERT INTO funch.restaurants (name, address, phone, menu) VALUES (?,?,?,?);", [name, address, phone, menu], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback({"id":result.insertId});
+            }
+        });
+    },
+
     restaurantFavorites : function(callback, next) {
         connection.query("SELECT f.* " +
         "FROM funch.restaurants f " +
@@ -263,7 +273,7 @@ module.exports = {
             if(err) {
                 next(err);
             } else {
-                callback(result.insertId);
+                callback({"id" : result.insertId});
             }
         });
     },

@@ -25,6 +25,18 @@ router.get('/api/restaurants/favorites', function(req, res, next) {
   }, next);
 });
 
+// POST
+
+router.post('/api/restaurants/', function(req, res, next) {
+  var name = req.body.name;
+  var address = req.body.address;
+  var phone = req.body.phone;
+  var menu = req.body.menu;
+  db.restaurantInsert(name, address, phone, menu, function(result) {
+    res.json(result);
+  }, next);
+});
+
 // PUT
 
 router.put('/api/restaurants/:id', function(req, res, next) {
