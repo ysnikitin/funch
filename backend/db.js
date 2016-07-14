@@ -121,7 +121,7 @@ module.exports = {
     },
 
     users : function(callback, next) {
-        connection.query("SELECT * FROM funch.users", function(err, results) {
+        connection.query("SELECT * FROM funch.users WHERE perm = 1;", function(err, results) {
             if(err) {
                 next(err);
             } else {
