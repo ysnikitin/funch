@@ -75,8 +75,9 @@ router.post('/api/lunch', function(req, res, next) {
   var restaurantId = req.body.restaurantId;
   var stoptime = req.body.stoptime;
   var notes = req.body.notes;
+  var limit = req.body.limit;
   var onduty = Array.isArray(req.body.onduty) ? req.body.onduty : JSON.parse(req.body.onduty);
-  db.lunchAdd(restaurantId, stoptime, notes, onduty, function(result) {
+  db.lunchAdd(restaurantId, stoptime, notes, onduty, limit, function(result) {
     res.json(result);
   }, next);
 });

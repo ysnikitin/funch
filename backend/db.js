@@ -122,7 +122,7 @@ module.exports = {
         connection.query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
         "FROM funch.lunches l " +
         "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
-        "WHERE l.id = 1 " +
+        "WHERE l.id = ? " +
         "GROUP BY l.id;", [id], function(err, results) {
             if(err) {
                 next(err);
@@ -148,12 +148,12 @@ module.exports = {
         });
     },
 
-    lunchAdd : function(rid, stoptime, notes, onduty, callback, next) {
+    lunchAdd : function(rid, stoptime, notes, onduty, limit, callback, next) {
         var mtime = moment(stoptime);
         var mytime = mtime.format("YYYY-MM-DD HH:mm:ss")
         // call is active
         var after = function(retUsers) {
-            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes) VALUES(?, NOW(), ?, ?); ", [rid, mytime, notes], function (err, result) {
+            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes, limit) VALUES(?, NOW(), ?, ?, ?); ", [rid, mytime, notes, limit], function (err, result) {
                 if (err) {
                     next(err);
                 } else {
