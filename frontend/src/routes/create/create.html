@@ -15,28 +15,25 @@
     </ul>
 
     <div class="form section" ng-show="vm.step === 1">
-        <label class="sectionlabel" for="rest">What's for Lunch?</label>
+        <label class="sectionlabel" for="rest">What's for lunch?</label>
         <div class="form-group">
             <div class="sectioncontent">
                 <div class="picks">
-                    <div class="pick">Pauli's</div>
-                    <div class="pick">Bonapita</div>
-                    <div class="pick">Piperi</div>
-                    <div class="pick">Uno Due Go</div>
-                    <div class="pick">Zo's</div>
-                    <div class="pick">Hererras</div>
+                    <div class="pick" ng-class="{'active': vm.restaurant.id === r.id}" ng-repeat="r in vm.restaurants" ng-click="vm.pickRestaurant(r)">
+                        {{r.name}}
+                    </div>
                 </div>
                 <div class="clear"></div>
 
-                <label>Something else...</label>
+                <label>{{vm.otherLabel}}</label>
                 <div class="row">
                     <div class="col-xs-6">
-                        <input type="text" class="form-control" placeholder="Restuarant">
-                        <input type="text" class="form-control" placeholder="Menu Link">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.name" placeholder="Restuarant">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.menu" placeholder="Menu Link">
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" class="form-control" placeholder="Address">
-                        <input type="text" class="form-control" placeholder="Phone">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.address" placeholder="Address">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.phone" placeholder="Phone">
                     </div>
                 </div>
             </div>
@@ -49,21 +46,36 @@
     </div>
 
     <div class="form section" ng-show="vm.step === 2">
-        <label class="sectionlabel" for="rest">Order Specifications</label>
+        <label class="sectionlabel" for="rest">Orders must be in by...</label>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
                     <div class="sectioncontent">
-                        <label>Order Limit</label>
-                        <rzslider rz-slider-model="vm.limit.value" rz-slider-options="vm.limit.options"></rzslider>
+                        <label>Date</label>
+                        <input type="text" class="form-control" uib-datepicker-popup="longDate" ng-click="vm.openDate()" ng-model="vm.due.date" is-open="vm.datePopup.opened" />
                     </div>
                 </div>
             </div>
             <div class="col-xs-6">
                 <div class="form-group">
-                    <div class="sectioncontent" style="padding-left: 50px;">
-                        <label>Orders In By...</label>
-                        <input ui-timepicker ng-model="vm.lunch.stoptime" class="form-control" style="width: 200px"></textarea>
+                    <div class="sectioncontent">
+                        <label>Time</label>
+                        <select class="form-control" ng-model="vm.due.time">
+                            <option value="8:30">8:30 AM</option>
+                            <option value="8:45">8:45 AM</option>
+                            <option value="9:00">9:00 AM</option>
+                            <option value="9:15">9:15 AM</option>
+                            <option value="9:30">9:30 AM</option>
+                            <option value="9:45">9:45 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="10:15">10:15 AM</option>
+                            <option value="10:30">10:30 AM</option>
+                            <option value="10:45">10:45 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="11:15">11:15 AM</option>
+                            <option value="11:30">11:30 AM</option>
+                            <option value="11:45">11:45 AM</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -83,6 +95,12 @@
         <label class="sectionlabel" for="rest">Other Details</label>
         <div class="form-group">
             <div class="sectioncontent">
+                <label>Order Limit</label>
+                <rzslider rz-slider-model="vm.limit.value" rz-slider-options="vm.limit.options"></rzslider>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="sectioncontent">
                 <label>Notes</label>
                 <textarea class="form-control"></textarea>
             </div>
@@ -98,7 +116,7 @@
     </div>
 
     <div class="form section" ng-show="vm.step === 4">
-        <label class="sectionlabel" for="rest">Who's Invited?</label>
+        <label class="sectionlabel" for="rest">Who's invited?</label>
         <div class="form-group">
             <div class="sectioncontent">
                 <div class="row">
@@ -118,7 +136,7 @@
                     <div class="col-xs-7">
                         <div class="invites-guests">
                             <label>We have guests...</label>
-                            <div style="width: 300px">
+                            <div>
                                 <input type="text" class="form-control" placeholder="Guest e-mail">
                                 <div class="invites-guests-more">
                                     <i class="fa fa-plus"></i>
