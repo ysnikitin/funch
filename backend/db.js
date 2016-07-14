@@ -30,7 +30,11 @@ var fitlerOneRow = function(rows) {
 }
 
 var convertCommaDelimToArray = function(commaDelim) {
-    return commaDelim.split(',');
+    if(commaDelim === undefined || commaDelim.length === 0) {
+        return [];
+    } else {
+        return commaDelim.split(',');
+    }
 }
 
 var convertTinyIntToBool = function(rows, columnName) {
