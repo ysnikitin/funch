@@ -2,6 +2,7 @@ var mysql = require('mysql');
 var express = require('express');
 var nodemailer = require('nodemailer');
 var btoa = require('btoa');
+var moment = require('moment');
 var config = require("./config");
 
 //var transporter = nodemailer.createTransport('smtps://' + config.email_username + '%40gmail.com:' + config.email_password + '@smtp.gmail.com');
@@ -148,9 +149,11 @@ module.exports = {
     },
 
     lunchAdd : function(rid, stoptime, notes, onduty, callback, next) {
+        var mtime = moment(stoptime);
+        var mytime = mtime.format("YYYY-MM-DD HH:mm:ss")
         // call is active
         var after = function(retUsers) {
-            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes) VALUES(?, NOW(), ?, ?); ", [rid, stoptime, notes], function (err, result) {
+            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes) VALUES(?, NOW(), ?, ?); ", [rid, mytime, notes], function (err, result) {
                 if (err) {
                     next(err);
                 } else {
