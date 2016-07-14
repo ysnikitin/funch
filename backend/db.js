@@ -403,7 +403,7 @@ module.exports = {
         }
         queryValues.push(oid);
         queryValues.push(lid);
-        connection.query("UPDATE funch.orders SET " + setClause + " WHERE id = ? and lunchId = ?", queryValues, function(err, result) {
+        connection.query("UPDATE funch.orders SET " + setClause + ", ordertime = NOW() WHERE id = ? and lunchId = ?", queryValues, function(err, result) {
             if(err) {
                 next(err);
             } else {

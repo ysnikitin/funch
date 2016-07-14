@@ -173,6 +173,14 @@ router.post('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
   }, next);
 });
 
+// PUT
+
+router.put('/api/lunch/:lid/orders/:oid(\\d+)', function(req, res, next) {
+  db.orderUpdate(req.params.lid, req.params.oid, req.body, function(result) {
+    res.json(result);
+  }, next);
+});
+
 ////////////////////////
 
 module.exports = router;
