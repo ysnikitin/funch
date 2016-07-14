@@ -27,7 +27,7 @@ router.get('/api/restaurants/favorites', function(req, res, next) {
 // PUT
 
 router.put('/api/restaurants/:id', function(req, res, next) {
-  db.updateRestaurant(req.params.id, req.body, function(result) {
+  db.restaurantUpdate(req.params.id, req.body, function(result) {
     res.json(result);
   }, next);
 });
@@ -36,22 +36,70 @@ router.put('/api/restaurants/:id', function(req, res, next) {
 
 // GET
 
+router.get('/api/lunch/active', function(req, res, next) {
+  db.lunchActive(function(result) {
+    res.json(result);
+  }, next);
+});
+
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
   db.lunch(req.params.id, function(results) {
     res.json(results);
   }, next);
 });
 
-////////////////////////
+// DELETE
 
-router.post('/api/newSession', function(req, res) {
-  var location = req.body.location;
-  var menuUrl = req.body.menuUrl;
-  var notes = req.body.notes;
-  db.newSession(location, menuUrl, notes, function(id) {
-    res.json({ id: id });
-  });
+router.delete('/api/lunch/:id(\\d+)', function(req, res, next) {
+  db.lunchDelete(req.params.id, function(result) {
+    res.json(result);
+  }, next);
 });
+
+// ------ USERS
+
+// GET
+
+router.get('/api/user', function(req, res, next) {
+  db.users(function(results) {
+    res.json(results);
+  }, next);
+});
+
+router.get('/api/user/:id(\\d+)', function(req, res, next) {
+  db.user(req.params.id, function(results) {
+    res.json(results);
+  }, next);
+});
+
+// POST
+
+router.post('/api/user', function(req, res, next) {
+  var name = req.body.name;
+  var email = req.body.email;
+  var perm = req.body.perm;
+  db.usersAdd(name, email, perm, function(result) {
+    res.json(result);
+  }, next);
+});
+
+// ------ RECOMMENDATIONS
+
+router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', function(req, res, next) {
+  db.recommendations(req.params.uid, req.params.rid, function(results) {
+    res.json(results);
+  }, next);
+});
+
+// ------ QUICK PICKS
+
+router.get('/api/restaurants/:rid(\\d+)/quickpicks', function(req, res, next) {
+  db.quickpicks(req.params.rid, function(results) {
+    res.json(results);
+  }, next);
+});
+
+////////////////////////
 
 router.get('/api/sessions', function(req, res) {
   db.sessions(function(results) {

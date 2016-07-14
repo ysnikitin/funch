@@ -24,6 +24,12 @@ var convertCommaDelimToArray = function(commaDelim) {
     return commaDelim.split(',');
 }
 
+var convertTinyIntToBool = function(rows, columnName) {
+    for(var row in rows) {
+        rows[row][columnName] = (rows[row][columnName] === 1);
+    }
+}
+
 module.exports = {
 
     restaurants : function(callback, next) {
@@ -61,7 +67,7 @@ module.exports = {
         });
     },
 
-    updateRestaurant : function(id, params, callback, next) {
+    restaurantUpdate : function(id, params, callback, next) {
 
         if(params.length === 0) {
             return false;
@@ -100,6 +106,82 @@ module.exports = {
                 var row = fitlerOneRow(results);
                 row['onduty'] = convertCommaDelimToArray(row['onduty']);
                 callback(row);
+            }
+        });
+    },
+
+    lunchActive : function(callback, next) {
+        connection.query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())", function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                if(results.length === 0) {
+                    callback({});
+                } else {
+                    callback({"id" : results[0]['id']});
+                }
+            }
+        });
+    },
+
+    lunchDelete : function(id, callback, next) {
+        connection.query("DELETE FROM funch.lunches WHERE id = ?;", [id], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.affectedRows === 1);
+            }
+        });
+    },
+
+    user : function(id, callback, next) {
+        connection.query("SELECT * FROM funch.users WHERE id = ?;", [id], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                convertTinyIntToBool(results, 'perm');
+                callback(fitlerOneRow(results));
+            }
+        });
+    },
+
+    users : function(callback, next) {
+        connection.query("SELECT * FROM funch.users WHERE perm = 1;", function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                convertTinyIntToBool(results, 'perm');
+                callback(results);
+            }
+        });
+    },
+
+    usersAdd : function(name, email, perm, callback, next) {
+        connection.query("INSERT INTO funch.users (name, email, perm) VALUES (?,?,?);", [name, email, perm], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback(result.insertId);
+            }
+        });
+    },
+
+    recommendations : function(uid, rid, callback, next) {
+        connection.query("SELECT * FROM funch.recommendations WHERE userId =? AND restaurantId = ?", [uid, rid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
+            }
+        });
+    },
+
+    quickpicks : function(rid, callback, next) {
+        connection.query("SELECT * FROM funch.quickpicks WHERE restaurantId =?; ", [rid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
             }
         });
     },
