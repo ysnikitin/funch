@@ -102,7 +102,7 @@ module.exports = {
         var setClause = "";
         for(var param in params) {
             if (!first) {
-                params += ", ";
+                setClause += ", ";
             }
             setClause += "`" + param + "` = ?";
             first = false;
@@ -261,7 +261,7 @@ module.exports = {
         var hasOnDuty = false;
         for(var param in params) {
             if (!first) {
-                params += ", ";
+                setClause += ", ";
             }
             if(param === 'onduty') {
                 if(Object.keys(params).length === 1) {
