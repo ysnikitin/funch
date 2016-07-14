@@ -152,6 +152,16 @@ module.exports = {
         });
     },
 
+    recommendations : function(uid, rid, callback, next) {
+        connection.query("SELECT * FROM funch.recommendations WHERE userId =? AND restaurantId = ?", [uid, rid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(results);
+            }
+        });
+    },
+
 
 }
 
