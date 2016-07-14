@@ -110,6 +110,21 @@ module.exports = {
         });
     },
 
+    lunchActive : function(callback, next) {
+        connection.query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())", function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                if(results.length === 0) {
+                    callback({});
+                } else {
+                    callback({"id" : results[0]['id']});
+                }
+            }
+        });
+    },
+
+
     lunchDelete : function(id, callback, next) {
         connection.query("DELETE FROM funch.lunches WHERE id = ?;", [id], function(err, result) {
             if(err) {

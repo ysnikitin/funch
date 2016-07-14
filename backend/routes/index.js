@@ -36,6 +36,12 @@ router.put('/api/restaurants/:id', function(req, res, next) {
 
 // GET
 
+router.get('/api/lunch/active', function(req, res, next) {
+  db.lunchActive(function(result) {
+    res.json(result);
+  }, next);
+});
+
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
   db.lunch(req.params.id, function(results) {
     res.json(results);
