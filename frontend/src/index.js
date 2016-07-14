@@ -2,7 +2,8 @@ var app = angular.module('funch', [
     'ui.router',
     'rzModule',
     'ui.timepicker',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'toastr'
 ]);
 
 app.config(function ($httpProvider) {

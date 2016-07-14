@@ -6,7 +6,12 @@ angular.module('funch').service('LunchSvc', function ($http, Lunch) {
     };
 
     this.create = function (lunch) {
-        return $http.post('/lunch', lunch);
+        var self = this;
+        return $http.post('/lunch', lunch).then(function (d) {
+            return self.get(d.data.id).then(function (c) {
+                return c;
+            });
+        });
     };
 
     this.getFavorites = function () {

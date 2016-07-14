@@ -1,4 +1,4 @@
-angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Restaurant, Lunch, UserSvc) {
+angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Restaurant, Lunch, LunchSvc, UserSvc, $q, toastr, $state) {
     var vm = this;
 
     vm.step = 1;
@@ -45,13 +45,49 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
     vm.resetRestaurant = function () {
         vm.restaurant = new Restaurant();
         vm.disableRestaurantFields = false;
+        vm.otherLabel = 'Something else...';
     };
 
     vm.create = function () {
-        vm.lunch.stoptime = vm.due.date + ' ' + vm.due.time;
+        var timespl = vm.due.time.split(':');
 
-        console.log('rest', vm.restaurant);
-        console.log('create', vm.lunch);
+        vm.lunch.stoptime = moment(vm.due.date).hour(+timespl[0]).minute(+timespl[1]);
+        vm.lunch.onduty = vm.users.filter(function (u) {
+            return u.onduty;
+        }).map(function (u) {
+            return u.id;
+        });
+
+        var ensureRest = $q.defer();
+
+        if (!vm.restaurant.id) {
+            RestaurantsSvc.create(vm.restuarant).then(function (r) {
+                vm.restuarant = r;
+                ensureRest.resolve();
+            });
+        } else {
+            ensureRest.resolve();
+        }
+
+        ensureRest.promise.then(function () {
+            vm.lunch.restaurantId = vm.restaurant.id;
+            LunchSvc.create(vm.lunch).then(function (lunch) {
+                var currentUser = vm.users.filter(function (u) {
+                    return u.iscurrent;
+                })[0];
+
+                var code = btoa(JSON.stringify({
+                    lunchId: lunch.id,
+                    userId: currentUser.id
+                }));
+
+                toastr.success('Lunch session created!');
+
+                $state.go('main.lunch', {
+                    code: code
+                });
+            });
+        });
     };
 
 
@@ -75,7 +111,19 @@ angular.module('funch').controller('CreateCtrl', function (RestaurantsSvc, Resta
     });
 
     vm.toggleOnDuty = function (user) {
-        user.onduty = !user.onduty; 
+        user.onduty = !user.onduty;
+    };
+
+    vm.toggleIsCurrent = function (user) {
+        vm.users.forEach(function (u) {
+            return u.iscurrent = false;
+        });
+
+        user.iscurrent = !user.iscurrent;
+
+        if (user.iscurrent) {
+            user.onduty = true;
+        }
     };
 
     vm.names = [
