@@ -1,5 +1,6 @@
 var express = require('express');
 var db = require("../db");
+
 var router = express.Router();
 
 // ------ RESTAURANTS
@@ -55,6 +56,18 @@ router.delete('/api/lunch/:id(\\d+)', function(req, res, next) {
     res.json(result);
   }, next);
 });
+
+// POST
+
+router.post('/api/lunch', function(req, res, next) {
+  var restaurantId = req.body.restaurantId;
+  var stoptime = req.body.stoptime;
+  var notes = req.body.notes;
+  db.lunchAdd(restaurantId, stoptime, notes, function(result) {
+    res.json(result);
+  }, next);
+});
+
 
 // ------ USERS
 

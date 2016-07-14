@@ -1,6 +1,15 @@
 var mysql = require('mysql');
-
+var express = require('express');
+var nodemailer = require('nodemailer');
+var btoa = require('btoa');
 var config = require("./config");
+
+//var transporter = nodemailer.createTransport('smtps://' + config.email_username + '%40gmail.com:' + config.email_password + '@smtp.gmail.com');
+var transporter = nodemailer.createTransport({service: 'Gmail',
+    auth: {
+        user: config.email_username,
+        pass: config.email_password
+    }});
 
 var connection = mysql.createConnection({
     host     : config.mysql_host,
@@ -124,6 +133,38 @@ module.exports = {
         });
     },
 
+    lunchAdd : function(rid, stoptime, notes, callback, next) {
+        // call is active
+        var after = function(retUsers) {
+            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes) VALUES(?, NOW(), ?, ?); ", [rid, stoptime, notes], function (err, result) {
+                if (err) {
+                    next(err);
+                } else {
+                    var newLunchId = result.insertId;
+                    for(var i in retUsers) {
+                        var user = retUsers[i];
+                        var code = encodeURIComponent(btoa(JSON.stringify({"lunchId" : newLunchId, "userId" : user['id']})));
+                        var mailOptions = {
+                            from: "Funch Bunch", // sender address
+                            to: user['email'], // list of receivers
+                            subject: 'Funch Is Here', // Subject line
+                            text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
+                        };
+                        transporter.sendMail(mailOptions, function(error, info){
+                            if(error){
+                                return console.log(error);
+                            } else {
+                                console.log('Message sent: ' + info.response);
+                            }
+                        })
+                    }
+                    callback({"id: ": newLunchId});
+                }
+            });
+        }
+        this.users(after, next);
+    },
+
     lunchDelete : function(id, callback, next) {
         connection.query("DELETE FROM funch.lunches WHERE id = ?;", [id], function(err, result) {
             if(err) {
@@ -185,7 +226,6 @@ module.exports = {
             }
         });
     },
-
 
 }
 
