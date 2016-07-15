@@ -1,6 +1,6 @@
 angular.module('funch').service('LunchSvc', function ($http, Lunch) {
     this.get = function (id) {
-        return $http.get('/lunch/' + id).then(function (d) {
+        return $http.get('/lunch/' + id, { cache: false }).then(function (d) {
             return new Lunch(d.data);
         });
     };

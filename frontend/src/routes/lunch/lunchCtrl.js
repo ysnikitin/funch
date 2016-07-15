@@ -150,6 +150,7 @@ angular.module('funch').controller('LunchCtrl', function ($http, $scope, LunchSv
     }, true);
 
     var defers = [];
+    vm.yelp = {};
 
     defers.push(LunchSvc.get(lunchId).then(function (l) {
         vm.lunch = l;
@@ -184,7 +185,6 @@ angular.module('funch').controller('LunchCtrl', function ($http, $scope, LunchSv
                 }
 
                 vm.yelp = use;
-
                 if (vm.yelp) {
                     vm.stars = (vm.yelp.rating / 5 * 100) + '%';
                 }
