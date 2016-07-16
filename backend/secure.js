@@ -1,11 +1,11 @@
 var crypto = require("crypto");
 var config = require("./config");
-var defaultHmacDigest = 'sha256';
+var defaultDigest = 'sha256';
 
 module.exports = {
-    getHmacForUserId : function(userId) {
-        var hmac = crypto.createHmac(defaultHmacDigest, config.hmac_secret);
-        hmac.update(userId.toString());
-        return hmac.digest("hex");
+    getHashForUserLunch : function(userId, lunchId) {
+        var ulObj = {'userId': userId, 'lunchId' : lunchId};
+        var ulStr = JSON.stringify(ulObj);
+        return crypto.createHash(defaultDigest).update(ulStr, 'utf8').digest('hex');
     }
 }

@@ -4,6 +4,7 @@ var nodemailer = require('nodemailer');
 var btoa = require('btoa');
 var moment = require('moment');
 var config = require("./config");
+var secure = require("./secure");
 
 //var transporter = nodemailer.createTransport('smtps://' + config.email_username + '%40gmail.com:' + config.email_password + '@smtp.gmail.com');
 var transporter = nodemailer.createTransport({service: 'Gmail',
@@ -130,6 +131,23 @@ module.exports = {
                 var row = filterOneRow(results);
                 row['onduty'] = convertCommaDelimToArray(row['onduty']);
                 callback(row);
+            }
+        });
+    },
+
+    lunches : function(callback, next) {
+        connection.query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
+            "FROM funch.lunches l " +
+            "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
+            "GROUP BY l.id;", function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                for(var i = 0; i < results.length; i++) {
+                    var result = results[i];
+                    result['onduty'] = convertCommaDelimToArray(result['onduty']);
+                }
+                callback(results);
             }
         });
     },
@@ -427,6 +445,46 @@ module.exports = {
         });
     },
 
+    getUserLunchDetailsForHash : function(hash, callback, next) {
+
+        connection.query("SELECT userId, lunchId FROM funch.hashes WHERE hash =? ", [hash], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                callback(filterOneRow(results));
+            }
+        });
+
+
+    },
+
+    generateHashForUserLunchDetails : function(userId, lunchId, callback, next) {
+
+        var hash = secure.getHashForUserLunch(userId, lunchId);
+        connection.query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?); ", [userId, lunchId, hash], function(err, result) {
+            if(err) {
+                next(err);
+            } else {
+                callback({"hash":hash});
+            }
+        });
+
+    },
+
+    userVote : function(rid, uid, callback, next) {
+
+        connection.query("SELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1; ", [uid, rid], function(err, results) {
+            if(err) {
+                next(err);
+            } else {
+                convertTinyIntToBool(results, 'upvote');
+                convertTinyIntToBool(results, 'downvote');
+                callback(filterOneRow(results));
+            }
+        });
+
+
+    }
 
 }
 
