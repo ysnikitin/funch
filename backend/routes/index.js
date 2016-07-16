@@ -55,6 +55,12 @@ router.get('/api/lunch/active', function(req, res, next) {
   }, next);
 });
 
+router.get('/api/lunch', function(req, res, next) {
+  db.lunches(function(results) {
+    res.json(results);
+  }, next);
+});
+
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
   db.lunch(req.params.id, function(results) {
     res.json(results);
@@ -186,6 +192,41 @@ router.put('/api/lunch/:lid/orders/:oid(\\d+)', function(req, res, next) {
     res.json(result);
   }, next);
 });
+
+// ------ HASHES
+
+router.get('/api/hash/:hash', function(req, res, next) {
+  db.getUserLunchDetailsForHash(req.params.hash, function(results) {
+    res.json(results);
+  }, next);
+});
+
+router.get('/api/lunch/:lid(\\d+)/user/:uid(\\d+)/hash', function(req, res, next) {
+  db.generateHashForUserLunchDetails(req.params.uid, req.params.lid, function(results) {
+    res.json(results);
+  }, next);
+});
+
+// ------ VOTES
+
+router.get('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)', function(req, res, next) {
+  db.userVote(req.params.rid, req.params.uid, function(result) {
+    res.json(result);
+  }, next);
+});
+
+router.put('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)/upvote', function(req, res, next) {
+  db.upvote(req.params.rid, req.params.uid, function(result) {
+    res.json(result);
+  }, next);
+});
+
+router.put('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)/downvote', function(req, res, next) {
+  db.downvote(req.params.rid, req.params.uid, function(result) {
+    res.json(result);
+  }, next);
+});
+
 
 ////////////////////////
 
