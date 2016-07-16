@@ -7,21 +7,17 @@ angular.module('funch').service('RestaurantsSvc', function ($http, Restaurant) {
 
     this.getAll = function () {
         return $http.get('/restaurants').then(function (d) {
-            var r = [];
-            d.data.forEach(function (x) {
-                r.push(new Restaurant(x));
+            return d.data.map(function (x) {
+                return new Restaurant(x);
             });
-            return r;
         });
     };
 
     this.getFavorites = function () {
         return $http.get('/restaurants/favorites').then(function (d) {
-            var r = [];
-            d.data.forEach(function (x) {
-                r.push(new Restaurant(x));
+            return d.data.map(function (x) {
+                return new Restaurant(x);
             });
-            return r;
         });
     };
 
