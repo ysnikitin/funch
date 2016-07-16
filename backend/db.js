@@ -5,6 +5,7 @@ var btoa = require('btoa');
 var moment = require('moment');
 var config = require("./config");
 var secure = require("./secure");
+var q = require('q');
 
 //var transporter = nodemailer.createTransport('smtps://' + config.email_username + '%40gmail.com:' + config.email_password + '@smtp.gmail.com');
 var transporter = nodemailer.createTransport({service: 'Gmail',
@@ -45,15 +46,25 @@ var convertTinyIntToBool = function(rows, columnName) {
     }
 }
 
+var query = function (sql, args) {
+    var d = q.defer();
+    connection.query(sql, args, function (err, res) {
+        if (err) {
+            d.reject(err);
+        } else {
+            d.resolve(res);
+        }
+    });
+    return d.promise;
+};
+
 module.exports = {
 
     restaurants : function(callback, next) {
-        connection.query("SELECT * FROM funch.restaurants;", function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(results);
-            }
+        query("SELECT * FROM funch.restaurants").then(function (res) {
+            callback(res);
+        }).catch(function (err) {
+            next(err);
         });
     },
 
@@ -68,12 +79,12 @@ module.exports = {
     },
 
     restaurantInsert : function(name, address, phone, menu, callback, next) {
-        connection.query("INSERT INTO funch.restaurants (name, address, phone, menu) VALUES (?,?,?,?);", [name, address, phone, menu], function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback({"id":result.insertId});
-            }
+        query("INSERT INTO funch.restaurants (name, address, phone, menu) VALUES (?,?,?,?)", [name, address, phone, menu]).then(function (res) {
+            return query("SELECT * FROM funch.restaurants WHERE id = ?", [res.insertId]);
+        }).then(function (res) {
+           callback(filterOneRow(res));
+        }).catch(function (err) {
+           next(err);
         });
     },
 
@@ -487,5 +498,3 @@ module.exports = {
     }
 
 }
-
-
