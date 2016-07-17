@@ -1,12 +1,10 @@
-angular.module('funch').controller('HomeCtrl', function (LunchSvc) {
+angular.module('funch').controller('HomeCtrl', function (Lunch) {
     var vm = this;
 
-    LunchSvc.getActive().then(function (lunch) {
+    Lunch.active().$promise.then(function (lunch) {
         if (lunch) {
-            LunchSvc.get(lunch.id).then(function (lunch) {
-                vm.activeLunch = lunch;
-                vm.activeDate = moment(vm.activeLunch.stoptime).format('MMMM Do');
-            });
+            vm.lunch = lunch;
+            vm.lunchDate = moment(vm.lunch.stoptime).format('MMMM Do');
         }
     });
 });

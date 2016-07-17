@@ -12,14 +12,14 @@ angular.module('funch').service('YelpSvc', function ($http) {
         var url = 'http://api.yelp.com/v2/search';
 
         var params = {
-            callback: 'angular.callbacks._0',
-            location: 'Boston+MA',
-            oauth_consumer_key: 'LjPEaXQFtErjHCNlVBOmQw',
-            oauth_token: 'xFZNMupFpAba5e3yJMBW3Ktix6ROios5',
-            oauth_signature_method: "HMAC-SHA1",
-            oauth_timestamp: new Date().getTime(),
-            oauth_nonce: rndstr(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-            term: term
+            callback:               'angular.callbacks._0',
+            location:               'Boston+MA',
+            oauth_consumer_key:     'LjPEaXQFtErjHCNlVBOmQw',
+            oauth_token:            'xFZNMupFpAba5e3yJMBW3Ktix6ROios5',
+            oauth_signature_method: 'HMAC-SHA1',
+            oauth_timestamp:        new Date().getTime(),
+            oauth_nonce:            rndstr(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
+            term:                   term
         };
 
         var consumerSecret = 'bltz9AZvILgqSCBo7tqMK3gP54w';

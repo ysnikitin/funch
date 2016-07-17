@@ -1,5 +1,5 @@
 angular.module('funch').service('Favorites', function ($uibModal) {
-    this.open = function (restaurantId) {
+    this.open = function (restaurant) {
         var m = $uibModal.open({
             animation: true,
             templateUrl: 'components/favorites/favorites.html',
@@ -8,7 +8,7 @@ angular.module('funch').service('Favorites', function ($uibModal) {
             controllerAs: 'vm'
         });
 
-        m.restaurantId = restaurantId;
+        m.restaurant = restaurant;
 
         return m;
     };

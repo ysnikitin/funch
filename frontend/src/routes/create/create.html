@@ -27,7 +27,8 @@
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <label>{{vm.otherLabel}}</label>
+                        <label ng-show="vm.restaurant.id">Sounds delicious!</label>
+                        <label ng-show="!vm.restaurant.id">Something else...</label>
                     </div>
                     <div class="col-xs-6 text-right">
                         <a class="reset-restaurant" ng-click="vm.resetRestaurant()" ng-show="vm.disableRestaurantFields">(I changed my mind, I want to try something new)</a>
@@ -36,12 +37,12 @@
                 <input type="hidden" ng-model="vm.restaurant.id">
                 <div class="row">
                     <div class="col-xs-6">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.name" placeholder="Restuarant" ng-disabled="vm.disableRestaurantFields">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.menu" placeholder="Menu Link" ng-disabled="vm.disableRestaurantFields">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.name" placeholder="Restuarant" ng-disabled="vm.restaurant.id">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.menu" placeholder="Menu Link" ng-disabled="vm.restaurant.id">
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.address" placeholder="Address" ng-disabled="vm.disableRestaurantFields">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.phone" placeholder="Phone" ng-disabled="vm.disableRestaurantFields">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.address" placeholder="Address" ng-disabled="vm.restaurant.id">
+                        <input type="text" class="form-control" ng-model="vm.restaurant.phone" placeholder="Phone" ng-disabled="vm.restaurant.id">
                     </div>
                 </div>
             </div>
@@ -77,7 +78,7 @@
 
                 <div class="sectioncontent">
                     <div class="invites">
-                        <div class="invites-person" ng-repeat="user in vm.users" ng-click="vm.toggleOnDuty(user)">
+                        <div class="invites-person" ng-repeat="user in vm.users" ng-click="user.onduty = !user.onduty">
                             <span class="fa-stack fa-lg">
                               <i class="fa fa-circle fa-stack-2x"></i>
                               <i ng-show="user.onduty" class="fa fa-check fa-stack-1x fa-inverse"></i>

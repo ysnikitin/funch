@@ -1,4 +1,4 @@
-angular.module('funch').controller('LunchCtrl', function ($http, $scope, LunchSvc, RestaurantsSvc, Favorites, $interval, $stateParams, $state, $q, GuestInvite, YelpSvc, UserSvc, toastr, Suggestions) {
+angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interval, $stateParams, $state, $q, Favorites, GuestInvite, YelpSvc, UserSvc, toastr, Suggestions, Order, Lunch) {
     var vm = this;
 
     var code = angular.fromJson(atob($stateParams.code));
@@ -9,13 +9,11 @@ angular.module('funch').controller('LunchCtrl', function ($http, $scope, LunchSv
     vm.ready = false;
     vm.locked = false;
     vm.userMap = {};
-    vm.processingOrder = false;
+    vm.processing = false;
 
-    var refreshCountdown = function () {
-        var stoptime = moment(vm.lunch.stoptime).valueOf();
-        var curtime = moment().valueOf();
-
-        var s = stoptime - curtime;
+    // refresh countdown clock
+    var countdown = function () {
+        var s = moment(vm.lunch.stoptime).valueOf() - moment().valueOf();
 
         if (s < 1) {
             $interval.cancel(vm.countdownInterval)
@@ -40,10 +38,9 @@ angular.module('funch').controller('LunchCtrl', function ($http, $scope, LunchSv
         };
     };
 
-    vm.myorder = {
-        order: ''
-    };
+    vm.order = new Order();
 
+    // open print dialog
     vm.print = function () {
         var html = '<html><head><style>@media print {.noprint {display: none;}}</style></head><body>Order for <b>Ecova<b><br />101 Arch Street, Boston MA<br /><br />' + $('.allorders').html() + '</body></html>';
         var w = window.open('', '', 'width=900,height=900,resizeable,scrollbars');
@@ -53,160 +50,142 @@ angular.module('funch').controller('LunchCtrl', function ($http, $scope, LunchSv
         w.close();
     };
 
+    // open favorites modal
     vm.openFavorites = function () {
         var m = Favorites.open(vm.restaurant.id);
         m.result.then(function (result) {
             if (result) {
-                vm.myorder.order = result;
+                vm.order.order = result;
                 vm.saveMyOrder();
             }
         });
     };
 
+    // open the suggestions modal
     vm.openSuggestions = function () {
         var m = Suggestions.open(vm.restaurant, vm.user);
         m.result.then(function (result) {
             if (result) {
-                vm.myorder.order = result;
-                vm.saveMyOrder();
+                vm.order.order = result;
+                vm.saveOrder();
             }
         });
     };
 
+    // open the guests modal
     vm.openInviteGuests = function () {
         GuestInvite.open(vm.lunch);
     };
 
+    // cancel lunch
     vm.cancelLunch = function () {
         if (confirm('Are you sure you want to cancel lunch?  This action cannot be undone.  All orders will be lost, along with most hopes and dreams.')) {
-            vm.lunch.destroy().then(function () {
+            vm.lunch.$delete().then(function () {
                 $state.go('home');
             });
         }
     };
 
+    // adds an extra 15 minutes
     vm.moreTime = function () {
-        var newtime = moment(vm.lunch.stoptime).add(15, 'minutes').toISOString();
-
-        vm.lunch.stoptime = newtime;
-        vm.lunch.save();
-
-        toastr.success('Added another 15 minutes to the order due date.');
+        vm.lunch.stoptime = moment(vm.lunch.stoptime).add(15, 'minutes').toISOString();
+        vm.lunch.$save().$promise.then(function () {
+            toastr.success('Added another 15 minutes to the order due date.');
+        });
     };
 
-    vm.saveMyOrder = function () {
-        if (vm.processingOrder) {
+    // saves the user order
+    vm.saveOrder = function () {
+        if (vm.processing) {
             return;
-        }
-
-        vm.processingOrder = true;
-        vm.myorder.userId = userId;
-
-        var pr;
-        if (!vm.myorder.id) {
-            pr = vm.lunch.makeOrder(vm.myorder);
         } else {
-            pr = vm.lunch.updateOrder(vm.myorder);
+            vm.processing = true;
         }
 
-        pr.then(function (order) {
-            if (order.id) {
-                return vm.lunch.getOrder(order.id);
-            }
-        }).then(function (o) {
-            vm.myorder = o;
-            vm.processingOrder = false;
-            getOrders();
+        // make sure the order has the userid
+        vm.order.userId = userId;
+
+        vm.order.$save().$promise.then(function () {
             toastr.success('Order saved!');
+            vm.processing = false;
+            return getOrders();
         }).catch(function () {
-            vm.processingOrder = false;
             toastr.error('Order could not be saved!');
+            vm.processing = false;
         });
     };
 
-    vm.orders = [];
+    // fetches all orders
     var getOrders = function () {
-        return vm.lunch.getOrders().then(function (o) {
-            if (o) {
-                vm.orders = _.cloneDeep(o);
-                o.forEach(function (order) {
-                    if (+order.userId === +userId) {
-                        vm.myorder = order;
-                    }
-                });
+        return Order.query({ lunchId: vm.lunch.id }).$promise.then(function (orders) {
+            vm.orders = _.cloneDeep(orders);
+            for (var i = 0; i < vm.order.length; i++) {
+                if (+order.userId === +userId) {
+                    vm.order = vm.order[i];
+                }
             }
         });
     };
 
-    vm.onduty = '';
-    $scope.$watch(function () {
-        return vm.ondutyUsers;
-    }, function () {
-        if (vm.ondutyUsers) {
-            vm.onduty = vm.ondutyUsers.map(function (u) {
-                return u.initials;
-            }).join(', ');
-        }
-    }, true);
+    // fetch a Yelp record
+    var getYelp = function (restaurant) {
+        return YelpSvc.search(restaurant.name).then(function (d) {
+            var record;
+            for (var i = 0; i < d.length; i++) {
+                if (~restaurant.address.toLowerCase().indexOf(d[i].location.address[0].toLowerCase())) {
+                    record = d[i];
+                    break;
+                }
+            }
 
-    var defers = [];
-    vm.yelp = {};
+            return {
+                details: record,
+                stars: (record.rating / 5 * 100) + '%'
+            };
+        });
+    };
 
-    defers.push(LunchSvc.get(lunchId).then(function (l) {
-        vm.lunch = l;
+    // boot everything up
+    Lunch.get({ id: lunchId }).$promise.then(function (lunch) {
+        vm.lunch = lunch;
 
-        var dusers = UserSvc.getAll().then(function (us) {
-            vm.ondutyUsers = [];
-            us.forEach(function (u) {
+        return $q.all([
+            User.query().$promise,
+            getOrders(),
+            Restaurant.get({ lunchId: lunch.id }).$promise
+        ]).then(function (res) {
+            var users = res[0];
+            var orders = res[1];
+            var rest = res[2];
+
+            // collect users
+            vm.onduty = [];
+            users.forEach(function (u) {
                 vm.userMap[u.id] = u;
 
-                if (+u.id === +userId) {
-                    vm.user = u;
-                }
-
                 if (~vm.lunch.onduty.indexOf(u.id)) {
-                    vm.ondutyUsers.push(u);
+                    vm.onduty.push(u);
                 }
             });
-        });
 
-        var dorders = getOrders();
-
-        var drest = RestaurantsSvc.get(vm.lunch.restaurantId).then(function (r) {
-            vm.restaurant = r;
-
-            YelpSvc.search(vm.restaurant.name).then(function (d) {
-                var use;
-                for (var i = 0; i < d.length; i++) {
-                    if (~vm.restaurant.address.toLowerCase().indexOf(d[i].location.address[0].toLowerCase())) {
-                        use = d[i];
-                        break;
-                    }
-                }
-
-                vm.yelp = use;
-                if (vm.yelp) {
-                    vm.stars = (vm.yelp.rating / 5 * 100) + '%';
-                }
+            // collect restaurant and related information
+            vm.restaurant = rest;
+            getYelp(vm.restaurant).then(function (y) {
+                vm.yelp = y;
             });
         });
+    }).then(function () {
+        vm.countdownInterval = undefined;
 
-        return $q.all([ dusers, dorders, drest ]);
-    }));
-
-
-    vm.countdownInterval = undefined;
-
-    $q.all(defers).then(function () {
-        refreshCountdown();
-        vm.ready = true;
-
+        countdown();
         vm.countdownInterval = $interval(function () {
-            refreshCountdown();
+            countdown();
         }, 1000);
 
         $interval(function () {
             getOrders();
         }, 10000);
+
+        vm.ready = true;
     });
 });

@@ -14,7 +14,8 @@ gulp.task('inject', function () {
         conf.path.tmp('routes/**/*.js'),
         conf.path.tmp('directives/**/*.js'),
         conf.path.tmp('services/**/*.js'),
-        conf.path.tmp('factories/**/*.js')
+        conf.path.tmp('factories/**/*.js'),
+        conf.path.tmp('resources/**/*.js')
     ]);
 
     const injectOptions = {

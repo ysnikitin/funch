@@ -14,7 +14,7 @@
                         Got a hunch about lunch?  What about brunch?<br />What shall we munch, what shall we crunch?
                     </div>
 
-                    <div class="actions" ng-show="!vm.activeLunch">
+                    <div class="actions" ng-show="!vm.lunch">
                         <div class="btn-start" ui-sref="main.create">
                             TAKE ORDERS
                         </div>
@@ -22,7 +22,7 @@
 
                     <div class="feedme" ng-show="vm.activeLunch">
                         <div class="takingorders">
-                            Now taking orders for <strong>{{vm.activeDate}}</strong>... <em>check your e-mail!</em>
+                            Now taking orders for <strong>{{vm.lunchDate}}</strong>... <em>check your e-mail!</em>
                         </div>
                     </div>
                 </div>

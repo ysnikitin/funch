@@ -5,7 +5,8 @@ var app = angular.module('funch', [
     'ui.bootstrap',
     'toastr',
     'angularSpinner',
-    'angular-input-stars'
+    'angular-input-stars',
+    'ngResource'
 ]);
 
 app.config(function ($httpProvider) {

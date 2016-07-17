@@ -1,6 +1,5 @@
 angular.module('funch').controller('GuestInviteCtrl', function ($uibModalInstance, $q) {
     var vm = this;
-    console.log($uibModalInstance.lunch);
 
     vm.guests = [{}];
 
@@ -16,7 +15,7 @@ angular.module('funch').controller('GuestInviteCtrl', function ($uibModalInstanc
         var defers = [];
 
         vm.guests.forEach(function (g) {
-            defers.push($uibModalInstance.lunch.inviteGuest(g));
+            defers.push($uibModalInstance.lunch.email(g).$promise);
         });
 
         $q.all(defers).then(function () {

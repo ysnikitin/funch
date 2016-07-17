@@ -1,12 +1,8 @@
-angular.module('funch').controller('FavoritesCtrl', function ($uibModalInstance, RestaurantsSvc) {
+angular.module('funch').controller('FavoritesCtrl', function ($uibModalInstance, Restaurant) {
     var vm = this;
 
-    RestaurantsSvc.get($uibModalInstance.restaurantId).then(function (r) {
-        vm.restaurant = r;
-
-        r.getQuickPicks().then(function (qp) {
-            vm.favorites = qp;
-        });
+    $uibModalInstance.restaurant.getQuickPicks().$promise.then(function (qp) {
+        vm.favorites = qp;
     });
 
     vm.order = function (name) {

@@ -16,7 +16,8 @@
     "angular-toastr": "^1.7.0",
     "angular-spinner": "^0.8.1",
     "lodash": "^4.13.1",
-    "angular-input-stars-directive": "angular-input-stars#^1.5.5"
+    "angular-input-stars-directive": "angular-input-stars#^1.5.5",
+    "angular-resource": "^1.5.7"
   },
   "overrides": {
     "bootstrap": {
@@ -43,10 +44,10 @@
       ]
     },
     "angular-input-stars-directive": {
-        "main": [
-            "angular-input-stars.js",
-            "angular-input-stars.css"
-        ]
+      "main": [
+        "angular-input-stars.js",
+        "angular-input-stars.css"
+      ]
     }
   },
   "devDependencies": {},
