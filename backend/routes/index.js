@@ -26,9 +26,8 @@ router.post('/api/restaurants/', function(req, res, next) {
   var address = req.body.address;
   var phone = req.body.phone;
   var menu = req.body.menu;
-  db.restaurantInsert(name, address, phone, menu, function(result) {
-    res.json(result);
-  }, next);
+  var yelpURL = req.body.yelpURL;
+  db.restaurantInsert(name, address, phone, menu, yelpURL, next).then(res.json.bind(res));
 });
 
 // PUT

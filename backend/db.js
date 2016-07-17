@@ -102,13 +102,13 @@ module.exports = {
 
     },
 
-    restaurantInsert : function(name, address, phone, menu, callback, next) {
+    restaurantInsert : function(name, address, phone, menu, yelpURL, next) {
 
-        query("INSERT INTO funch.restaurants (name, address, phone, menu) VALUES (?,?,?,?)", [name, address, phone, menu]).
+        return query("INSERT INTO funch.restaurants (name, address, phone, menu, yelpURL) VALUES (?,?,?,?, ?);", [name, address, phone, menu, yelpURL]).
         then(function (res) {
             return query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [res.insertId]);
         }).then(function (res) {
-           callback(filterOneRow(res));
+           return filterOneRow(res);
         }).catch(function (err) {
            next(err);
         });
