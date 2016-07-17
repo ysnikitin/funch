@@ -116,9 +116,7 @@ router.get('/api/user', function(req, res, next) {
 });
 
 router.get('/api/user/:id(\\d+)', function(req, res, next) {
-  db.user(req.params.id, function(results) {
-    res.json(results);
-  }, next);
+  db.user(req.params.id, next).then(res.json.bind(res));
 });
 
 // POST

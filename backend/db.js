@@ -59,6 +59,25 @@ var query = function (sql, args) {
     return d.promise;
 };
 
+var emailPromise = function (email, title, body) {
+    var d = q.defer();
+    var mailOptions = {
+        from: "Funch Bunch", // sender address
+        to: email, // list of receivers
+        subject: title, // Subject line
+        text: body // plaintext body
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            d.reject(error);
+        } else {
+            console.log('Message sent: ' + info.response);
+            d.resolve(info.response);
+        }
+    });
+    return d.promise();
+};
+
 module.exports = {
 
     restaurants : function(callback, next) {
@@ -277,9 +296,9 @@ module.exports = {
                 } else {
                     console.log('Message sent: ' + info.response);
                 }
-            })
+            });
             callback({"id": newUserId });
-        }
+        };
         this.usersAdd(name, email, false, initials, emailUser, next);
     },
 
@@ -329,11 +348,11 @@ module.exports = {
         });
     },
 
-    user : function(id, callback, next) {
+    user : function(id, next) {
 
-        query("SELECT * FROM funch.users WHERE id = ? LIMIT 1;", [id]).then(function (res) {
+        return query("SELECT * FROM funch.users WHERE id = ? LIMIT 1;", [id]).then(function (res) {
             convertTinyIntToBool(res, 'perm');
-            callback(filterOneRow(res));
+            return filterOneRow(res);
         }).catch(function (err) {
             next(err);
         });
