@@ -8,21 +8,21 @@ var router = express.Router();
 // GET
 
 router.get('/api/restaurants', function(req, res, next) {
-  db.restaurants(function(results) {
-    res.json(results);
-  }, next);
+  db.restaurants(next).then(res.json.bind(res));
 });
 
 router.get('/api/restaurants/:id(\\d+)', function(req, res, next) {
-  db.restaurant(req.params.id, function(results) {
-    res.json(results);
-  }, next);
+  db.restaurant(req.params.id, next).then(res.json.bind(res));
 });
 
 router.get('/api/restaurants/favorites', function(req, res, next) {
-  db.restaurantFavorites(function(results) {
-    res.json(results);
-  }, next);
+  db.restaurantFavorites(next).then(res.json.bind(res));
+});
+
+// DELETE
+
+router.delete('/api/restaurants/:id(\\d+)', function(req, res, next) {
+  db.restaurantDelete(req.params.id, next).then(res.json.bind(res));
 });
 
 // POST
@@ -32,17 +32,14 @@ router.post('/api/restaurants/', function(req, res, next) {
   var address = req.body.address;
   var phone = req.body.phone;
   var menu = req.body.menu;
-  db.restaurantInsert(name, address, phone, menu, function(result) {
-    res.json(result);
-  }, next);
+  var yelpURL = req.body.yelpURL;
+  db.restaurantInsert(name, address, phone, menu, yelpURL, next).then(res.json.bind(res));
 });
 
 // PUT
 
 router.put('/api/restaurants/:id', function(req, res, next) {
-  db.restaurantUpdate(req.params.id, req.body, function(result) {
-    res.json(result);
-  }, next);
+  db.restaurantUpdate(req.params.id, req.body, next).then(res.json.bind(res));
 });
 
 // ------ LUNCHES
@@ -50,15 +47,11 @@ router.put('/api/restaurants/:id', function(req, res, next) {
 // GET
 
 router.get('/api/lunch/active', function(req, res, next) {
-  db.lunchActive(function(result) {
-    res.json(result);
-  }, next);
+  db.lunchActive(next).then(res.json.bind(res));
 });
 
 router.get('/api/lunch', function(req, res, next) {
-  db.lunches(function(results) {
-    res.json(results);
-  }, next);
+  db.lunches(next).then(res.json.bind(res));
 });
 
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
@@ -116,9 +109,7 @@ router.get('/api/user', function(req, res, next) {
 });
 
 router.get('/api/user/:id(\\d+)', function(req, res, next) {
-  db.user(req.params.id, function(results) {
-    res.json(results);
-  }, next);
+  db.user(req.params.id, next).then(res.json.bind(res));
 });
 
 // POST

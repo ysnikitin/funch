@@ -41,8 +41,9 @@ var convertCommaDelimToArray = function(commaDelim) {
 }
 
 var convertTinyIntToBool = function(rows, columnName) {
-    for(var row in rows) {
-        rows[row][columnName] = (rows[row][columnName] === 1);
+    for(var i = 0; i < rows.length; i++) {
+        var row = rows[i];
+        row[columnName] = (row[columnName] === 1);
     }
 }
 
@@ -58,52 +59,79 @@ var query = function (sql, args) {
     return d.promise;
 };
 
+var emailPromise = function (email, title, body) {
+    var d = q.defer();
+    var mailOptions = {
+        from: "Funch Bunch", // sender address
+        to: email, // list of receivers
+        subject: title, // Subject line
+        text: body // plaintext body
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            d.reject(error);
+        } else {
+            console.log('Message sent: ' + info.response);
+            d.resolve(info.response);
+        }
+    });
+    return d.promise();
+};
+
 module.exports = {
 
-    restaurants : function(callback, next) {
-        query("SELECT * FROM funch.restaurants").then(function (res) {
-            callback(res);
+    restaurants : function(next) {
+
+        return query("SELECT * FROM funch.restaurants").
+        then(function (res) {
+            return res;
         }).catch(function (err) {
             next(err);
         });
+
     },
 
     restaurant : function(id, callback, next) {
-        connection.query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(filterOneRow(results));
-            }
+
+        return query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id]).
+        then(function (res) {
+            return filterOneRow(res);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
-    restaurantInsert : function(name, address, phone, menu, callback, next) {
-        query("INSERT INTO funch.restaurants (name, address, phone, menu) VALUES (?,?,?,?)", [name, address, phone, menu]).then(function (res) {
-            return query("SELECT * FROM funch.restaurants WHERE id = ?", [res.insertId]);
+    restaurantInsert : function(name, address, phone, menu, yelpURL, next) {
+
+        return query("INSERT INTO funch.restaurants (name, address, phone, menu, yelpURL) VALUES (?,?,?,?, ?);", [name, address, phone, menu, yelpURL]).
+        then(function (res) {
+            return query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [res.insertId]);
         }).then(function (res) {
-           callback(filterOneRow(res));
+           return filterOneRow(res);
         }).catch(function (err) {
            next(err);
         });
+
     },
 
-    restaurantFavorites : function(callback, next) {
-        connection.query("SELECT f.* " +
-        "FROM funch.restaurants f " +
-        "JOIN funch.lunches l ON l.restaurantId = f.id " +
-        "GROUP BY l.id " +
-        "ORDER BY COUNT(*) DESC " +
-        "LIMIT 5;", function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(results);
-            }
+    restaurantFavorites : function(next) {
+
+        return query("SELECT f.* " +
+                "FROM funch.restaurants f " +
+                "JOIN funch.lunches l ON l.restaurantId = f.id " +
+                "GROUP BY f.id " +
+                "ORDER BY COUNT(*) DESC " +
+                "LIMIT 5;").
+        then(function (res) {
+            return(res);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
-    restaurantUpdate : function(id, params, callback, next) {
+    restaurantUpdate : function(id, params, next) {
 
         if(Object.keys(params).length === 0) {
             callback(false);
@@ -122,60 +150,74 @@ module.exports = {
         }
         queryValues.push(id);
 
-        query("UPDATE funch.restaurants SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
+        return query("UPDATE funch.restaurants SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
             return query("SELECT * FROM funch.restaurants WHERE id = ?", [id]);
         }).then(function (res) {
-           callback(filterOneRow(res));
+           return filterOneRow(res);
         }).catch(function (err) {
            next(err);
         });
     },
 
-    lunch : function(id, callback, next) {
-        connection.query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
-        "FROM funch.lunches l " +
-        "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
-        "WHERE l.id = ? " +
-        "GROUP BY l.id;", [id], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                var row = filterOneRow(results);
-                row['onduty'] = convertCommaDelimToArray(row['onduty']);
-                callback(row);
-            }
+    restaurantDelete: function(id, next) {
+
+        return query("DELETE FROM funch.restaurants WHERE id = ?;", [id]).
+        then(function (res) {
+            return res.affectedRows === 1;
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
-    lunches : function(callback, next) {
-        connection.query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
+    lunch : function(id, callback, next) {
+
+        query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
             "FROM funch.lunches l " +
             "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
-            "GROUP BY l.id;", function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                for(var i = 0; i < results.length; i++) {
-                    var result = results[i];
-                    result['onduty'] = convertCommaDelimToArray(result['onduty']);
-                }
-                callback(results);
-            }
+            "WHERE l.id = ? " +
+            "GROUP BY l.id;", [id]).
+        then(function (res) {
+            var row = filterOneRow(res);
+            row['onduty'] = convertCommaDelimToArray(row['onduty']);
+            callback(row);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
-    lunchActive : function(callback, next) {
-        connection.query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())", function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                if(results.length === 0) {
-                    callback({});
-                } else {
-                    callback({"id" : results[0]['id']});
-                }
+    lunches : function(next) {
+
+        return query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
+            "FROM funch.lunches l " +
+            "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
+            "GROUP BY l.id;").
+        then(function (res) {
+            for(var i = 0; i < res.length; i++) {
+                var result = res[i];
+                result['onduty'] = convertCommaDelimToArray(result['onduty']);
             }
+            return res;
+        }).catch(function (err) {
+            next(err);
         });
+
+    },
+
+    lunchActive : function(next) {
+
+        return query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())").
+        then(function (res) {
+            if(res.length === 0) {
+                return {};
+            } else {
+                return {"id" : res[0]['id']};
+            }
+        }).catch(function (err) {
+            next(err);
+        });
+
     },
 
     lunchAdd : function(rid, stoptime, notes, onduty, limit, callback, next) {
@@ -265,20 +307,20 @@ module.exports = {
                 } else {
                     console.log('Message sent: ' + info.response);
                 }
-            })
+            });
             callback({"id": newUserId });
-        }
+        };
         this.usersAdd(name, email, false, initials, emailUser, next);
     },
 
     lunchDelete : function(id, callback, next) {
-        connection.query("DELETE FROM funch.lunches WHERE id = ?;", [id], function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback(result.affectedRows === 1);
-            }
+
+        query("DELETE FROM funch.lunches WHERE id = ?;", [id]).then(function (res) {
+            callback(res.affectedRows === 1);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     lunchUpdate : function(id, params, callback, next) {
@@ -317,26 +359,26 @@ module.exports = {
         });
     },
 
-    user : function(id, callback, next) {
-        connection.query("SELECT * FROM funch.users WHERE id = ?;", [id], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                convertTinyIntToBool(results, 'perm');
-                callback(filterOneRow(results));
-            }
+    user : function(id, next) {
+
+        return query("SELECT * FROM funch.users WHERE id = ? LIMIT 1;", [id]).then(function (res) {
+            convertTinyIntToBool(res, 'perm');
+            return filterOneRow(res);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     users : function(callback, next) {
-        connection.query("SELECT * FROM funch.users WHERE perm = 1;", function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                convertTinyIntToBool(results, 'perm');
-                callback(results);
-            }
+
+        query("SELECT * FROM funch.users WHERE perm = 1;").then(function (res) {
+            convertTinyIntToBool(res, 'perm');
+            callback(res);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     usersAdd : function(name, email, perm, initials, callback, next) {
@@ -350,43 +392,43 @@ module.exports = {
     },
 
     recommendations : function(uid, rid, callback, next) {
-        connection.query("SELECT * FROM funch.recommendations WHERE userId =? AND restaurantId = ?", [uid, rid], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(results);
-            }
+
+        query("SELECT * FROM funch.recommendations WHERE userId =? AND restaurantId = ?;", [uid, rid]).then(function (res) {
+            callback(res);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     quickpicks : function(rid, callback, next) {
-        connection.query("SELECT * FROM funch.quickpicks WHERE restaurantId =?; ", [rid], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(results);
-            }
+
+        query("SELECT * FROM funch.quickpicks WHERE restaurantId =?; ", [rid]).then(function (res) {
+            callback(res);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     order : function(lid, oid, callback, next) {
-        connection.query("SELECT * FROM funch.orders WHERE lunchId =? AND id = ?; ", [lid, oid], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(filterOneRow(results));
-            }
+
+        query("SELECT * FROM funch.orders WHERE lunchId =? AND id = ?; ", [lid, oid]).then(function (res) {
+            callback(filterOneRow(res));
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     orders : function(lid, callback, next) {
-        connection.query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(results);
-            }
+
+        query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid]).then(function (res) {
+            callback(res);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     ordersInsert : function(lid, body, callback, next) {
@@ -421,13 +463,13 @@ module.exports = {
     },
 
     orderDelete : function(lid, oid, callback, next) {
-        connection.query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid], function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback(result.affectedRows > 0);
-            }
+
+        query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid]).then(function (result) {
+            callback(result.affectedRows > 0);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     orderUpdate : function(lid, oid, params, callback, next) {
@@ -472,28 +514,23 @@ module.exports = {
     generateHashForUserLunchDetails : function(userId, lunchId, callback, next) {
 
         var hash = secure.getHashForUserLunch(userId, lunchId);
-        connection.query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?); ", [userId, lunchId, hash], function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback({"hash":hash});
-            }
+        query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
+            callback({"hash":hash});
+        }).catch(function (err) {
+            next(err);
         });
 
     },
 
     userVote : function(rid, uid, callback, next) {
 
-        connection.query("SELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1; ", [uid, rid], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                convertTinyIntToBool(results, 'upvote');
-                convertTinyIntToBool(results, 'downvote');
-                callback(filterOneRow(results));
-            }
+        query("ELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1;", [uid, rid]).then(function (result) {
+            convertTinyIntToBool(result, 'upvote');
+            convertTinyIntToBool(result, 'downvote');
+            callback(filterOneRow(result));
+        }).catch(function (err) {
+            next(err);
         });
-
 
     }
 
