@@ -421,13 +421,13 @@ module.exports = {
     },
 
     orderDelete : function(lid, oid, callback, next) {
-        connection.query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid], function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback(result.affectedRows > 0);
-            }
+
+        query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid]).then(function (result) {
+            callback(result.affectedRows > 0);
+        }).catch(function (err) {
+            next(err);
         });
+
     },
 
     orderUpdate : function(lid, oid, params, callback, next) {
@@ -472,12 +472,10 @@ module.exports = {
     generateHashForUserLunchDetails : function(userId, lunchId, callback, next) {
 
         var hash = secure.getHashForUserLunch(userId, lunchId);
-        connection.query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?); ", [userId, lunchId, hash], function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback({"hash":hash});
-            }
+        query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
+            callback({"hash":hash});
+        }).catch(function (err) {
+            next(err);
         });
 
     },
