@@ -131,7 +131,7 @@ module.exports = {
 
     },
 
-    restaurantUpdate : function(id, params, callback, next) {
+    restaurantUpdate : function(id, params, next) {
 
         if(Object.keys(params).length === 0) {
             callback(false);
@@ -150,10 +150,10 @@ module.exports = {
         }
         queryValues.push(id);
 
-        query("UPDATE funch.restaurants SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
+        return query("UPDATE funch.restaurants SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
             return query("SELECT * FROM funch.restaurants WHERE id = ?", [id]);
         }).then(function (res) {
-           callback(filterOneRow(res));
+           return filterOneRow(res);
         }).catch(function (err) {
            next(err);
         });

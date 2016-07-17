@@ -39,9 +39,7 @@ router.post('/api/restaurants/', function(req, res, next) {
 // PUT
 
 router.put('/api/restaurants/:id', function(req, res, next) {
-  db.restaurantUpdate(req.params.id, req.body, function(result) {
-    res.json(result);
-  }, next);
+  db.restaurantUpdate(req.params.id, req.body, next).then(res.json.bind(res));
 });
 
 // ------ LUNCHES
