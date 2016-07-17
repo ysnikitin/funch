@@ -80,11 +80,11 @@ var emailPromise = function (email, title, body) {
 
 module.exports = {
 
-    restaurants : function(callback, next) {
+    restaurants : function(next) {
 
-        query("SELECT * FROM funch.restaurants").
+        return query("SELECT * FROM funch.restaurants").
         then(function (res) {
-            callback(res);
+            return res;
         }).catch(function (err) {
             next(err);
         });

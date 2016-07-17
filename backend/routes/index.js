@@ -8,9 +8,7 @@ var router = express.Router();
 // GET
 
 router.get('/api/restaurants', function(req, res, next) {
-  db.restaurants(function(results) {
-    res.json(results);
-  }, next);
+  db.restaurants(next).then(res.json.bind(res));
 });
 
 router.get('/api/restaurants/:id(\\d+)', function(req, res, next) {
