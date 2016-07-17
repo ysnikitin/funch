@@ -9,86 +9,8 @@ body {
     margin-bottom: 150px;
 }
 
-.pagetitle {
-    font-size: 30px;
-    color: #fff;
-}
-
 .clear {
     clear: both;
-}
-
-.btn-brand {
-    background-color: $brand-color;
-    color: white;
-    text-transform: uppercase;
-    text-align: center;
-    cursor: pointer;
-
-    &:hover {
-        background-color: $brand-color-dark;
-    }
-}
-
-.btn-secondary {
-    background-color: transparent;
-    border: 2px solid #444;
-    color: #444;
-    text-transform: uppercase;
-    text-align: center;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #444;
-        color: #fff;
-    }
-}
-
-input,
-textarea,
-select {
-    background: #333 !important;
-    color: #fff !important;
-    border-color: #4e4e4e !important;
-    border-radius: 0px !important;
-    padding: 11px 17px !important;
-    font-size: 18px !important;
-    font-weight: 300 !important;
-    height: inherit !important;
-}
-
-select {
-    height: 49px !important;
-}
-
-label {
-    color: white;
-    font-size: 17px;
-    margin-bottom: 15px;
-}
-
-/* Turn on custom 8px wide scrollbar */
-::-webkit-scrollbar {
-  width: 8px; /* 1px wider than Lion. */
-  /* This is more usable for users trying to click it. */
-  background-color: #999;
-  -webkit-border-radius: 100px;
-}
-/* hover effect for both scrollbar area, and scrollbar 'thumb' */
-::-webkit-scrollbar:hover {
-  background-color: #999;
-}
-
-/* The scrollbar 'thumb' ...that marque oval shape in a scrollbar */
-::-webkit-scrollbar-thumb:vertical {
-  /* This is the EXACT color of Mac OS scrollbars.
-     Yes, I pulled out digital color meter */
-  background: rgba(0,0,0,0.5);
-  -webkit-border-radius: 100px;
-}
-::-webkit-scrollbar-thumb:vertical:active {
-  background: rgba(0,0,0,0.61); /* Some darker color when you click it */
-  -webkit-border-radius: 100px;
 }
 
 @media print {

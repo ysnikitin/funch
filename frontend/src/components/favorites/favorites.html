@@ -3,7 +3,7 @@
         <h3 class="modal-title"><strong>Your Favorites</strong> at {{vm.restaurant.name}}</h3>
     </div>
     <div class="modal-body">
-        <table class="table">
+        <table class="table table-borderless">
             <tr ng-repeat="fv in vm.favorites">
                 <td class="col-xs-1">
                     <button class="btn btn-primary" ng-click="vm.order(fv.order)">Order</button>

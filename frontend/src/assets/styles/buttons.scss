@@ -1,0 +1,25 @@
+.btn-brand {
+    background-color: $brand-color;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $brand-color-dark;
+    }
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 2px solid #444;
+    color: #444;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #444;
+        color: #fff;
+    }
+}
