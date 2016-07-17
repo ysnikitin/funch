@@ -187,9 +187,9 @@ module.exports = {
 
     },
 
-    lunches : function(callback, next) {
+    lunches : function(next) {
 
-        query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
+        return query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
             "FROM funch.lunches l " +
             "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
             "GROUP BY l.id;").
@@ -198,7 +198,7 @@ module.exports = {
                 var result = res[i];
                 result['onduty'] = convertCommaDelimToArray(result['onduty']);
             }
-            callback(res);
+            return res;
         }).catch(function (err) {
             next(err);
         });

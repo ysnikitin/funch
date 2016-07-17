@@ -51,9 +51,7 @@ router.get('/api/lunch/active', function(req, res, next) {
 });
 
 router.get('/api/lunch', function(req, res, next) {
-  db.lunches(function(results) {
-    res.json(results);
-  }, next);
+  db.lunches(next).then(res.json.bind(res));
 });
 
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
