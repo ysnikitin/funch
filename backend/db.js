@@ -205,14 +205,14 @@ module.exports = {
 
     },
 
-    lunchActive : function(callback, next) {
+    lunchActive : function(next) {
 
-        query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())").
+        return query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())").
         then(function (res) {
             if(res.length === 0) {
-                callback({});
+                return {};
             } else {
-                callback({"id" : res[0]['id']});
+                return {"id" : res[0]['id']};
             }
         }).catch(function (err) {
             next(err);
