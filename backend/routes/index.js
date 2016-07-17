@@ -12,9 +12,7 @@ router.get('/api/restaurants', function(req, res, next) {
 });
 
 router.get('/api/restaurants/:id(\\d+)', function(req, res, next) {
-  db.restaurant(req.params.id, function(results) {
-    res.json(results);
-  }, next);
+  db.restaurant(req.params.id, next).then(res.json.bind(res));
 });
 
 router.get('/api/restaurants/favorites', function(req, res, next) {

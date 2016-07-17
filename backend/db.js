@@ -93,9 +93,9 @@ module.exports = {
 
     restaurant : function(id, callback, next) {
 
-        query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id]).
+        return query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id]).
         then(function (res) {
-            callback(filterOneRow(res));
+            return filterOneRow(res);
         }).catch(function (err) {
             next(err);
         });
