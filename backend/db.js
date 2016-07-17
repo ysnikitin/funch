@@ -159,6 +159,17 @@ module.exports = {
         });
     },
 
+    restaurantDelete: function(id, next) {
+
+        return query("DELETE FROM funch.restaurants WHERE id = ?;", [id]).
+        then(function (res) {
+            return res.affectedRows === 1;
+        }).catch(function (err) {
+            next(err);
+        });
+
+    },
+
     lunch : function(id, callback, next) {
 
         query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +

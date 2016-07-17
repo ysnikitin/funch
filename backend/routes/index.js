@@ -19,6 +19,12 @@ router.get('/api/restaurants/favorites', function(req, res, next) {
   db.restaurantFavorites(next).then(res.json.bind(res));
 });
 
+// DELETE
+
+router.delete('/api/restaurants/:id(\\d+)', function(req, res, next) {
+  db.restaurantDelete(req.params.id, next).then(res.json.bind(res));
+});
+
 // POST
 
 router.post('/api/restaurants/', function(req, res, next) {
