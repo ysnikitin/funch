@@ -482,16 +482,13 @@ module.exports = {
 
     userVote : function(rid, uid, callback, next) {
 
-        connection.query("SELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1; ", [uid, rid], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                convertTinyIntToBool(results, 'upvote');
-                convertTinyIntToBool(results, 'downvote');
-                callback(filterOneRow(results));
-            }
+        query("ELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1;", [uid, rid]).then(function (result) {
+            convertTinyIntToBool(result, 'upvote');
+            convertTinyIntToBool(result, 'downvote');
+            callback(filterOneRow(result));
+        }).catch(function (err) {
+            next(err);
         });
-
 
     }
 
