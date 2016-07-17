@@ -121,12 +121,13 @@ module.exports = {
             queryValues.push(params[param]);
         }
         queryValues.push(id);
-        connection.query("UPDATE funch.restaurants SET " + setClause + " WHERE id = ? ", queryValues, function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback(result.changedRows === 1);
-            }
+
+        query("UPDATE funch.restaurants SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
+            return query("SELECT * FROM funch.restaurants WHERE id = ?", [id]);
+        }).then(function (res) {
+           callback(filterOneRow(res));
+        }).catch(function (err) {
+           next(err);
         });
     },
 
@@ -306,14 +307,14 @@ module.exports = {
             queryValues.push(params[param]);
         }
         queryValues.push(id);
-        connection.query("UPDATE funch.lunches SET " + setClause + " WHERE id = ? ", queryValues, function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback(result.changedRows === 1);
-            }
-        });
 
+        query("UPDATE funch.lunches SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
+            return query("SELECT * FROM funch.lunches WHERE id = ?", [id]);
+        }).then(function (res) {
+           callback(filterOneRow(res));
+        }).catch(function (err) {
+           next(err);
+        });
     },
 
     user : function(id, callback, next) {
@@ -339,12 +340,12 @@ module.exports = {
     },
 
     usersAdd : function(name, email, perm, initials, callback, next) {
-        connection.query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials], function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback({"id" : result.insertId});
-            }
+        query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials]).then(function (res) {
+            return query("SELECT * FROM funch.users WHERE id = ?", [result.insertId]);
+        }).then(function (res) {
+           callback(filterOneRow(res));
+        }).catch(function (err) {
+           next(err);
         });
     },
 
@@ -409,12 +410,13 @@ module.exports = {
             params.push(lid);
             first = false;
         }
-        connection.query(query, params, function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback({"id" : result.insertId});
-            }
+
+        query(query, params).then(function (res) {
+            return query("SELECT * FROM funch.orders WHERE id = ?", [result.insertId]);
+        }).then(function (res) {
+           callback(filterOneRow(res));
+        }).catch(function (err) {
+           next(err);
         });
     },
 
@@ -447,12 +449,13 @@ module.exports = {
         }
         queryValues.push(oid);
         queryValues.push(lid);
-        connection.query("UPDATE funch.orders SET " + setClause + ", ordertime = NOW() WHERE id = ? and lunchId = ?", queryValues, function(err, result) {
-            if(err) {
-                next(err);
-            } else {
-                callback(result.changedRows > 0);
-            }
+
+        query("UPDATE funch.orders SET " + setClause + ", ordertime = NOW() WHERE id = ? and lunchId = ?", queryValues).then(function (res) {
+            return query("SELECT * FROM funch.orders WHERE id = ?", [oid]);
+        }).then(function (res) {
+           callback(filterOneRow(res));
+        }).catch(function (err) {
+           next(err);
         });
     },
 
