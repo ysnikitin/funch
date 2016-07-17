@@ -7,9 +7,9 @@ angular.module('funch').service('YelpSvc', function ($http) {
         return result;
     }
 
-    this.search = function (term) {
+    this.business = function (term) {
         var method = 'GET';
-        var url = 'http://api.yelp.com/v2/search';
+        var url = 'http://api.yelp.com/v2/business/' + term;
 
         var params = {
             callback:               'angular.callbacks._0',
@@ -18,8 +18,7 @@ angular.module('funch').service('YelpSvc', function ($http) {
             oauth_token:            'xFZNMupFpAba5e3yJMBW3Ktix6ROios5',
             oauth_signature_method: 'HMAC-SHA1',
             oauth_timestamp:        new Date().getTime(),
-            oauth_nonce:            rndstr(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-            term:                   term
+            oauth_nonce:            rndstr(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')
         };
 
         var consumerSecret = 'bltz9AZvILgqSCBo7tqMK3gP54w';
@@ -34,7 +33,7 @@ angular.module('funch').service('YelpSvc', function ($http) {
         return $http.jsonp(url, {
             params: params
         }).then(function (d) {
-            return d.data.businesses;
+            return d.data;
         });
     };
 });

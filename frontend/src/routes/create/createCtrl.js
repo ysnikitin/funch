@@ -104,9 +104,9 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
         });
 
         // save the restaurant, make the lunch session
-        vm.restaurant.$save().$promise.then(function () {
+        vm.restaurant.$saveOrUpdate().then(function () {
             vm.lunch.restaurantId = vm.restaurant.id;
-            return vm.lunch.$save().$promise;
+            return vm.lunch.$save();
         }).then(function (lunch) {
             var currentUser = vm.users.filter(function (u) {
                 return u.iscurrent;
