@@ -341,7 +341,7 @@ module.exports = {
 
     usersAdd : function(name, email, perm, initials, callback, next) {
         query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials]).then(function (res) {
-            return query("SELECT * FROM funch.users WHERE id = ?", [result.insertId]);
+            return query("SELECT * FROM funch.users WHERE id = ?", [res.insertId]);
         }).then(function (res) {
            callback(filterOneRow(res));
         }).catch(function (err) {
@@ -412,7 +412,7 @@ module.exports = {
         }
 
         query(insertQuery, params).then(function (res) {
-            return query("SELECT * FROM funch.orders WHERE id = ?", [result.insertId]);
+            return query("SELECT * FROM funch.orders WHERE id = ?", [res.insertId]);
         }).then(function (res) {
            callback(filterOneRow(res));
         }).catch(function (err) {
