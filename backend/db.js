@@ -43,7 +43,7 @@ var convertCommaDelimToArray = function(commaDelim) {
 var convertTinyIntToBool = function(rows, columnName) {
     for(var i = 0; i < rows.length; i++) {
         var row = rows[i];
-        rows[row][columnName] = (rows[row][columnName] === 1);
+        row[columnName] = (row[columnName] === 1);
     }
 }
 
