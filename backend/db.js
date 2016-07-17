@@ -41,7 +41,8 @@ var convertCommaDelimToArray = function(commaDelim) {
 }
 
 var convertTinyIntToBool = function(rows, columnName) {
-    for(var row in rows) {
+    for(var i = 0; i < rows.length; i++) {
+        var row = rows[i];
         rows[row][columnName] = (rows[row][columnName] === 1);
     }
 }
@@ -69,12 +70,10 @@ module.exports = {
     },
 
     restaurant : function(id, callback, next) {
-        connection.query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(filterOneRow(results));
-            }
+        query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id]).then(function (res) {
+            callback(filterOneRow(res));
+        }).catch(function (err) {
+            next(err);
         });
     },
 
