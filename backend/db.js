@@ -216,21 +216,21 @@ module.exports = {
                         if(onduty.length === 0) {
                             emailUsers();
                         } else {
-                            var query = "INSERT INTO funch.duty (lunchId, userId) VALUES ";
+                            var insertQuery = "INSERT INTO funch.duty (lunchId, userId) VALUES ";
                             var params = [];
                             var first = true;
                             for(var dindx in onduty) {
                                 var duty = onduty[dindx];
                                 if(!first) {
-                                    query += ", ";
+                                    insertQuery += ", ";
                                 }
-                                query += "(?,?)";
+                                insertQuery += "(?,?)";
                                 params.push(newLunchId);
                                 params.push(duty);
                                 first = false;
                             }
-                            query += ";";
-                            connection.query(query, params, function (err2, result2) {
+                            insertQuery += ";";
+                            connection.query(insertQuery, params, function (err2, result2) {
                                 if(err2) {
                                     next(err2);
                                 } else {
@@ -392,7 +392,7 @@ module.exports = {
     ordersInsert : function(lid, body, callback, next) {
         var params = [];
         var first = true;
-        var query = "INSERT INTO funch.orders (`order`, userId, lunchId, ordertime) VALUES ";
+        var insertQuery = "INSERT INTO funch.orders (`order`, userId, lunchId, ordertime) VALUES ";
         if(Array.isArray(body) === false) {
             body = [body];
         }
@@ -402,16 +402,16 @@ module.exports = {
                 continue;
             }
             if(!first) {
-                query += ", ";
+                insertQuery += ", ";
             }
-            query += "(?,?,?,NOW())";
+            insertQuery += "(?,?,?,NOW())";
             params.push(order.order);
             params.push(order.userId);
             params.push(lid);
             first = false;
         }
 
-        query(query, params).then(function (res) {
+        query(insertQuery, params).then(function (res) {
             return query("SELECT * FROM funch.orders WHERE id = ?", [result.insertId]);
         }).then(function (res) {
            callback(filterOneRow(res));
@@ -461,14 +461,11 @@ module.exports = {
 
     getUserLunchDetailsForHash : function(hash, callback, next) {
 
-        connection.query("SELECT userId, lunchId FROM funch.hashes WHERE hash =? ", [hash], function(err, results) {
-            if(err) {
-                next(err);
-            } else {
-                callback(filterOneRow(results));
-            }
+        query("SELECT userId, lunchId FROM funch.hashes WHERE hash =?", hash).then(function(results) {
+            callback(filterOneRow(results));
+        }).catch(function (err) {
+            next(err);
         });
-
 
     },
 
