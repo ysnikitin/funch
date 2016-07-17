@@ -16,9 +16,7 @@ router.get('/api/restaurants/:id(\\d+)', function(req, res, next) {
 });
 
 router.get('/api/restaurants/favorites', function(req, res, next) {
-  db.restaurantFavorites(function(results) {
-    res.json(results);
-  }, next);
+  db.restaurantFavorites(next).then(res.json.bind(res));
 });
 
 // POST

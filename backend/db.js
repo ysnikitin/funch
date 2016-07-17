@@ -115,16 +115,16 @@ module.exports = {
 
     },
 
-    restaurantFavorites : function(callback, next) {
+    restaurantFavorites : function(next) {
 
-        query("SELECT f.* " +
+        return query("SELECT f.* " +
                 "FROM funch.restaurants f " +
                 "JOIN funch.lunches l ON l.restaurantId = f.id " +
-                "GROUP BY l.id " +
+                "GROUP BY f.id " +
                 "ORDER BY COUNT(*) DESC " +
                 "LIMIT 5;").
         then(function (res) {
-            callback(res);
+            return(res);
         }).catch(function (err) {
             next(err);
         });
