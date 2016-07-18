@@ -163,9 +163,7 @@ router.delete('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next
 // POST
 
 router.post('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
-  db.ordersInsert(req.params.id, req.body, function(results) {
-    res.json(results);
-  }, next);
+  db.ordersInsert(req.params.id, req.body, next).then(res.json.bind(res));
 });
 
 // PUT

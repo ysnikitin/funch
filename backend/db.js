@@ -445,7 +445,7 @@ module.exports = {
 
     },
 
-    ordersInsert : function(lid, body, callback, next) {
+    ordersInsert : function(lid, body, next) {
         var params = [];
         var first = true;
         var insertQuery = "INSERT INTO funch.orders (`order`, userId, lunchId, ordertime) VALUES ";
@@ -467,10 +467,13 @@ module.exports = {
             first = false;
         }
 
-        query(insertQuery, params).then(function (res) {
-            return query("SELECT * FROM funch.orders WHERE id = ?", [res.insertId]);
-        }).then(function (res) {
-           callback(filterOneRow(res));
+        if(params.length === 0) {
+            return q(false);
+        }
+
+        var self = this;
+        return query(insertQuery, params).then(function (res) {
+            return self.order(lid, res.insertId, next);
         }).catch(function (err) {
            next(err);
         });
