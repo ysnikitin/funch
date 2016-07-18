@@ -226,73 +226,59 @@ module.exports = {
 
     },
 
-    lunchAdd : function(rid, stoptime, notes, onduty, limit, callback, next) {
+    lunchAdd : function(rid, stoptime, notes, onduty, limit, next) {
         var mtime = moment(stoptime);
         var mytime = mtime.format("YYYY-MM-DD HH:mm:ss")
-        // call is active
-        var after = function(retUsers) {
-            connection.query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes, `limit`) VALUES(?, NOW(), ?, ?, ?); ", [rid, mytime, notes, limit], function (err, result) {
-                if (err) {
-                    next(err);
-                } else {
-                    var insertOnDuty = function(newLunchId) {
-                        var emailUsers = function() {
-                            for (var i in retUsers) {
-                                var user = retUsers[i];
-                                var code = encodeURIComponent(btoa(JSON.stringify({
-                                    "lunchId": newLunchId,
-                                    "userId": user['id']
-                                })));
-                                var mailOptions = {
-                                    from: "Funch Bunch", // sender address
-                                    to: user['email'], // list of receivers
-                                    subject: 'Funch Is Here', // Subject line
-                                    text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
-                                };
-                                if(user['email'] === 'jeremy.nikitin@retroficiency.com' || user['email'] === 'tangiblelime@gmail.com') {
-                                    transporter.sendMail(mailOptions, function (error, info) {
-                                        if (error) {
-                                            return console.log(error);
-                                        } else {
-                                            console.log('Message sent: ' + info.response);
-                                        }
-                                    })
-                                }
-                            }
-                            callback({"id": newLunchId});
-                        }
-                        if(onduty.length === 0) {
-                            emailUsers();
-                        } else {
-                            var insertQuery = "INSERT INTO funch.duty (lunchId, userId) VALUES ";
-                            var params = [];
-                            var first = true;
-                            for(var dindx in onduty) {
-                                var duty = onduty[dindx];
-                                if(!first) {
-                                    insertQuery += ", ";
-                                }
-                                insertQuery += "(?,?)";
-                                params.push(newLunchId);
-                                params.push(duty);
-                                first = false;
-                            }
-                            insertQuery += ";";
-                            connection.query(insertQuery, params, function (err2, result2) {
-                                if(err2) {
-                                    next(err2);
-                                } else {
-                                    emailUsers();
-                                }
-                            });
-                        }
 
+        var self = this;
+        return query("INSERT INTO funch.lunches (restaurantId, created, stoptime, notes, `limit`) VALUES(?, NOW(), ?, ?, ?); ", [rid, mytime, notes, limit]).then(function(result) {
+            var newLunchId = result.insertId;
+            if (onduty.length > 0) {
+                var insertQuery = "INSERT INTO funch.duty (lunchId, userId) VALUES ";
+                var params = [];
+                var first = true;
+                for (var dindx in onduty) {
+                    var duty = onduty[dindx];
+                    if (!first) {
+                        insertQuery += ", ";
                     }
-                    insertOnDuty(result.insertId);
+                    insertQuery += "(?,?)";
+                    params.push(newLunchId);
+                    params.push(duty);
+                    first = false;
                 }
-            });
-        }
-        this.users(after, next);
+                insertQuery += ";";
+                return query(insertQuery, params).then(function(result) {
+                    return self.users(next).then(function(users) {
+                        for (var i in users) {
+                            var user = users[i];
+                            var code = encodeURIComponent(btoa(JSON.stringify({
+                                "lunchId": newLunchId,
+                                "userId": user['id']
+                            })));
+                            var mailOptions = {
+                                from: "Funch Bunch", // sender address
+                                to: user['email'], // list of receivers
+                                subject: 'Funch Is Here', // Subject line
+                                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
+                            };
+                            if(user['email'] === 'jeremy.nikitin@retroficiency.com' || user['email'] === 'tangiblelime@gmail.com') {
+                                transporter.sendMail(mailOptions, function (error, info) {
+                                    if (error) {
+                                        return console.log(error);
+                                    } else {
+                                        console.log('Message sent: ' + info.response);
+                                    }
+                                })
+                            }
+                        }
+                        return self.lunch(newLunchId, next);
+                    });
+                });
+            }
+        }).catch(function (err) {
+            next(err);
+        });
     },
 
     lunchEmail : function(lid, name, email, initials, callback, next) {
@@ -364,14 +350,16 @@ module.exports = {
         return query("UPDATE funch.lunches SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
             if(dutyArray && dutyArray.length > 0) {
                 return query("DELETE FROM funch.duty WHERE lunchId = ?;", id).then(function(res) {
-                    var dutyClause = "";
-                    for(var i = 0; i < dutyArray.length; i++) {
-                        if(i > 0) {
-                            dutyClause += ", "
+                    if(dutyArray.length > 0) {
+                        var dutyClause = "";
+                        for (var i = 0; i < dutyArray.length; i++) {
+                            if (i > 0) {
+                                dutyClause += ", "
+                            }
+                            dutyClause += " (" + id + "," + dutyArray[i] + ") ";
                         }
-                        dutyClause += " (" + id + "," + dutyArray[i] + ") ";
+                        return query("INSERT INTO funch.duty (lunchId, userId) VALUES " + dutyClause + ";")
                     }
-                    return query("INSERT INTO funch.duty (lunchId, userId) VALUES " + dutyClause + ";")
                 });
             }
         }).then(function (res) {

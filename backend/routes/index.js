@@ -72,9 +72,7 @@ router.post('/api/lunch', function(req, res, next) {
   var notes = req.body.notes;
   var limit = req.body.limit;
   var onduty = Array.isArray(req.body.onduty) ? req.body.onduty : JSON.parse(req.body.onduty);
-  db.lunchAdd(restaurantId, stoptime, notes, onduty, limit, function(result) {
-    res.json(result);
-  }, next);
+  db.lunchAdd(restaurantId, stoptime, notes, onduty, limit, next).then(res.json.bind(res));
 });
 
 router.post('/api/lunch/:id(\\d+)/email', function(req, res, next) {
