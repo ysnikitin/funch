@@ -543,7 +543,7 @@ module.exports = {
 
     restaurantVote : function(rid, next) {
 
-        return query("SELECT SUM(upvote) AS upvote, SUM(downvote) as downvote FROM funch.votes WHERE restaurantId =? LIMIT 1;", [rid]).then(function (result) {
+        return query("SELECT COALESCE(SUM(upvote),0) AS upvotes, COALESCE(SUM(downvote),0) as downvotes FROM funch.votes WHERE restaurantId =? LIMIT 1;", [rid]).then(function (result) {
             return filterOneRow(result);
         }).catch(function (err) {
             next(err);
