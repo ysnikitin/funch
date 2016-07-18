@@ -143,9 +143,7 @@ router.get('/api/restaurants/:rid(\\d+)/quickpicks', function(req, res, next) {
 // GET
 
 router.get('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
-  db.orders(req.params.id, function(results) {
-    res.json(results);
-  }, next);
+  db.orders(req.params.id,  next).then(res.json.bind(res));
 });
 
 router.get('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {
@@ -155,9 +153,7 @@ router.get('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {
 // DELETE
 
 router.delete('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {
-  db.orderDelete(req.params.lid, req.params.oid, function(result) {
-    res.json(result);
-  }, next);
+  db.orderDelete(req.params.lid, req.params.oid, next).then(res.json.bind(res));
 });
 
 // POST

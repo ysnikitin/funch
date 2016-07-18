@@ -437,8 +437,8 @@ module.exports = {
 
     orders : function(lid, callback, next) {
 
-        query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid]).then(function (res) {
-            callback(res);
+        return query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid]).then(function (res) {
+            return res;
         }).catch(function (err) {
             next(err);
         });
@@ -479,10 +479,10 @@ module.exports = {
         });
     },
 
-    orderDelete : function(lid, oid, callback, next) {
+    orderDelete : function(lid, oid, next) {
 
-        query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid]).then(function (result) {
-            callback(result.affectedRows > 0);
+        return query("DELETE FROM funch.orders WHERE lunchId = ? AND id = ?;", [lid, oid]).then(function (result) {
+            return result.affectedRows > 0;
         }).catch(function (err) {
             next(err);
         });
