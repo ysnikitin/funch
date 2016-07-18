@@ -149,9 +149,7 @@ router.get('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
 });
 
 router.get('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {
-  db.order(req.params.lid, req.params.oid, function(results) {
-    res.json(results);
-  }, next);
+  db.order(req.params.lid, req.params.oid, next).then(res.json.bind(res));
 });
 
 // DELETE
@@ -173,9 +171,7 @@ router.post('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
 // PUT
 
 router.put('/api/lunch/:lid/orders/:oid(\\d+)', function(req, res, next) {
-  db.orderUpdate(req.params.lid, req.params.oid, req.body, function(result) {
-    res.json(result);
-  }, next);
+  db.orderUpdate(req.params.lid, req.params.oid, req.body, next).then(res.json.bind(res));
 });
 
 // ------ HASHES

@@ -134,7 +134,7 @@ module.exports = {
     restaurantUpdate : function(id, params, next) {
 
         if(Object.keys(params).length === 0) {
-            callback(false);
+            return q(false);
         }
 
         var first = true;
@@ -425,10 +425,10 @@ module.exports = {
 
     },
 
-    order : function(lid, oid, callback, next) {
+    order : function(lid, oid, next) {
 
-        query("SELECT * FROM funch.orders WHERE lunchId =? AND id = ?; ", [lid, oid]).then(function (res) {
-            callback(filterOneRow(res));
+        return query("SELECT * FROM funch.orders WHERE lunchId =? AND id = ?; ", [lid, oid]).then(function (res) {
+            return filterOneRow(res);
         }).catch(function (err) {
             next(err);
         });
@@ -486,10 +486,10 @@ module.exports = {
 
     },
 
-    orderUpdate : function(lid, oid, params, callback, next) {
+    orderUpdate : function(lid, oid, params, next) {
 
         if(Object.keys(params).length === 0) {
-            callback(false);
+            return q(false);
         }
 
         var first = true;
@@ -506,10 +506,9 @@ module.exports = {
         queryValues.push(oid);
         queryValues.push(lid);
 
-        query("UPDATE funch.orders SET " + setClause + ", ordertime = NOW() WHERE id = ? and lunchId = ?", queryValues).then(function (res) {
-            return query("SELECT * FROM funch.orders WHERE id = ?", [oid]);
-        }).then(function (res) {
-           callback(filterOneRow(res));
+        var self = this;
+        return query("UPDATE funch.orders SET " + setClause + ", ordertime = NOW() WHERE id = ? and lunchId = ?", queryValues).then(function (res) {
+            return self.order(lid, oid, next);
         }).catch(function (err) {
            next(err);
         });
