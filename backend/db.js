@@ -347,6 +347,10 @@ module.exports = {
                 }
                 continue;
             }
+            if(param === 'stoptime') {
+                var mtime = moment(params[param]);
+                params[param] = mtime.format("YYYY-MM-DD HH:mm:ss")
+            }
             if (!first) {
                 setClause += ", ";
             }
