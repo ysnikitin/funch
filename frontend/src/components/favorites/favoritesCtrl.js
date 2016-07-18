@@ -1,7 +1,9 @@
 angular.module('funch').controller('FavoritesCtrl', function ($uibModalInstance, Restaurant) {
     var vm = this;
 
-    $uibModalInstance.restaurant.getQuickPicks().$promise.then(function (qp) {
+    vm.restaurant = $uibModalInstance.restaurant;
+
+    vm.restaurant.quickpicks().then(function (qp) {
         vm.favorites = qp;
     });
 

@@ -1,163 +1,170 @@
-<div ng-show="!vm.ready">
-    <span us-spinner="$root.spinner"></span>
-</div>
-<div class="rt-create" ng-show="vm.ready">
-    <ul class="progress-indicator">
-        <li ng-class="{'completed': vm.step > 1, 'active': vm.step === 1}">
-            <span class="bubble"></span> 1. RESTAURANT
-        </li>
-        <li ng-class="{'completed': vm.step > 2, 'active': vm.step === 2}">
-            <span class="bubble"></span> 2. ON DUTY
-        </li>
-        <li ng-class="{'completed': vm.step > 3, 'active': vm.step === 3}">
-            <span class="bubble"></span> 3. ORDER DETAILS
-        </li>
-    </ul>
-
-    <div class="form section" ng-show="vm.step === 1">
-        <label class="sectionlabel" for="rest">What's for lunch?</label>
-        <div class="form-group">
-            <div class="sectioncontent">
-                <div class="picks">
-                    <div class="pick" ng-class="{'active': vm.restaurant.id === r.id}" ng-repeat="r in vm.restaurants" ng-click="vm.pickRestaurant(r)">
-                        {{r.name}}
-                    </div>
-                </div>
-                <div class="clear"></div>
-
-                <div class="row">
-                    <div class="col-xs-6">
-                        <label ng-show="vm.restaurant.id">Sounds delicious!</label>
-                        <label ng-show="!vm.restaurant.id">Something else...</label>
-                    </div>
-                    <div class="col-xs-6 text-right">
-                        <a class="reset-restaurant" ng-click="vm.resetRestaurant()" ng-show="vm.disableRestaurantFields">(I changed my mind, I want to try something new)</a>
-                    </div>
-                </div>
-                <input type="hidden" ng-model="vm.restaurant.id">
-                <div class="row">
-                    <div class="col-xs-6">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.name" placeholder="Restuarant" ng-disabled="vm.restaurant.id">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.menu" placeholder="Menu Link" ng-disabled="vm.restaurant.id">
-                    </div>
-                    <div class="col-xs-6">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.address" placeholder="Address" ng-disabled="vm.restaurant.id">
-                        <input type="text" class="form-control" ng-model="vm.restaurant.phone" placeholder="Phone" ng-disabled="vm.restaurant.id">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="sectionnext">
-            <div class="next" ng-click="vm.next()">
-                Next
-            </div>
-        </div>
+<div class="container">
+    <div ng-show="!vm.ready">
+        <span us-spinner="$root.spinner"></span>
     </div>
+    <div class="rt-create" ng-show="vm.ready">
+        <ul class="progress-indicator">
+            <li ng-class="{'completed': vm.step > 1, 'active': vm.step === 1}">
+                <span class="bubble"></span> 1. RESTAURANT
+            </li>
+            <li ng-class="{'completed': vm.step > 2, 'active': vm.step === 2}">
+                <span class="bubble"></span> 2. ON DUTY
+            </li>
+            <li ng-class="{'completed': vm.step > 3, 'active': vm.step === 3}">
+                <span class="bubble"></span> 3. ORDER DETAILS
+            </li>
+        </ul>
 
-    <div class="form section" ng-show="vm.step === 2">
-        <div class="row">
-            <div class="col-xs-6">
-                <label class="sectionlabel" for="rest">Who are you?</label>
-
+        <div class="form section" ng-show="vm.step === 1">
+            <label class="sectionlabel" for="rest">What's for lunch?</label>
+            <div class="form-group">
                 <div class="sectioncontent">
-                    <div class="invites">
-                        <div class="invites-person" ng-repeat="user in vm.users" ng-click="vm.toggleIsCurrent(user)">
-                            <span class="fa-stack fa-lg">
-                              <i class="fa fa-circle fa-stack-2x"></i>
-                              <i ng-show="user.iscurrent" class="fa fa-check fa-stack-1x fa-inverse"></i>
-                            </span>
-                            <span class="name">
-                                {{user.name}} <span class="text-muted">({{user.initials}})</span>
-                            </span>
+                    <div class="picks">
+                        <div class="pick" ng-class="{'active': vm.restaurant.id === r.id}" ng-repeat="r in vm.restaurants" ng-click="vm.pickRestaurant(r)">
+                            {{r.name}}
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <label ng-show="vm.restaurant.id">Sounds delicious!</label>
+                            <label ng-show="!vm.restaurant.id">Something else...</label>
+                        </div>
+                        <div class="col-xs-6 text-right">
+                            <a class="reset-restaurant" ng-click="vm.resetRestaurant()" ng-show="vm.restaurant.id">(I changed my mind, I want to try something new)</a>
+                        </div>
+                    </div>
+                    <input type="hidden" ng-model="vm.restaurant.id">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" ng-model="vm.restaurant.name" placeholder="Restuarant" ng-disabled="vm.restaurant.id">
+                            <input type="text" class="form-control" ng-model="vm.restaurant.menu" placeholder="Menu Link">
+                        </div>
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" ng-model="vm.restaurant.address" placeholder="Address">
+                            <input type="text" class="form-control" ng-model="vm.restaurant.phone" placeholder="Phone">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <input type="text" class="form-control" ng-model="vm.restaurant.yelpURL" placeholder="Yelp URL">
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-6">
-                <label class="sectionlabel" for="rest">Who's on lunch duty?</label>
+            <div class="sectionnext">
+                <div class="next" ng-click="vm.next()">
+                    Next
+                </div>
+            </div>
+        </div>
 
-                <div class="sectioncontent">
-                    <div class="invites">
-                        <div class="invites-person" ng-repeat="user in vm.users" ng-click="user.onduty = !user.onduty">
-                            <span class="fa-stack fa-lg">
-                              <i class="fa fa-circle fa-stack-2x"></i>
-                              <i ng-show="user.onduty" class="fa fa-check fa-stack-1x fa-inverse"></i>
-                            </span>
-                            <span class="name">
-                                {{user.name}} <span class="text-muted">({{user.initials}})</span>
-                            </span>
+        <div class="form section" ng-show="vm.step === 2">
+            <div class="row">
+                <div class="col-xs-6">
+                    <label class="sectionlabel" for="rest">Who are you?</label>
+
+                    <div class="sectioncontent">
+                        <div class="invites">
+                            <div class="invites-person" ng-repeat="user in vm.users" ng-click="vm.toggleIsCurrent(user)">
+                                <span class="fa-stack fa-lg">
+                                  <i class="fa fa-circle fa-stack-2x"></i>
+                                  <i ng-show="user.iscurrent" class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                </span>
+                                <span class="name">
+                                    {{user.name}} <span class="text-muted">({{user.initials}})</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <label class="sectionlabel" for="rest">Who's on lunch duty?</label>
+
+                    <div class="sectioncontent">
+                        <div class="invites">
+                            <div class="invites-person" ng-repeat="user in vm.users" ng-click="user.onduty = !user.onduty">
+                                <span class="fa-stack fa-lg">
+                                  <i class="fa fa-circle fa-stack-2x"></i>
+                                  <i ng-show="user.onduty" class="fa fa-check fa-stack-1x fa-inverse"></i>
+                                </span>
+                                <span class="name">
+                                    {{user.name}} <span class="text-muted">({{user.initials}})</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="sectionnext">
-            <div class="prev" ng-click="vm.prev()">
-                Back
-            </div>
-            <div class="next" ng-click="vm.next()">
-                Next
-            </div>
-        </div>
-    </div>
-
-    <div class="form section" ng-show="vm.step === 3">
-        <label class="sectionlabel" for="rest">Order Details</label>
-
-        <div class="form-group">
-            <div class="sectioncontent">
-                <label>Order Limit</label>
-                <rzslider rz-slider-model="vm.lunch.limit" rz-slider-options="vm.limit.options"></rzslider>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <div class="sectioncontent">
-                        <label>Due Date</label>
-                        <input type="text" class="form-control" uib-datepicker-popup="longDate" ng-click="vm.openDate()" ng-model="vm.due.date" is-open="vm.datePopup.opened" />
-                    </div>
+            <div class="sectionnext">
+                <div class="prev" ng-click="vm.prev()">
+                    Back
                 </div>
-            </div>
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <div class="sectioncontent">
-                        <label>Due Time</label>
-                        <select class="form-control" ng-model="vm.due.time">
-                            <option value="8:30">8:30 AM</option>
-                            <option value="8:45">8:45 AM</option>
-                            <option value="9:00">9:00 AM</option>
-                            <option value="9:15">9:15 AM</option>
-                            <option value="9:30">9:30 AM</option>
-                            <option value="9:45">9:45 AM</option>
-                            <option value="10:00">10:00 AM</option>
-                            <option value="10:15">10:15 AM</option>
-                            <option value="10:30">10:30 AM</option>
-                            <option value="10:45">10:45 AM</option>
-                            <option value="11:00">11:00 AM</option>
-                            <option value="11:15">11:15 AM</option>
-                            <option value="11:30">11:30 AM</option>
-                            <option value="11:45">11:45 AM</option>
-                        </select>
-                    </div>
+                <div class="next" ng-click="vm.next()">
+                    Next
                 </div>
             </div>
         </div>
 
-        <div class="form-group">
-            <div class="sectioncontent">
-                <label>Notes</label>
-                <textarea ng-model="vm.lunch.notes" class="form-control"></textarea>
+        <div class="form section" ng-show="vm.step === 3">
+            <label class="sectionlabel" for="rest">Order Details</label>
+
+            <div class="form-group">
+                <div class="sectioncontent">
+                    <label>Order Limit</label>
+                    <rzslider rz-slider-model="vm.lunch.limit" rz-slider-options="vm.limit.options"></rzslider>
+                </div>
             </div>
-        </div>
-        <div class="sectionnext">
-            <div class="prev" ng-click="vm.prev()">
-                Back
+
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <div class="sectioncontent">
+                            <label>Due Date</label>
+                            <input type="text" class="form-control" uib-datepicker-popup="longDate" ng-click="vm.openDate()" ng-model="vm.due.date" is-open="vm.datePopup.opened" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="form-group">
+                        <div class="sectioncontent">
+                            <label>Due Time</label>
+                            <select class="form-control" ng-model="vm.due.time">
+                                <option value="8:30">8:30 AM</option>
+                                <option value="8:45">8:45 AM</option>
+                                <option value="9:00">9:00 AM</option>
+                                <option value="9:15">9:15 AM</option>
+                                <option value="9:30">9:30 AM</option>
+                                <option value="9:45">9:45 AM</option>
+                                <option value="10:00">10:00 AM</option>
+                                <option value="10:15">10:15 AM</option>
+                                <option value="10:30">10:30 AM</option>
+                                <option value="10:45">10:45 AM</option>
+                                <option value="11:00">11:00 AM</option>
+                                <option value="11:15">11:15 AM</option>
+                                <option value="11:30">11:30 AM</option>
+                                <option value="11:45">11:45 AM</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="next" ng-click="vm.create()">
-                START LUNCH
+
+            <div class="form-group">
+                <div class="sectioncontent">
+                    <label>Notes</label>
+                    <textarea ng-model="vm.lunch.notes" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="sectionnext">
+                <div class="prev" ng-click="vm.prev()">
+                    Back
+                </div>
+                <div class="next" ng-click="vm.create()">
+                    START LUNCH
+                </div>
             </div>
         </div>
     </div>

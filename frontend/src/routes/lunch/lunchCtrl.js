@@ -1,4 +1,4 @@
-angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interval, $stateParams, $state, $q, Favorites, GuestInvite, YelpSvc, UserSvc, toastr, Suggestions, Order, Lunch) {
+angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interval, $stateParams, $state, $q, Favorites, GuestInvite, YelpSvc, toastr, Suggestions, Order, Lunch, User, Restaurant) {
     var vm = this;
 
     var code = angular.fromJson(atob($stateParams.code));
@@ -38,7 +38,9 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         };
     };
 
-    vm.order = new Order();
+    vm.order = new Order({
+        lunchId: lunchId
+    });
 
     // open print dialog
     vm.print = function () {
@@ -52,17 +54,18 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
 
     // open favorites modal
     vm.openFavorites = function () {
-        var m = Favorites.open(vm.restaurant.id);
+        var m = Favorites.open(vm.restaurant);
         m.result.then(function (result) {
             if (result) {
                 vm.order.order = result;
-                vm.saveMyOrder();
+                vm.saveOrder();
             }
         });
     };
 
     // open the suggestions modal
     vm.openSuggestions = function () {
+        console.log('u', vm.user);
         var m = Suggestions.open(vm.restaurant, vm.user);
         m.result.then(function (result) {
             if (result) {
@@ -89,7 +92,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
     // adds an extra 15 minutes
     vm.moreTime = function () {
         vm.lunch.stoptime = moment(vm.lunch.stoptime).add(15, 'minutes').toISOString();
-        vm.lunch.$save().$promise.then(function () {
+        vm.lunch.$update().then(function () {
             toastr.success('Added another 15 minutes to the order due date.');
         });
     };
@@ -105,7 +108,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         // make sure the order has the userid
         vm.order.userId = userId;
 
-        vm.order.$save().$promise.then(function () {
+        vm.order.$update().then(function () {
             toastr.success('Order saved!');
             vm.processing = false;
             return getOrders();
@@ -117,7 +120,9 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
 
     // fetches all orders
     var getOrders = function () {
-        return Order.query({ lunchId: vm.lunch.id }).$promise.then(function (orders) {
+        return Order.query({
+            lunchId: vm.lunch.id
+        }).$promise.then(function (orders) {
             vm.orders = _.cloneDeep(orders);
             for (var i = 0; i < vm.order.length; i++) {
                 if (+order.userId === +userId) {
@@ -129,15 +134,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
 
     // fetch a Yelp record
     var getYelp = function (restaurant) {
-        return YelpSvc.search(restaurant.name).then(function (d) {
-            var record;
-            for (var i = 0; i < d.length; i++) {
-                if (~restaurant.address.toLowerCase().indexOf(d[i].location.address[0].toLowerCase())) {
-                    record = d[i];
-                    break;
-                }
-            }
-
+        return YelpSvc.business(restaurant.yelpURL.split('/').pop()).then(function (record) {
             return {
                 details: record,
                 stars: (record.rating / 5 * 100) + '%'
@@ -152,7 +149,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         return $q.all([
             User.query().$promise,
             getOrders(),
-            Restaurant.get({ lunchId: lunch.id }).$promise
+            Restaurant.get({ id: lunch.restaurantId }).$promise
         ]).then(function (res) {
             var users = res[0];
             var orders = res[1];
@@ -161,9 +158,14 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             // collect users
             vm.onduty = [];
             users.forEach(function (u) {
+                u.id = +u.id;
                 vm.userMap[u.id] = u;
 
-                if (~vm.lunch.onduty.indexOf(u.id)) {
+                if (u.id === userId) {
+                    vm.user = u;
+                }
+
+                if (~vm.lunch.onduty.indexOf(u.id.toString())) {
                     vm.onduty.push(u);
                 }
             });
@@ -171,6 +173,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             // collect restaurant and related information
             vm.restaurant = rest;
             getYelp(vm.restaurant).then(function (y) {
+                console.log(y);
                 vm.yelp = y;
             });
         });

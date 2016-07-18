@@ -18,6 +18,12 @@ angular.module('funch').config(function ($stateProvider, $urlRouterProvider, $lo
             controller: 'CreateCtrl',
             controllerAs: 'vm'
         })
+        .state('main.history', {
+            url: '/history',
+            templateUrl: 'src/routes/history/history.html',
+            controller: 'HistoryCtrl',
+            controllerAs: 'vm'
+        })
         .state('main.lunch', {
             url: '/lunch/:code',
             templateUrl: 'src/routes/lunch/lunch.html',

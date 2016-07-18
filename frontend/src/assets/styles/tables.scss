@@ -3,3 +3,27 @@
         border: none !important;
     }
 }
+
+.table-dark {
+    color: #fff;
+
+    &.table-striped>tbody>tr:nth-of-type(odd) {
+        background-color: #333;
+    }
+
+    th, td {
+        border: none;
+        color: #fff;
+    }
+
+    th {
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+}
+
+.table-expanded {
+    td, th {
+        padding: 15px !important;
+    }
+}
