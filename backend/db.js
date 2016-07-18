@@ -265,7 +265,7 @@ module.exports = {
                             if(user['email'] === 'jeremy.nikitin@retroficiency.com' || user['email'] === 'tangiblelime@gmail.com') {
                                 transporter.sendMail(mailOptions, function (error, info) {
                                     if (error) {
-                                        return console.log(error);
+                                        next(error);
                                     } else {
                                         console.log('Message sent: ' + info.response);
                                     }
@@ -281,11 +281,13 @@ module.exports = {
         });
     },
 
-    lunchEmail : function(lid, name, email, initials, callback, next) {
-        var emailUser = function(newUserId) {
+    lunchEmail : function(lid, name, email, initials, next) {
+
+        var self = this;
+        return self.usersAdd(name, email, false, initials, next).then(function(user) {
             var code = encodeURIComponent(btoa(JSON.stringify({
                 "lunchId": lid,
-                "userId": newUserId
+                "userId": user.id
             })));
             var mailOptions = {
                 from: "Funch Bunch", // sender address
@@ -295,14 +297,16 @@ module.exports = {
             };
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
-                    return console.log(error);
+                    next(error);
                 } else {
                     console.log('Message sent: ' + info.response);
                 }
             });
-            callback({"id": newUserId });
-        };
-        this.usersAdd(name, email, false, initials, emailUser, next);
+            return user;
+        }).catch (function(err) {
+            next(err);
+        });
+
     },
 
     lunchDelete : function(id, next) {
@@ -396,10 +400,9 @@ module.exports = {
             next(new Error("All parameters must be set!"));
             return q(false);
         }
+        var self = this;
         return query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials]).then(function (res) {
-            return query("SELECT * FROM funch.users WHERE id = ?", [res.insertId]);
-        }).then(function (res) {
-           return filterOneRow(res);
+            return self.user(res.insertId, next);
         }).catch(function (err) {
            next(err);
         });

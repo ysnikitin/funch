@@ -79,9 +79,7 @@ router.post('/api/lunch/:id(\\d+)/email', function(req, res, next) {
   var name = req.body.name;
   var email = req.body.email;
   var initials = req.body.initials;
-  db.lunchEmail(req.params.id, name, email, initials, function(result) {
-    res.json(result);
-  }, next);
+  db.lunchEmail(req.params.id, name, email, initials, next).then(res.json.bind(res));
 });
 
 // PUT
