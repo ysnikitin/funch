@@ -541,6 +541,16 @@ module.exports = {
 
     },
 
+    restaurantVote : function(rid, next) {
+
+        return query("SELECT SUM(upvote) AS upvote, SUM(downvote) as downvote FROM funch.votes WHERE restaurantId =? LIMIT 1;", [rid]).then(function (result) {
+            return filterOneRow(result);
+        }).catch(function (err) {
+            next(err);
+        });
+
+    },
+
     userVote : function(rid, uid, next) {
 
         return query("SELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1;", [uid, rid]).then(function (result) {

@@ -168,6 +168,10 @@ router.get('/api/lunch/:lid(\\d+)/user/:uid(\\d+)/hash', function(req, res, next
 
 // ------ VOTES
 
+router.get('/api/restaurants/:rid(\\d+)/votes', function(req, res, next) {
+  db.restaurantVote(req.params.rid, next).then(res.json.bind(res));
+});
+
 router.get('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)/votes', function(req, res, next) {
   db.userVote(req.params.rid, req.params.uid, next).then(res.json.bind(res));
 });
