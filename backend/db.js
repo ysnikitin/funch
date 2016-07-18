@@ -32,6 +32,10 @@ var filterOneRow = function(rows) {
     return rows.length > 0 ? rows[0] : {};
 }
 
+var isDef = function(val) {
+    return val !== undefined;
+}
+
 var convertCommaDelimToArray = function(commaDelim) {
     if(commaDelim === null) {
         return [];
@@ -384,22 +388,26 @@ module.exports = {
 
     },
 
-    users : function(callback, next) {
+    users : function(next) {
 
-        query("SELECT * FROM funch.users WHERE perm = 1;").then(function (res) {
+        return query("SELECT * FROM funch.users WHERE perm = 1;").then(function (res) {
             convertTinyIntToBool(res, 'perm');
-            callback(res);
+            return res;
         }).catch(function (err) {
             next(err);
         });
 
     },
 
-    usersAdd : function(name, email, perm, initials, callback, next) {
-        query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials]).then(function (res) {
+    usersAdd : function(name, email, perm, initials, next) {
+        if(!isDef(name) || !isDef(email) || !isDef(perm) || !isDef(initials)) {
+            next(new Error("All parameters must be set!"));
+            return q(false);
+        }
+        return query("INSERT INTO funch.users (`name`, email, perm, initials) VALUES (?,?,?, ?);", [name, email, perm, initials]).then(function (res) {
             return query("SELECT * FROM funch.users WHERE id = ?", [res.insertId]);
         }).then(function (res) {
-           callback(filterOneRow(res));
+           return filterOneRow(res);
         }).catch(function (err) {
            next(err);
         });

@@ -97,9 +97,7 @@ router.put('/api/lunch/:id', function(req, res, next) {
 // GET
 
 router.get('/api/user', function(req, res, next) {
-  db.users(function(results) {
-    res.json(results);
-  }, next);
+  db.users(next).then(res.json.bind(res));
 });
 
 router.get('/api/user/:id(\\d+)', function(req, res, next) {
@@ -113,9 +111,7 @@ router.post('/api/user', function(req, res, next) {
   var email = req.body.email;
   var perm = req.body.perm;
   var initials = req.body.initials;
-  db.usersAdd(name, email, perm, initials, function(result) {
-    res.json(result);
-  }, next);
+  db.usersAdd(name, email, perm, initials, next).then(res.json.bind(res));
 });
 
 // ------ RECOMMENDATIONS
