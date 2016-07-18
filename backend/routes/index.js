@@ -123,9 +123,7 @@ router.post('/api/user', function(req, res, next) {
 // GET
 
 router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', function(req, res, next) {
-  db.recommendations(req.params.uid, req.params.rid, function(results) {
-    res.json(results);
-  }, next);
+  db.recommendations(req.params.uid, req.params.rid, next).then(res.json.bind(res));
 });
 
 // ------ QUICK PICKS
@@ -133,9 +131,7 @@ router.get('/api/user/:uid(\\d+)/restaurants/:rid(\\d+)/recommendations', functi
 // GET
 
 router.get('/api/restaurants/:rid(\\d+)/quickpicks', function(req, res, next) {
-  db.quickpicks(req.params.rid, function(results) {
-    res.json(results);
-  }, next);
+  db.quickpicks(req.params.rid, next).then(res.json.bind(res));
 });
 
 // ------ ORDERS

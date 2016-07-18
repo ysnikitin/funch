@@ -405,20 +405,20 @@ module.exports = {
         });
     },
 
-    recommendations : function(uid, rid, callback, next) {
+    recommendations : function(uid, rid, next) {
 
-        query("SELECT * FROM funch.recommendations WHERE userId =? AND restaurantId = ?;", [uid, rid]).then(function (res) {
-            callback(res);
+        return query("SELECT * FROM funch.recommendations WHERE userId =? AND restaurantId = ? ORDER BY `order`;", [uid, rid]).then(function (res) {
+            return res;
         }).catch(function (err) {
             next(err);
         });
 
     },
 
-    quickpicks : function(rid, callback, next) {
+    quickpicks : function(rid, next) {
 
-        query("SELECT * FROM funch.quickpicks WHERE restaurantId =?; ", [rid]).then(function (res) {
-            callback(res);
+        return query("SELECT * FROM funch.quickpicks WHERE restaurantId =? ORDER BY `order`; ", [rid]).then(function (res) {
+            return res;
         }).catch(function (err) {
             next(err);
         });
