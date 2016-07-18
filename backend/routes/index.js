@@ -181,23 +181,17 @@ router.put('/api/lunch/:lid/orders/:oid(\\d+)', function(req, res, next) {
 // ------ HASHES
 
 router.get('/api/hash/:hash', function(req, res, next) {
-  db.getUserLunchDetailsForHash(req.params.hash, function(results) {
-    res.json(results);
-  }, next);
+  db.getUserLunchDetailsForHash(req.params.hash, next).then(res.json.bind(res));
 });
 
 router.get('/api/lunch/:lid(\\d+)/user/:uid(\\d+)/hash', function(req, res, next) {
-  db.generateHashForUserLunchDetails(req.params.uid, req.params.lid, function(results) {
-    res.json(results);
-  }, next);
+  db.generateHashForUserLunchDetails(req.params.uid, req.params.lid, next).then(res.json.bind(res));
 });
 
 // ------ VOTES
 
 router.get('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)', function(req, res, next) {
-  db.userVote(req.params.rid, req.params.uid, function(result) {
-    res.json(result);
-  }, next);
+  db.userVote(req.params.rid, req.params.uid, next).then(res.json.bind(res));
 });
 
 router.put('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)/upvote', function(req, res, next) {

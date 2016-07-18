@@ -517,31 +517,31 @@ module.exports = {
 
     getUserLunchDetailsForHash : function(hash, callback, next) {
 
-        query("SELECT userId, lunchId FROM funch.hashes WHERE hash =?", hash).then(function(results) {
-            callback(filterOneRow(results));
+        return query("SELECT userId, lunchId FROM funch.hashes WHERE hash =?", hash).then(function(results) {
+            return filterOneRow(results);
         }).catch(function (err) {
             next(err);
         });
 
     },
 
-    generateHashForUserLunchDetails : function(userId, lunchId, callback, next) {
+    generateHashForUserLunchDetails : function(userId, lunchId, next) {
 
         var hash = secure.getHashForUserLunch(userId, lunchId);
-        query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
-            callback({"hash":hash});
+        return query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
+            return {"hash":hash};
         }).catch(function (err) {
             next(err);
         });
 
     },
 
-    userVote : function(rid, uid, callback, next) {
+    userVote : function(rid, uid, next) {
 
-        query("SELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1;", [uid, rid]).then(function (result) {
+        return query("SELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1;", [uid, rid]).then(function (result) {
             convertTinyIntToBool(result, 'upvote');
             convertTinyIntToBool(result, 'downvote');
-            callback(filterOneRow(result));
+            return filterOneRow(result);
         }).catch(function (err) {
             next(err);
         });
