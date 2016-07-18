@@ -131,7 +131,7 @@ router.get('/api/restaurants/:rid(\\d+)/quickpicks', function(req, res, next) {
 // GET
 
 router.get('/api/lunch/:id(\\d+)/orders', function(req, res, next) {
-  db.orders(req.params.id,  next).then(res.json.bind(res));
+  db.orders(req.params.id, next).then(res.json.bind(res));
 });
 
 router.get('/api/lunch/:lid(\\d+)/orders/:oid(\\d+)', function(req, res, next) {

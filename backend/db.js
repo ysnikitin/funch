@@ -95,7 +95,7 @@ module.exports = {
 
     },
 
-    restaurant : function(id, callback, next) {
+    restaurant : function(id, next) {
 
         return query("SELECT * FROM funch.restaurants WHERE id = ? LIMIT 1;", [id]).
         then(function (res) {
@@ -322,7 +322,7 @@ module.exports = {
     lunchUpdate : function(id, params, next) {
 
         if(Object.keys(params).length === 0) {
-            callback(false);
+            return q(false);
         }
 
         var first = true;
@@ -438,7 +438,7 @@ module.exports = {
 
     },
 
-    orders : function(lid, callback, next) {
+    orders : function(lid, next) {
 
         return query("SELECT * FROM funch.orders WHERE lunchId =?; ", [lid]).then(function (res) {
             return res;
@@ -520,7 +520,7 @@ module.exports = {
         });
     },
 
-    getUserLunchDetailsForHash : function(hash, callback, next) {
+    getUserLunchDetailsForHash : function(hash, next) {
 
         return query("SELECT userId, lunchId FROM funch.hashes WHERE hash =?", hash).then(function(results) {
             return filterOneRow(results);
