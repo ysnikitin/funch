@@ -1,0 +1,30 @@
+<div class="container">
+    <div ng-show="!vm.ready">
+        <span us-spinner="$root.spinner"></span>
+    </div>
+    <div class="rt-history" ng-show="vm.ready">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pagetitle">Lunch History</div>
+            </div>
+        </div>
+        <div class="row listing">
+            <div class="col-xs-12">
+                <table class="table table-borderless table-dark table-expanded table-striped">
+                    <tr>
+                        <th class="col-xs-1"></th>
+                        <th class="col-xs-2">Date</th>
+                        <th class="col-xs-9">Lunch</th>
+                    </tr>
+                    <tr ng-repeat="lunch in vm.lunches">
+                        <td ng-click="vm.launch(lunch)" class="text-center">
+                            <i class="fa fa-external-link"></i>
+                        </td>
+                        <td>{{lunch.date | date}}</td>
+                        <td>{{lunch.restaurant.name}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

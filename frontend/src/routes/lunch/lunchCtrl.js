@@ -108,7 +108,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         // make sure the order has the userid
         vm.order.userId = userId;
 
-        vm.order.save().then(function () {
+        vm.order.$update().then(function () {
             toastr.success('Order saved!');
             vm.processing = false;
             return getOrders();
