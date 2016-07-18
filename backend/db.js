@@ -551,6 +551,28 @@ module.exports = {
             next(err);
         });
 
+    },
+
+    upvote : function(rid, uid, next) {
+
+        var self = this;
+        return query("INSERT INTO funch.votes (userId, restaurantId, upvote, downvote) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE upvote = ?, downvote = ?;", [uid, rid, 1, 0, 1, 0]).then(function (result) {
+            return self.userVote(rid, uid, next);
+        }).catch(function (err) {
+            next(err);
+        });
+
+    },
+
+    downvote : function(rid, uid, next) {
+
+        var self = this;
+        return query("INSERT INTO funch.votes (userId, restaurantId, upvote, downvote) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE upvote = ?, downvote = ?;", [uid, rid, 0, 1, 0, 1]).then(function (result) {
+            return self.userVote(rid, uid, next);
+        }).catch(function (err) {
+            next(err);
+        });
+
     }
 
 }

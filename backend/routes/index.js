@@ -168,20 +168,16 @@ router.get('/api/lunch/:lid(\\d+)/user/:uid(\\d+)/hash', function(req, res, next
 
 // ------ VOTES
 
-router.get('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)', function(req, res, next) {
+router.get('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)/votes', function(req, res, next) {
   db.userVote(req.params.rid, req.params.uid, next).then(res.json.bind(res));
 });
 
 router.put('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)/upvote', function(req, res, next) {
-  db.upvote(req.params.rid, req.params.uid, function(result) {
-    res.json(result);
-  }, next);
+  db.upvote(req.params.rid, req.params.uid, next).then(res.json.bind(res));
 });
 
 router.put('/api/restaurants/:rid(\\d+)/user/:uid(\\d+)/downvote', function(req, res, next) {
-  db.downvote(req.params.rid, req.params.uid, function(result) {
-    res.json(result);
-  }, next);
+  db.downvote(req.params.rid, req.params.uid, next).then(res.json.bind(res));
 });
 
 
