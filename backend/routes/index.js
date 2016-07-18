@@ -55,9 +55,7 @@ router.get('/api/lunch', function(req, res, next) {
 });
 
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
-  db.lunch(req.params.id, function(results) {
-    res.json(results);
-  }, next);
+  db.lunch(req.params.id, next).then(res.json.bind(res));
 });
 
 // DELETE
@@ -93,9 +91,7 @@ router.post('/api/lunch/:id(\\d+)/email', function(req, res, next) {
 // PUT
 
 router.put('/api/lunch/:id', function(req, res, next) {
-  db.lunchUpdate(req.params.id, req.body, function(result) {
-    res.json(result);
-  }, next);
+  db.lunchUpdate(req.params.id, req.body, next).then(res.json.bind(res));
 });
 
 // ------ USERS

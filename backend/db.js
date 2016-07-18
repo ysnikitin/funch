@@ -170,9 +170,9 @@ module.exports = {
 
     },
 
-    lunch : function(id, callback, next) {
+    lunch : function(id, next) {
 
-        query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
+        return query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
             "FROM funch.lunches l " +
             "LEFT JOIN funch.duty d ON l.id = d.lunchId " +
             "WHERE l.id = ? " +
@@ -180,7 +180,7 @@ module.exports = {
         then(function (res) {
             var row = filterOneRow(res);
             row['onduty'] = convertCommaDelimToArray(row['onduty']);
-            callback(row);
+            return row;
         }).catch(function (err) {
             next(err);
         });
@@ -323,7 +323,7 @@ module.exports = {
 
     },
 
-    lunchUpdate : function(id, params, callback, next) {
+    lunchUpdate : function(id, params, next) {
 
         if(Object.keys(params).length === 0) {
             callback(false);
@@ -332,17 +332,17 @@ module.exports = {
         var first = true;
         var queryValues = [];
         var setClause = "";
-        var hasOnDuty = false;
+        var dutyArray = false;
         for(var param in params) {
+            if(param === 'onduty') {
+                dutyArray = params[param];
+                if(!Array.isArray(dutyArray)) {
+                    dutyArray = JSON.parse(dutyArray);
+                }
+                continue;
+            }
             if (!first) {
                 setClause += ", ";
-            }
-            if(param === 'onduty') {
-                if(Object.keys(params).length === 1) {
-                    callback(false);
-                }
-                hasOnDuty = true;
-                continue;
             }
             setClause += "`" + param + "` = ?";
             first = false;
@@ -350,10 +350,22 @@ module.exports = {
         }
         queryValues.push(id);
 
-        query("UPDATE funch.lunches SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
-            return query("SELECT * FROM funch.lunches WHERE id = ?", [id]);
+        var self = this;
+        return query("UPDATE funch.lunches SET " + setClause + " WHERE id = ? ", queryValues).then(function (res) {
+            if(dutyArray && dutyArray.length > 0) {
+                return query("DELETE FROM funch.duty WHERE lunchId = ?;", id).then(function(res) {
+                    var dutyClause = "";
+                    for(var i = 0; i < dutyArray.length; i++) {
+                        if(i > 0) {
+                            dutyClause += ", "
+                        }
+                        dutyClause += " (" + id + "," + dutyArray[i] + ") ";
+                    }
+                    return query("INSERT INTO funch.duty (lunchId, userId) VALUES " + dutyClause + ";")
+                });
+            }
         }).then(function (res) {
-           callback(filterOneRow(res));
+            return self.lunch(id, next);
         }).catch(function (err) {
            next(err);
         });
@@ -524,7 +536,7 @@ module.exports = {
 
     userVote : function(rid, uid, callback, next) {
 
-        query("ELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1;", [uid, rid]).then(function (result) {
+        query("SELECT * FROM funch.votes WHERE userId =? AND restaurantId =? LIMIT 1;", [uid, rid]).then(function (result) {
             convertTinyIntToBool(result, 'upvote');
             convertTinyIntToBool(result, 'downvote');
             callback(filterOneRow(result));
