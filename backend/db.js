@@ -179,7 +179,9 @@ module.exports = {
             "GROUP BY l.id;", [id]).
         then(function (res) {
             var row = filterOneRow(res);
-            row['onduty'] = convertCommaDelimToArray(row['onduty']);
+            if(row['onduty'] !== undefined) {
+                row['onduty'] = convertCommaDelimToArray(row['onduty']);
+            }
             return row;
         }).catch(function (err) {
             next(err);
@@ -313,10 +315,10 @@ module.exports = {
         this.usersAdd(name, email, false, initials, emailUser, next);
     },
 
-    lunchDelete : function(id, callback, next) {
+    lunchDelete : function(id, next) {
 
-        query("DELETE FROM funch.lunches WHERE id = ?;", [id]).then(function (res) {
-            callback(res.affectedRows === 1);
+        return query("DELETE FROM funch.lunches WHERE id = ?;", [id]).then(function (res) {
+            return res.affectedRows === 1;
         }).catch(function (err) {
             next(err);
         });

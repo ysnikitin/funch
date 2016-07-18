@@ -61,9 +61,7 @@ router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
 // DELETE
 
 router.delete('/api/lunch/:id(\\d+)', function(req, res, next) {
-  db.lunchDelete(req.params.id, function(result) {
-    res.json(result);
-  }, next);
+  db.lunchDelete(req.params.id, next).then(res.json.bind(res));
 });
 
 // POST
