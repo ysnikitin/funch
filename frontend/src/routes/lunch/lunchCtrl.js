@@ -6,6 +6,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
     vm.userMap = {};
     vm.processing = false;
     vm.isOnDuty = false;
+    vm.lastKnownOrder = '';
 
     // refresh countdown clock
     var countdown = function () {
@@ -102,6 +103,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         vm.order.$saveOrUpdate().then(function () {
             toastr.success('Order saved!');
             vm.processing = false;
+            vm.lastKnownOrder = vm.order.order;
             return getOrders();
         }).catch(function () {
             toastr.error('Order could not be saved!');
@@ -118,6 +120,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
                 vm.order = new Order({
                     lunchId: vm.lunch.id
                 });
+                vm.lastKnownOrder = '';
 
                 getOrders();
             }).catch(function () {
@@ -149,6 +152,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             for (var i = 0; i < vm.orders.length; i++) {
                 if (+vm.orders[i].userId === +vm.user.id) {
                     vm.order = _.cloneDeep(vm.orders[i]);
+                    vm.lastKnownOrder = vm.order.order;
                 }
             }
         });

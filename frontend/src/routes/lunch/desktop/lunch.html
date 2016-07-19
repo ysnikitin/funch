@@ -139,7 +139,7 @@
                                         </button>
                                     </div>
                                     <div class="col-xs-8 text-right">
-                                        <button class="btn btn-success" ng-click="vm.saveOrder()" ng-if="!vm.locked">
+                                        <button class="btn btn-success" ng-click="vm.saveOrder()" ng-if="!vm.locked" ng-disabled="vm.lastKnownOrder === vm.order.order"">
                                             <span ng-show="!vm.processingOrder">Save</span>
                                             <span ng-show="vm.processingOrder">...</span>
                                         </button>
