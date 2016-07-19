@@ -20,7 +20,8 @@
     "angular-resource": "^1.5.7",
     "mobile-detect": "hgoebl/mobile-detect.js#^1.3.2",
     "ng-device-detector": "^3.0.1",
-    "angular-md5": "^0.1.10"
+    "angular-md5": "^0.1.10",
+    "ng-tags-input": "3.1.1"
   },
   "overrides": {
     "bootstrap": {
@@ -45,6 +46,13 @@
         "fonts/fontawesome-webfont.woff2",
         "fonts/FontAwesome.otf"
       ]
+    },
+    "ng-tags-input": {
+        "main": [
+          "ng-tags-input.js",
+          "ng-tags-input.css",
+          "ng-tags-input.bootstrap.min.css"
+        ]
     },
     "angular-input-stars-directive": {
       "main": [

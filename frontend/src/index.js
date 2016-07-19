@@ -8,7 +8,8 @@ var app = angular.module('funch', [
     'angular-input-stars',
     'ngResource',
     'ng.deviceDetector',
-    'angular-md5'
+    'angular-md5',
+    'ngTagsInput'
 ]);
 
 app.config(function ($httpProvider) {
@@ -47,4 +48,6 @@ app.run(function ($rootScope, $window) {
         hwaccel: false,
         position: 'absolute'
     };
+
+    $rootScope.isMobile = true;
 });

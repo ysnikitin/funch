@@ -1,5 +1,10 @@
-angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, User, $q, toastr, $state, BrowserDetectSvc, md5) {
+angular.module('funch').controller('CreateCtrl', function ($rootScope, Restaurant, Lunch, User, $q, toastr, $state, BrowserDetectSvc, $window, md5) {
     var vm = this;
+
+    // scrolls to top of the page
+    var scrollTop = function () {
+        $window.scrollTo(0, 0);
+    };
 
     // validate password
     var validatePw = function (against) {
@@ -19,15 +24,14 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
 
     // validate onduty
     var validateStaff = function () {
-        var cur = vm.users.filter(function (u) {
-            return u.iscurrent;
-        });
+        return vm.duty.me && vm.duty.others && vm.duty.me.length === 1 && vm.duty.others.length > 0;
+    };
 
-        var onduty = vm.users.filter(function (u) {
-            return u.onduty;
+    vm.queryUserList = function (query) {
+        var u = vm.users.filter(function (us) {
+            return ~us.name.toUpperCase().indexOf(query.toUpperCase());
         });
-
-        return cur.length > 0 && onduty.length > 0;
+        return $q.resolve(u);
     };
 
     // progress to next stop
@@ -52,6 +56,9 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
 
         if (valid) {
             vm.step++;
+            if ($rootScope.isMobile) {
+                scrollTop();
+            }
         } else {
             toastr.error(error);
         }
@@ -60,6 +67,9 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
     // back to previous step
     vm.prev = function () {
         vm.step--;
+        if ($rootScope.isMobile) {
+            scrollTop();
+        }
     };
 
     // date popups
@@ -84,19 +94,6 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
         vm.restaurant = new Restaurant();
     };
 
-    // toggle the currently selected user
-    vm.toggleIsCurrent = function (user) {
-        vm.users.forEach(function (u) {
-            return u.iscurrent = false;
-        });
-
-        user.iscurrent = !user.iscurrent;
-
-        if (user.iscurrent) {
-            user.onduty = true;
-        }
-    };
-
     // create the lunch session
     vm.create = function () {
         if (vm.processing) {
@@ -110,10 +107,16 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
         vm.lunch.stoptime = moment(vm.due.date).hour(+timeParts[0]).minute(+timeParts[1]);
 
         // determine who is on duty
-        vm.lunch.onduty = vm.users.filter(function (u) {
-            return u.onduty;
-        }).map(function (u) {
-            return u.id;
+        vm.lunch.onduty = [];
+
+        vm.duty.me.forEach(function (u) {
+            vm.lunch.onduty.push(u.id);
+        });
+
+        vm.duty.others.filter(function (u) {
+            return u.id !== vm.duty.me[0].id;
+        }).forEach(function (u) {
+            vm.lunch.onduty.push(u.id);
         });
 
         // save the restaurant, make the lunch session
@@ -121,11 +124,7 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
             vm.lunch.restaurantId = vm.restaurant.id;
             return vm.lunch.$save();
         }).then(function (lunch) {
-            var currentUser = vm.users.filter(function (u) {
-                return u.iscurrent;
-            })[0];
-
-            return vm.lunch.getUserHash(currentUser.id);
+            return vm.lunch.getUserHash(vm.duty.me[0].id);
         }).then(function (hash) {
             toastr.success('Lunch session created!');
             vm.processing = false;
@@ -141,7 +140,7 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
 
     vm.ready = false;
     vm.processing = false;
-    vm.step = 0;
+    vm.step = 1;
 
     // slider options
     vm.limit = {
@@ -153,6 +152,11 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
                 return '$' + v;
             }
         }
+    };
+
+    vm.duty = {
+        me: undefined,
+        others: undefined
     };
 
     vm.restaurants = [];
@@ -168,14 +172,7 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
         User.query().$promise
     ]).then(function (res) {
         vm.restaurants = res[0];
-
-        vm.users = res[1].map(function (u) {
-            u.onduty = false;
-            return u;
-        }).sort(function (a, b) {
-            return a.initials.charCodeAt(0) - b.initials.charCodeAt(0);
-        });
-
+        vm.users = res[1];
         vm.ready = true;
     });
 });

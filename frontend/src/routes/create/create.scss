@@ -17,31 +17,21 @@
         textarea {
             height: 100px;
         }
+    }
 
-        .section {
-            margin: 0 auto;
-        }
+    .section {
+        margin: 0 auto;
 
-        .reset-restaurant {
-            color: #fff;
-            cursor: pointer;
-
-            &:hover {
-                color: #fff;
-                text-decoration: none;
-            }
-        }
-
-        .sectionlabel {
+        .section-label {
             font-size: 25px;
             padding-bottom: 10px;
         }
 
-        .sectioncontent {
+        .section-content {
             padding: 0;
         }
 
-        .sectionnext {
+        .section-actions {
             padding-top: 50px;
             text-align: center;
 
@@ -63,67 +53,69 @@
                 border-radius: 30px;
             }
         }
+    }
 
-        .picks {
-            padding: 15px 0 20px 0;
-            text-align: center;
+    .invites {
+        max-height: 300px;
+        overflow: auto;
 
-            .pick {
-                display: inline-block;
-                padding: 20px;
-                border: 1px solid #999;
-                margin-right: 15px;
-                margin-bottom: 20px;
-                text-align: center;
-                color: #999;
-                min-width: 150px;
-                transition: 200ms background;
-                cursor: pointer;
-
-                &:hover {
-                    background-color: white;
-                    color: #222;
-                }
-
-                &.active {
-                    background-color: $brand-color !important;
-                    border: 1px solid $brand-color !important;
-                    color: #fff !important;
-
-                    &:hover {
-                        background-color: $brand-color;
-                        color: #fff;
-                    }
-                }
-            }
+        .fa-circle {
+            color: #333;
         }
 
-        .rzslider .rz-bubble,
-        .rzslider .rz-bubble.rz-limit {
-            color: white;
-            padding: 8px 3px;
+        .invites-person {
+            cursor: pointer;
         }
+    }
 
-        .invites {
-            max-height: 300px;
-            overflow: auto;
+    .reset-restaurant {
+        a {
+            color: #fff;
+            cursor: pointer;
 
-            .invites-person {
-                cursor: pointer;
-
-                .name {
-                    color: white;
-                }
+            &:hover {
+                color: #fff;
+                text-decoration: none;
             }
         }
+    }
 
-        .invites-guests {
-            padding-left: 30px;
+    .quickpicks {
+        padding: 15px 0 20px 0;
+        text-align: center;
+    }
 
-            .invites-guests-more {
-                text-align: right;
-                color: white;
-            }
+    .rzslider .rz-bubble,
+    .rzslider .rz-bubble.rz-limit {
+        color: white;
+        padding: 8px 3px;
+    }
+
+    tags-input.ng-invalid {
+        border: none;
+        box-shadow: none;
+    }
+
+    .tags {
+        border-radius: 0 !important;
+        background: #333 !important;
+        color: #fff !important;
+        border-color: #4e4e4e !important;
+
+        input {
+            margin-bottom: 0;
+            background: transparent !important;
+            color: #fff !important;
+            width: auto !important;
+        }
+
+        .tag-item {
+            background: #82cc31 !important;
+            color: #fff !important;
+            height: 42px !important;
+            padding: 0 10px !important;
+            border: 0 !important;
+            line-height: 42px !important;
         }
     }
 

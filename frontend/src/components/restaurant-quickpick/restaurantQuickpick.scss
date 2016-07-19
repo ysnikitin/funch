@@ -1,0 +1,28 @@
+.restaurant-quickpick {
+    display: inline-block;
+    padding: 20px;
+    border: 1px solid #999;
+    margin-right: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #999;
+    min-width: 150px;
+    transition: 200ms background;
+    cursor: pointer;
+
+    &:hover {
+        background-color: white;
+        color: #222;
+    }
+
+    &.active {
+        background-color: $brand-color !important;
+        border: 1px solid $brand-color !important;
+        color: #fff !important;
+
+        &:hover {
+            background-color: $brand-color;
+            color: #fff;
+        }
+    }
+}
