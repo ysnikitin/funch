@@ -25,6 +25,10 @@
                             Now taking orders for <strong>{{vm.lunchDate}}</strong>... <em>check your e-mail!</em>
                         </div>
                     </div>
+
+                    <div class="letmein" ng-show="vm.lunch.id"  ng-click="vm.letmein()">
+                        (I didn't get an e-mail)
+                    </div>
                 </div>
             </div>
         </div>
