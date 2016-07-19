@@ -3,6 +3,10 @@
 </div>
 
 <div class="rt-lunch" ng-show="vm.ready">
+    <div class="lunch-orderstatus" ng-if="vm.order.id">
+        <i class="fa fa-check"></i> You have a submitted order for this lunch.
+    </div>
+
     <div class="lunch-title">
         <div class="container">
             <div class="row">

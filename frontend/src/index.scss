@@ -1,7 +1,10 @@
 @import url(https://fonts.googleapis.com/css?family=Muli:400,300,300italic,400italic);
 
-$brand-color: #82cc31;
-$brand-color-dark: darken(#82cc31, 5%);
+$brand-color: #68923b;
+$brand-color-dark: darken(#68923b, 5%);
+
+$danger-color: #923b3b;
+$danger-color-dark: darken(#923b3b, 5%);
 
 body {
     background-color: #222;

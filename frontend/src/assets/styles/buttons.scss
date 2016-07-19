@@ -23,3 +23,15 @@
         color: #fff;
     }
 }
+
+.btn-danger {
+    background-color: $danger-color;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $danger-color-dark;
+    }
+}

@@ -78,6 +78,16 @@
         </div>
     </div>
 
+    <div class="lunch-orderstatus" ng-if="vm.order.id">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <i class="fa fa-check"></i> You have a submitted order for this lunch.
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="lunch">
             <div class="row">
@@ -122,13 +132,19 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-xs-12 text-right">
+                                    <div class="col-xs-4 text-left">
+                                        <div class="myorder-cancel" ng-click="vm.cancelOrder()" ng-if="!vm.locked">
+                                            <span ng-show="!vm.processingOrder">Cancel Order</span>
+                                            <span ng-show="vm.processingOrder">...</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-8 text-right">
                                         <div class="myorder-save" ng-click="vm.saveOrder()" ng-if="!vm.locked">
                                             <span ng-show="!vm.processingOrder">Save</span>
                                             <span ng-show="vm.processingOrder">...</span>
                                         </div>
                                         <div class="myorder-expired" ng-if="vm.locked">
-                                            This lunch is locked.  Time has expired!
+                                            This lunch is locked.
                                         </div>
                                     </div>
                                 </div>
