@@ -19,7 +19,8 @@
     "angular-input-stars-directive": "angular-input-stars#^1.5.5",
     "angular-resource": "^1.5.7",
     "mobile-detect": "hgoebl/mobile-detect.js#^1.3.2",
-    "ng-device-detector": "^3.0.1"
+    "ng-device-detector": "^3.0.1",
+    "angular-md5": "^0.1.10"
   },
   "overrides": {
     "bootstrap": {

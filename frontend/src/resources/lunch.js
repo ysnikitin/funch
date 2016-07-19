@@ -1,5 +1,5 @@
-angular.module('funch').factory('Lunch', function ($resource) {
-    return $resource('/lunch/:id', {
+angular.module('funch').factory('Lunch', function ($resource, $http) {
+    var l = $resource('/lunch/:id', {
         id: '@id'
     }, {
         active: {
@@ -20,4 +20,12 @@ angular.module('funch').factory('Lunch', function ($resource) {
             }
         }
     });
+
+    l.prototype.getUserHash = function (userId) {
+        return $http.get('/lunch/' + this.id + '/user/' + userId + '/hash').then(function (d) {
+            return d.data.hash;
+        })
+    };
+
+    return l;
 });

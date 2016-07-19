@@ -4,6 +4,9 @@
     </div>
     <div class="rt-create" ng-show="vm.ready">
         <ul class="progress-indicator">
+            <li ng-class="{'completed': vm.step > 0, 'active': vm.step === 0}">
+                <span class="bubble"></span> 0. PASSWORD
+            </li>
             <li ng-class="{'completed': vm.step > 1, 'active': vm.step === 1}">
                 <span class="bubble"></span> 1. RESTAURANT
             </li>
@@ -14,6 +17,21 @@
                 <span class="bubble"></span> 3. ORDER DETAILS
             </li>
         </ul>
+
+        <div class="form section" ng-show="vm.step === 0">
+            <label class="sectionlabel" for="rest">What's the password?</label>
+            <div class="form-group">
+                <div class="sectioncontent">
+                    <label>Before you start a lunch session, you need to prove that you work here.</label>
+                    <input type="password" class="form-control" ng-model="vm.password" ng-enter="vm.next()" />
+                </div>
+            </div>
+            <div class="sectionnext">
+                <div class="next" ng-click="vm.next()">
+                    Next
+                </div>
+            </div>
+        </div>
 
         <div class="form section" ng-show="vm.step === 1">
             <label class="sectionlabel" for="rest">What's for lunch?</label>

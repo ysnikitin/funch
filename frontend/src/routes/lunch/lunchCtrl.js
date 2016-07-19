@@ -1,10 +1,5 @@
-angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interval, $stateParams, $state, $q, Favorites, GuestInvite, YelpSvc, toastr, Suggestions, Order, Lunch, User, Restaurant) {
+angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interval, $stateParams, $state, $q, Favorites, GuestInvite, YelpSvc, toastr, Suggestions, Order, Lunch, User, Restaurant, HashSvc) {
     var vm = this;
-
-    var code = angular.fromJson(atob($stateParams.code));
-    var lunchId = code.lunchId;
-    var userId = code.userId;
-    vm.userId = userId;
 
     vm.ready = false;
     vm.locked = false;
@@ -37,10 +32,6 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             s: secs
         };
     };
-
-    vm.order = new Order({
-        lunchId: lunchId
-    });
 
     // open print dialog
     vm.print = function () {
@@ -105,7 +96,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         }
 
         // make sure the order has the userid
-        vm.order.userId = userId;
+        vm.order.userId = vm.user.id;
 
         vm.order.$saveOrUpdate().then(function () {
             toastr.success('Order saved!');
@@ -137,9 +128,9 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             lunchId: vm.lunch.id
         }).$promise.then(function (orders) {
             vm.orders = _.cloneDeep(orders);
-            for (var i = 0; i < vm.order.length; i++) {
-                if (+order.userId === +userId) {
-                    vm.order = vm.order[i];
+            for (var i = 0; i < vm.orders.length; i++) {
+                if (+vm.orders[i].userId === +vm.user.id) {
+                    vm.order = _.cloneDeep(vm.orders[i]);
                 }
             }
         });
@@ -163,37 +154,50 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         ]).then(function (votes) {
             vm.votes = votes[0];
             vm.userVotes = votes[1];
-            console.log(vm.userVotes);
         });
     };
 
     // boot everything up
-    Lunch.get({ id: lunchId }).$promise.then(function (lunch) {
+    HashSvc.decrypt($stateParams.code).then(function (hash) {
+        vm.hash = hash;
+        return Lunch.get({ id: vm.hash.lunch.id }).$promise;
+    }).then(function (lunch) {
         vm.lunch = lunch;
+
+        vm.order = new Order({
+            lunchId: vm.lunch.id
+        });
 
         return $q.all([
             User.query().$promise,
-            getOrders(),
             Restaurant.get({ id: lunch.restaurantId }).$promise
-        ]).then(function (res) {
-            var users = res[0];
-            vm.restaurant = res[2];
+        ]);
+    }).then(function (res) {
+        var users = res[0];
+        vm.restaurant = res[1];
 
-            // collect users
-            vm.onduty = [];
-            users.forEach(function (u) {
-                u.id = +u.id;
-                vm.userMap[u.id] = u;
-                if (u.id === userId) vm.user = u;
-                if (~vm.lunch.onduty.indexOf(u.id.toString())) vm.onduty.push(u);
-            });
-        }).then(function () {
-            return getYelp(vm.restaurant).then(function (y) {
-                vm.yelp = y;
-            });
-        }).then(function () {
-            return getVotes();
+        // collect users
+        vm.onduty = [];
+        users.forEach(function (u) {
+            u.id = +u.id;
+            vm.userMap[u.id] = u;
+
+            if (u.id === vm.hash.user.id) {
+                vm.user = u;
+            }
+
+            if (~vm.lunch.onduty.indexOf(u.id.toString())) {
+                vm.onduty.push(u);
+            }
         });
+    }).then(function () {
+        return getOrders();
+    }).then(function () {
+        return getYelp(vm.restaurant).then(function (y) {
+            vm.yelp = y;
+        });
+    }).then(function () {
+        return getVotes();
     }).then(function () {
         vm.countdownInterval = undefined;
 

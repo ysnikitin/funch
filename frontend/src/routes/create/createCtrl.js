@@ -1,5 +1,10 @@
-angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, User, $q, toastr, $state, BrowserDetectSvc) {
+angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, User, $q, toastr, $state, BrowserDetectSvc, md5) {
     var vm = this;
+
+    // validate password
+    var validatePw = function (against) {
+        return md5.createHash(against || '') === 'd48e865a6025ec49f483a0e4aea96e29';
+    };
 
     // validate restaurant information
     var validateRestaurant = function () {
@@ -28,19 +33,27 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
     // progress to next stop
     vm.next = function () {
         var valid;
+        var error = '';
+
+        if (vm.step === 0) {
+            valid = validatePw(vm.password);
+            error = 'That password doesn\'t look right...';
+        }
 
         if (vm.step === 1) {
             valid = validateRestaurant();
+            error = 'Looks like you forgot something on this step...';
         }
 
         if (vm.step === 2) {
             valid = validateStaff();
+            error = 'Looks like you forgot something on this step...';
         }
 
         if (valid) {
             vm.step++;
         } else {
-            toastr.error('Looks like you forgot something on this step...')
+            toastr.error(error);
         }
     };
 
@@ -112,16 +125,13 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
                 return u.iscurrent;
             })[0];
 
-            var code = btoa(JSON.stringify({
-                lunchId: lunch.id,
-                userId: currentUser.id
-            }));
-
+            return vm.lunch.getUserHash(currentUser.id);
+        }).then(function (hash) {
             toastr.success('Lunch session created!');
             vm.processing = false;
 
             $state.go('main.lunch', {
-                code: code
+                code: hash
             });
         }).catch(function () {
             vm.processing = false;
@@ -131,7 +141,7 @@ angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, Us
 
     vm.ready = false;
     vm.processing = false;
-    vm.step = 1;
+    vm.step = 0;
 
     // slider options
     vm.limit = {

@@ -7,7 +7,8 @@ var app = angular.module('funch', [
     'angularSpinner',
     'angular-input-stars',
     'ngResource',
-    'ng.deviceDetector'
+    'ng.deviceDetector',
+    'angular-md5'
 ]);
 
 app.config(function ($httpProvider) {
@@ -46,6 +47,4 @@ app.run(function ($rootScope, $window) {
         hwaccel: false,
         position: 'absolute'
     };
-
-    $rootScope.isMobile = true;
 });

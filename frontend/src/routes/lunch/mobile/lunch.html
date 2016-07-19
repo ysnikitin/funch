@@ -101,10 +101,10 @@
                     <div class="order">
                         <form>
                             <div class="form-group">
-                                <label>MY ORDER <span class="text-muted">(<strong>{{vm.userMap[vm.userId].initials}}</strong> / ${{vm.lunch.limit}} limit)</span></label>
+                                <label>MY ORDER <span class="text-muted">(<strong>{{vm.userMap[vm.user.id].initials}}</strong> / ${{vm.lunch.limit}} limit)</span></label>
                                 <div class="row">
                                     <div class="col-xs-12">
-                                        <input type="text" class="form-control" ng-model="vm.order.order" placeholder="Order" ng-disabled="vm.locked" />
+                                        <input type="text" class="form-control" ng-model="vm.order.order" placeholder="Order" ng-enter="vm.saveOrder()" ng-disabled="vm.locked" />
                                     </div>
                                 </div>
                                 <div class="row">
