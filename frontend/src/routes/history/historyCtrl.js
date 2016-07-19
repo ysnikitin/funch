@@ -16,7 +16,7 @@ angular.module('funch').controller('HistoryCtrl', function ($q, Lunch, Restauran
         })
     }).then(function (lunches) {
         lunches = lunches.map(function (lunch) {
-            lunch.date = moment(lunch.stoptime).format('MMMM Do');
+            lunch.date = moment(lunch.stoptime).format('M/D');
             return lunch;
         });
         return lunches;

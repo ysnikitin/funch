@@ -5,6 +5,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
     vm.locked = false;
     vm.userMap = {};
     vm.processing = false;
+    vm.isOnDuty = false;
 
     // refresh countdown clock
     var countdown = function () {
@@ -188,6 +189,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
 
             if (~vm.lunch.onduty.indexOf(u.id.toString())) {
                 vm.onduty.push(u);
+                vm.isOnDuty = true;
             }
         });
     }).then(function () {

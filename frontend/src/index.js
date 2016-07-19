@@ -49,5 +49,5 @@ app.run(function ($rootScope, $window) {
         position: 'absolute'
     };
 
-    $rootScope.isMobile = true;
+    $rootScope.isMobile = false;
 });
