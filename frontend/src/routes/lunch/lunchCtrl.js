@@ -109,6 +109,23 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         });
     };
 
+    // cancels your order
+    vm.cancelOrder = function () {
+        if (confirm('Are you sure you want to cancel your order?')) {
+            vm.order.$delete().then(function () {
+                toastr.success('Order cancelled!');
+
+                vm.order = new Order({
+                    lunchId: vm.lunch.id
+                });
+
+                getOrders();
+            }).catch(function () {
+                toastr.error('Order could not be cancelled!');
+            });
+        }
+    };
+
     // upvotes the restaurant
     vm.upvote = function () {
         return vm.restaurant.upvote(vm.user.id).then(function () {

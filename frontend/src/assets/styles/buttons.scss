@@ -24,14 +24,12 @@
     }
 }
 
-.btn-danger {
-    background-color: $danger-color;
-    color: white;
-    text-transform: uppercase;
-    text-align: center;
-    cursor: pointer;
+.btn-success {
+    background: #68923b !important;
+    border: 0 !important;
+}
 
-    &:hover {
-        background-color: $danger-color-dark;
-    }
+.btn-danger {
+    background: $danger-color;
+    border: 0 !important;
 }

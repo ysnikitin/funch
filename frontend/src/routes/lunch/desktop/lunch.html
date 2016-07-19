@@ -82,7 +82,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12">
-                    <i class="fa fa-check"></i> You have a submitted order for this lunch.
+                    <i class="fa fa-check"></i> You're all set for this lunch, you have an order submitted as {{vm.userMap[vm.order.userId].initials}}.
                 </div>
             </div>
         </div>
@@ -131,18 +131,18 @@
                                         <input type="text" class="form-control" ng-model="vm.order.order" placeholder="Order" ng-enter="vm.saveOrder()" ng-disabled="vm.locked" />
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row order-actions">
                                     <div class="col-xs-4 text-left">
-                                        <div class="myorder-cancel" ng-click="vm.cancelOrder()" ng-if="!vm.locked">
+                                        <button class="btn btn-danger" ng-click="vm.cancelOrder()" ng-if="!vm.locked && vm.order.id">
                                             <span ng-show="!vm.processingOrder">Cancel Order</span>
                                             <span ng-show="vm.processingOrder">...</span>
-                                        </div>
+                                        </button>
                                     </div>
                                     <div class="col-xs-8 text-right">
-                                        <div class="myorder-save" ng-click="vm.saveOrder()" ng-if="!vm.locked">
+                                        <button class="btn btn-success" ng-click="vm.saveOrder()" ng-if="!vm.locked">
                                             <span ng-show="!vm.processingOrder">Save</span>
                                             <span ng-show="vm.processingOrder">...</span>
-                                        </div>
+                                        </button>
                                         <div class="myorder-expired" ng-if="vm.locked">
                                             This lunch is locked.
                                         </div>
