@@ -252,22 +252,19 @@ module.exports = {
                     return self.users(next).then(function(users) {
                         for (var i in users) {
                             var user = users[i];
-                            var code = encodeURIComponent(btoa(JSON.stringify({
-                                "lunchId": newLunchId,
-                                "userId": user['id']
-                            })));
+                            var hash = secure.getHashForUserLunch(user['id'], newLunchId);
                             var mailOptions = {
                                 from: "Funch Bunch", // sender address
                                 to: user['email'], // list of receivers
                                 subject: 'Funch Is Here', // Subject line
-                                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
+                                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + hash // plaintext body
                             };
                             if(user['email'] === 'jeremy.nikitin@retroficiency.com' || user['email'] === 'tangiblelime@gmail.com') {
                                 transporter.sendMail(mailOptions, function (error, info) {
                                     if (error) {
                                         next(error);
                                     } else {
-                                        console.log('Message sent: ' + info.response);
+                                        console.log('Message sent to: ' + user['email'] + ', response: ' + info.response);
                                     }
                                 })
                             }
@@ -285,15 +282,12 @@ module.exports = {
 
         var self = this;
         return self.usersAdd(name, email, false, initials, next).then(function(user) {
-            var code = encodeURIComponent(btoa(JSON.stringify({
-                "lunchId": lid,
-                "userId": user.id
-            })));
+            var hash = secure.getHashForUserLunch(user.id, lid);
             var mailOptions = {
                 from: "Funch Bunch", // sender address
                 to: email, // list of receivers
                 subject: 'Funch Is Here', // Subject line
-                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + code // plaintext body
+                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + hash // plaintext body
             };
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
@@ -522,8 +516,16 @@ module.exports = {
 
     getUserLunchDetailsForHash : function(hash, next) {
 
+        var self = this;
         return query("SELECT userId, lunchId FROM funch.hashes WHERE hash =?", hash).then(function(results) {
-            return filterOneRow(results);
+            var row = filterOneRow(results);
+            var userId = row['userId'];
+            var lunchId = row['lunchId'];
+            return self.user(userId, next).then(function(user) {
+                return self.lunch(lunchId, next).then(function(lunch) {
+                    return {"user" : user, "lunch": lunch};
+                });
+            });
         }).catch(function (err) {
             next(err);
         });
@@ -535,6 +537,16 @@ module.exports = {
         var hash = secure.getHashForUserLunch(userId, lunchId);
         return query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
             return {"hash":hash};
+        }).catch(function (err) {
+            next(err);
+        });
+
+    },
+
+    restaurantVote : function(rid, next) {
+
+        return query("SELECT COALESCE(SUM(upvote),0) AS upvotes, COALESCE(SUM(downvote),0) as downvotes FROM funch.votes WHERE restaurantId =? LIMIT 1;", [rid]).then(function (result) {
+            return filterOneRow(result);
         }).catch(function (err) {
             next(err);
         });
