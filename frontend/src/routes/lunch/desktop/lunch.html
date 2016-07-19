@@ -1,0 +1,161 @@
+<div ng-show="!vm.ready">
+    <span us-spinner="$root.spinner"></span>
+</div>
+
+<div class="rt-lunch" ng-show="vm.ready">
+    <div class="lunch-title">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="pagetitle">May I Take Your Order?</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="duty">This lunch is brought to you by: <strong>{{vm.onduty | commalist:'initials'}}</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lunch-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="countdown" ng-class="{'warning': vm.timeWarning}">
+                        <span class="set">
+                            <span class="primary">{{vm.countdown.h}}</span><span class="secondary">h</span>
+                        </span>
+                        <span class="set">
+                            <span class="primary">{{vm.countdown.m}}</span><span class="secondary">m</span>
+                        </span>
+                        <span class="set">
+                            <span class="primary">{{vm.countdown.s}}</span><span class="secondary">s</span>
+                        </span>
+                    </div>
+                    <div class="countdown-left">
+                        left to order
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <div class="restaurant">
+                        <div class="row">
+                            <div class="col-xs-9">
+                                <div class="media">
+                                    <div class="media-left media-middle">
+                                        <img src="{{vm.yelp.details.image_url}}" style="height: 75px;" />
+                                    </div>
+                                    <div class="media-body media-middle">
+                                        <div class="name">
+                                            <span class="title">{{vm.restaurant.name}}</span>
+                                            <span class="rating">
+                                                <span class="stars">
+                                                    <span ng-style="{ 'width': vm.yelp.stars }"></span>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="details">
+                                            <a target="_blank" href="http://maps.google.com/?q={{vm.restaurant.address}}"><i class="fa fa-map-marker"></i></a> {{vm.restaurant.address}} &bull; {{vm.restaurant.phone}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-3 text-right">
+                                <div class="votes">
+                                    <div class="vote" ng-class="{'voted': vm.userVotes.upvote}" uib-tooltip="Yum!" tooltip-append-to-body="true" ng-click="vm.upvote()">
+                                        <i class="icon fa fa-thumbs-up"></i>
+                                        <span class="num">{{vm.votes.upvotes}}</span>
+                                    </div>
+                                    <div class="vote" ng-class="{'voted': vm.userVotes.downvote}" uib-tooltip="Gross" tooltip-append-to-body="true" ng-click="vm.downvote()">
+                                        <i class="icon fa fa-thumbs-down"></i>
+                                        <span class="num">{{vm.votes.downvotes}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="lunch">
+            <div class="row">
+                <div class="col-xs-3">
+                    <div class="toolbar">
+                        <a class="toolbar-item" target="_blank" href="{{vm.restaurant.menu}}">
+                            <span>Menu</span><i class="fa fa-fw fa-file" style="color: #eaea7c" aria-hidden="true"></i>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.openFavorites()">
+                            <span>Favs</span><i class="fa fa-fw fa-heart" aria-hidden="true" style="color: #d86f6f"></i>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.openSuggestions()">
+                            <span>Suggestions</span><i class="fa fa-fw fa-commenting" aria-hidden="true" style="color: #ab6fd8"></i>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.print()">
+                            <span>Print</span><i class="fa fa-fw fa-print" aria-hidden="true" style="color: #91e891"></i>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.moreTime()">
+                            <span>MORE TIME</span><i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.openInviteGuests()">
+                            <span>INVITE GUESTS</span><i class="fa fa-fw fa-user" aria-hidden="true"></i>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.cancelLunch()">
+                            <span>CANCEL LUNCH</span><i class="fa fa-fw fa-times" aria-hidden="true" style="color: #d86f6f"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-1"></div>
+                <div class="col-xs-8">
+                    <div class="notes" ng-if="vm.lunch.notes">
+                        <label>NOTES</label>
+                        <div>{{vm.lunch.notes}}</div>
+                    </div>
+                    <div class="order">
+                        <form>
+                            <div class="form-group">
+                                <label>MY ORDER <span class="text-muted">(ordering as <strong>{{vm.userMap[vm.userId].initials}}</strong> / ${{vm.lunch.limit}} limit)</span></label>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <input type="text" class="form-control" ng-model="vm.order.order" placeholder="Order" ng-disabled="vm.locked" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-right">
+                                        <div class="myorder-save" ng-click="vm.saveOrder()" ng-if="!vm.locked">
+                                            <span ng-show="!vm.processingOrder">Save</span>
+                                            <span ng-show="vm.processingOrder">...</span>
+                                        </div>
+                                        <div class="myorder-expired" ng-if="vm.locked">
+                                            This lunch is locked.  Time has expired!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="allorders">
+                        <label class="noprint">ALL ORDERS <span class="text-muted">({{vm.orders.length}} order(s) placed)</span></label>
+                        <table class="table table-striped">
+                            <tr ng-repeat="order in vm.orders">
+                                <td class="col-xs-2 text-center">
+                                    <strong>{{vm.userMap[order.userId].initials}}</strong>
+                                </td>
+                                <td class="col-xs-10">
+                                    <span ng-show="order.order">
+                                        {{order.order}}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr ng-if="vm.orders.length === 0">
+                                <td>Nobody has placed any orders!</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

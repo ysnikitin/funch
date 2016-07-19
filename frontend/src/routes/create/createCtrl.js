@@ -1,4 +1,4 @@
-angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, User, $q, toastr, $state) {
+angular.module('funch').controller('CreateCtrl', function (Restaurant, Lunch, User, $q, toastr, $state, BrowserDetectSvc) {
     var vm = this;
 
     // validate restaurant information

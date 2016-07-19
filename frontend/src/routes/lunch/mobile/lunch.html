@@ -1,0 +1,147 @@
+<div ng-show="!vm.ready">
+    <span us-spinner="$root.spinner"></span>
+</div>
+
+<div class="rt-lunch" ng-show="vm.ready">
+    <div class="lunch-title">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="pagetitle">May I Take Your Order?</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="duty">On duty:&nbsp;&nbsp;<strong>{{vm.onduty | commalist:'initials'}}</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lunch-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="countdown" ng-class="{'warning': vm.timeWarning}">
+                        <span class="set">
+                            <span class="primary">{{vm.countdown.h}}</span><span class="secondary">h</span>
+                        </span>
+                        <span class="set">
+                            <span class="primary">{{vm.countdown.m}}</span><span class="secondary">m</span>
+                        </span>
+                        <span class="set">
+                            <span class="primary">{{vm.countdown.s}}</span><span class="secondary">s</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-8">
+                    <div class="restaurant">
+                        <div class="name">
+                            <span class="title">{{vm.restaurant.name}}</span>
+                        </div>
+                        <div class="rating">
+                            <span class="stars">
+                                <span ng-style="{ 'width': vm.yelp.stars }"></span>
+                            </span>
+                        </div>
+
+                        <div class="row votes">
+                            <div class="col-xs-6 text-center">
+                                <div class="vote" ng-class="{'voted': vm.userVotes.upvote}" uib-tooltip="Yum!" tooltip-append-to-body="true" ng-click="vm.upvote()">
+                                    <i class="icon fa fa-thumbs-up"></i>
+                                    <span class="num">{{vm.votes.upvotes}}</span>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 text-center">
+                                <div class="vote" ng-class="{'voted': vm.userVotes.downvote}" uib-tooltip="Gross" tooltip-append-to-body="true" ng-click="vm.downvote()">
+                                    <i class="icon fa fa-thumbs-down"></i>
+                                    <span class="num">{{vm.votes.downvotes}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="lunch">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="toolbar">
+                        <a class="toolbar-item" target="_blank" href="{{vm.restaurant.menu}}">
+                            <i class="fa fa-fw fa-file" style="color: #eaea7c"></i><span>Menu</span>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.openFavorites()">
+                            <i class="fa fa-fw fa-heart" style="color: #d86f6f"></i><span>Favs</span>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.openSuggestions()">
+                            <i class="fa fa-fw fa-commenting" style="color: #ab6fd8"></i><span>Suggestions</span>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.moreTime()">
+                            <i class="fa fa-fw fa-clock-o"></i><span>MORE TIME</span>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.openInviteGuests()">
+                            <i class="fa fa-fw fa-user"></i><span>INVITE GUESTS</span>
+                        </a>
+                        <a class="toolbar-item" ng-click="vm.cancelLunch()">
+                            <i class="fa fa-fw fa-times" style="color: #d86f6f"></i><span>CANCEL LUNCH</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="notes" ng-if="vm.lunch.notes">
+                        <label>NOTES</label>
+                        <div>{{vm.lunch.notes}}</div>
+                    </div>
+                    <div class="order">
+                        <form>
+                            <div class="form-group">
+                                <label>MY ORDER <span class="text-muted">(<strong>{{vm.userMap[vm.userId].initials}}</strong> / ${{vm.lunch.limit}} limit)</span></label>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <input type="text" class="form-control" ng-model="vm.order.order" placeholder="Order" ng-disabled="vm.locked" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 text-right">
+                                        <div class="myorder-save" ng-click="vm.saveOrder()" ng-if="!vm.locked">
+                                            <span ng-show="!vm.processingOrder">Save</span>
+                                            <span ng-show="vm.processingOrder">...</span>
+                                        </div>
+                                        <div class="myorder-expired" ng-if="vm.locked">
+                                            This lunch is locked.  Time has expired!
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="allorders">
+                        <label class="noprint">ALL ORDERS <span class="text-muted">({{vm.orders.length}} order(s) placed)</span></label>
+                        <table class="table table-striped">
+                            <tr ng-repeat="order in vm.orders">
+                                <td class="col-xs-2 text-center">
+                                    <strong>{{vm.userMap[order.userId].initials}}</strong>
+                                </td>
+                                <td class="col-xs-10">
+                                    <span ng-show="order.order">
+                                        {{order.order}}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr ng-if="vm.orders.length === 0">
+                                <td>Nobody has placed any orders!</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

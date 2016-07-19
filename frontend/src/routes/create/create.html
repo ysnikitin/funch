@@ -27,27 +27,27 @@
                     <div class="clear"></div>
 
                     <div class="row">
-                        <div class="col-xs-6">
+                        <div class="col-md-6">
                             <label ng-show="vm.restaurant.id">Sounds delicious!</label>
                             <label ng-show="!vm.restaurant.id">Something else...</label>
                         </div>
-                        <div class="col-xs-6 text-right">
+                        <div class="col-md-6 text-right">
                             <a class="reset-restaurant" ng-click="vm.resetRestaurant()" ng-show="vm.restaurant.id">(I changed my mind, I want to try something new)</a>
                         </div>
                     </div>
                     <input type="hidden" ng-model="vm.restaurant.id">
                     <div class="row">
-                        <div class="col-xs-6">
+                        <div class="col-md-6">
                             <input type="text" class="form-control" ng-model="vm.restaurant.name" placeholder="Restuarant" ng-disabled="vm.restaurant.id">
                             <input type="text" class="form-control" ng-model="vm.restaurant.menu" placeholder="Menu Link">
                         </div>
-                        <div class="col-xs-6">
+                        <div class="col-md-6">
                             <input type="text" class="form-control" ng-model="vm.restaurant.address" placeholder="Address">
                             <input type="text" class="form-control" ng-model="vm.restaurant.phone" placeholder="Phone">
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-xs-12">
+                        <div class="col-md-12">
                             <input type="text" class="form-control" ng-model="vm.restaurant.yelpURL" placeholder="Yelp URL">
                         </div>
                     </div>
@@ -62,7 +62,7 @@
 
         <div class="form section" ng-show="vm.step === 2">
             <div class="row">
-                <div class="col-xs-6">
+                <div class="col-md-6">
                     <label class="sectionlabel" for="rest">Who are you?</label>
 
                     <div class="sectioncontent">
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-6">
+                <div class="col-md-6">
                     <label class="sectionlabel" for="rest">Who's on lunch duty?</label>
 
                     <div class="sectioncontent">

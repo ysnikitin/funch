@@ -27,7 +27,30 @@ angular.module('funch').factory('Restaurant', function ($resource, $http) {
 
     r.prototype.quickpicks = function () {
         return $http.get('/restaurants/' + this.id + '/quickpicks').then(function (data) {
-            console.log(data);
+            return data.data;
+        });
+    };
+
+    r.prototype.votes = function () {
+        return $http.get('/restaurants/' + this.id + '/votes').then(function (data) {
+            return data.data;
+        });
+    };
+
+    r.prototype.userVotes = function (userId) {
+        return $http.get('/restaurants/' + this.id + '/user/' + userId + '/votes').then(function (data) {
+            return data.data;
+        });
+    };
+
+    r.prototype.upvote = function (userId) {
+        return $http.put('/restaurants/' + this.id + '/user/' + userId + '/upvote').then(function (data) {
+            return data.data;
+        });
+    };
+
+    r.prototype.downvote = function (userId) {
+        return $http.put('/restaurants/' + this.id + '/user/' + userId + '/downvote').then(function (data) {
             return data.data;
         });
     };

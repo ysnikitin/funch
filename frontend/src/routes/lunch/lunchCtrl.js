@@ -65,7 +65,6 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
 
     // open the suggestions modal
     vm.openSuggestions = function () {
-        console.log('u', vm.user);
         var m = Suggestions.open(vm.restaurant, vm.user);
         m.result.then(function (result) {
             if (result) {
@@ -108,13 +107,27 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         // make sure the order has the userid
         vm.order.userId = userId;
 
-        vm.order.$update().then(function () {
+        vm.order.$saveOrUpdate().then(function () {
             toastr.success('Order saved!');
             vm.processing = false;
             return getOrders();
         }).catch(function () {
             toastr.error('Order could not be saved!');
             vm.processing = false;
+        });
+    };
+
+    // upvotes the restaurant
+    vm.upvote = function () {
+        return vm.restaurant.upvote(vm.user.id).then(function () {
+            return getVotes();
+        });
+    };
+
+    // downvotes the restaurant
+    vm.downvote = function () {
+        return vm.restaurant.downvote(vm.user.id).then(function () {
+            return getVotes();
         });
     };
 
@@ -142,6 +155,18 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         });
     };
 
+    // fetches the voting records
+    var getVotes = function () {
+        return $q.all([
+            vm.restaurant.votes(),
+            vm.restaurant.userVotes(vm.user.id)
+        ]).then(function (votes) {
+            vm.votes = votes[0];
+            vm.userVotes = votes[1];
+            console.log(vm.userVotes);
+        });
+    };
+
     // boot everything up
     Lunch.get({ id: lunchId }).$promise.then(function (lunch) {
         vm.lunch = lunch;
@@ -152,30 +177,22 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             Restaurant.get({ id: lunch.restaurantId }).$promise
         ]).then(function (res) {
             var users = res[0];
-            var orders = res[1];
-            var rest = res[2];
+            vm.restaurant = res[2];
 
             // collect users
             vm.onduty = [];
             users.forEach(function (u) {
                 u.id = +u.id;
                 vm.userMap[u.id] = u;
-
-                if (u.id === userId) {
-                    vm.user = u;
-                }
-
-                if (~vm.lunch.onduty.indexOf(u.id.toString())) {
-                    vm.onduty.push(u);
-                }
+                if (u.id === userId) vm.user = u;
+                if (~vm.lunch.onduty.indexOf(u.id.toString())) vm.onduty.push(u);
             });
-
-            // collect restaurant and related information
-            vm.restaurant = rest;
-            getYelp(vm.restaurant).then(function (y) {
-                console.log(y);
+        }).then(function () {
+            return getYelp(vm.restaurant).then(function (y) {
                 vm.yelp = y;
             });
+        }).then(function () {
+            return getVotes();
         });
     }).then(function () {
         vm.countdownInterval = undefined;

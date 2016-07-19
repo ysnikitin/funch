@@ -1,0 +1,79 @@
+.mobile {
+    .rt-lunch {
+        .lunch-title {
+            .duty {
+                font-size: 15px;
+                text-align: left;
+            }
+        }
+
+        .lunch-header {
+            .countdown {
+                text-align: center;
+            }
+
+            .restaurant {
+                .name {
+                    text-align: center;
+
+                    .title {
+                        font-size: 30px;
+                    }
+                }
+
+                .rating {
+                    width: 81px;
+                    margin: 0 auto;
+                }
+            }
+
+            .votes {
+                padding-top: 30px;
+            }
+        }
+
+        .lunch {
+            margin-top: 20px;
+
+            .toolbar {
+                color: #fff;
+                text-align: left;
+
+                .toolbar-item {
+                    text-transform: uppercase;
+                    font-size: 14px;
+                    margin-bottom: 20px;
+                    padding: 20px;
+                    cursor: pointer;
+                    display: block;
+                    color: #fff;
+                    transition: 200ms background;
+
+                    span {
+                        vertical-align: middle;
+                        padding-left: 15px;
+                    }
+
+                    i {
+                        font-size: 35px;
+                        vertical-align: middle;
+                    }
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    &:hover {
+                        background-color: #fff;
+                        color: #222;
+                        text-decoration: none;
+
+                        i {
+                            color: #222 !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

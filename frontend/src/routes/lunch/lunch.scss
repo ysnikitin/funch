@@ -17,7 +17,6 @@
             color: #999;
             font-size: 18px;
             padding-top: 10px;
-            text-align: right;
         }
     }
 
@@ -28,7 +27,6 @@
 
         .countdown {
             vertical-align: bottom;
-            text-align: right;
             padding-right: 20px;
 
             &.warning {
@@ -59,48 +57,22 @@
             }
         }
 
-        .countdown-left {
-            padding-right: 20px;
-            font-size: 18px;
-            color: #999;
-            text-align: right;
-            text-transform: uppercase;
-        }
-
-        .restaurant {
-            .name {
-                padding-left: 5px;
-
-                .title {
-                    font-size: 40px;
-                }
-
-                .rating {
-                    padding-left: 10px;
-                }
-            }
-
-            .details {
-                font-size: 18px;
-                color: #999;
-                padding-left: 5px;
-
-                a {
-                    color: #fff;
-
-                    &:hover {
-                        color: #fff;
-                    }
-                }
-            }
-        }
-
         .votes {
-            padding-top: 14px;
-
             .vote {
                 display: inline-block;
                 margin-right: 20px;
+
+                &.voted {
+                    .icon, .num {
+                        color: #ecac15 !important;
+                    }
+
+                    &:hover {
+                        .icon, .num {
+                            color: lighten(#ecac15, 20%) !important;
+                        }
+                    }
+                }
 
                 &:last-child {
                     margin-right: 0;
@@ -129,48 +101,6 @@
     }
 
     .lunch {
-        margin-top: 40px;
-
-        .toolbar {
-            color: #fff;
-            text-align: right;
-
-            .toolbar-item {
-                text-transform: uppercase;
-                font-size: 18px;
-                margin-bottom: 20px;
-                padding: 20px;
-                cursor: pointer;
-                display: block;
-                color: #fff;
-                transition: 200ms background;
-
-                span {
-                    vertical-align: middle;
-                    padding-right: 20px;
-                }
-
-                i {
-                    font-size: 40px;
-                    vertical-align: middle;
-                }
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
-
-                &:hover {
-                    background-color: #fff;
-                    color: #222;
-                    text-decoration: none;
-
-                    i {
-                        color: #222 !important;
-                    }
-                }
-            }
-        }
-
         .notes {
             color: #999;
         }

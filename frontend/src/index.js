@@ -6,7 +6,8 @@ var app = angular.module('funch', [
     'toastr',
     'angularSpinner',
     'angular-input-stars',
-    'ngResource'
+    'ngResource',
+    'ng.deviceDetector'
 ]);
 
 app.config(function ($httpProvider) {
@@ -22,7 +23,7 @@ app.config(function ($httpProvider) {
     });
 });
 
-app.run(function ($rootScope) {
+app.run(function ($rootScope, $window) {
     $rootScope.spinner = {
         lines: 13,
         length: 28,
@@ -45,4 +46,6 @@ app.run(function ($rootScope) {
         hwaccel: false,
         position: 'absolute'
     };
+
+    $rootScope.isMobile = true;
 });

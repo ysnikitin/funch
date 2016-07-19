@@ -23,7 +23,7 @@
     </head>
 
 
-    <body ng-app="funch">
+    <body ng-app="funch" ng-class="{'mobile': $root.isMobile, 'desktop': !$root.isMobile}">
         <ui-view></ui-view>
     </body>
 
