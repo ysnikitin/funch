@@ -13,7 +13,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         var s = moment(vm.lunch.stoptime).valueOf() - moment().valueOf();
 
         if (s < 1) {
-            $interval.cancel(vm.countdownInterval)
+            $interval.cancel(vm.countdownInterval);
             vm.locked = true;
         } else {
             vm.locked = false;
@@ -234,5 +234,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         }, 10000);
 
         vm.ready = true;
+    }).catch(function () {
+        $state.go('main.error');
     });
 });

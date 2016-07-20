@@ -18,7 +18,7 @@
             </li>
         </ul>
 
-        <div class="form section" ng-show="vm.step === 0">
+        <div class="form form-dark section" ng-show="vm.step === 0">
             <label class="section-label">What's the password?</label>
             <div class="form-group">
                 <div class="section-content">
@@ -37,12 +37,12 @@
             </div>
         </div>
 
-        <div class="form section" ng-show="vm.step === 1">
+        <div class="form form-dark section" ng-show="vm.step === 1">
             <label class="section-label">What's for lunch?</label>
             <div class="form-group">
                 <div class="section-content">
                     <div class="quickpicks">
-                        <f-restaurant-quickpick ng-repeat="r in vm.restaurants" restaurant="r" ng-click="vm.pickRestaurant(r)"></f-restaurant-quickpick>
+                        <f-restaurant-quickpick ng-repeat="r in vm.restaurants" restaurant="r" active="r.id === vm.restaurant.id" ng-click="vm.pickRestaurant(r)"></f-restaurant-quickpick>
                     </div>
 
                     <div class="row">
@@ -89,7 +89,7 @@
             </div>
         </div>
 
-        <div class="form section" ng-show="vm.step === 2">
+        <div class="form form-dark section" ng-show="vm.step === 2">
             <div class="row">
                 <div class="col-md-6 onduty-me">
                     <label class="section-label">Who are you?</label>
@@ -141,7 +141,7 @@
             </div>
         </div>
 
-        <div class="form section" ng-show="vm.step === 3">
+        <div class="form form-dark section" ng-show="vm.step === 3">
             <label class="section-label" for="rest">Order Details</label>
 
             <div class="form-group">

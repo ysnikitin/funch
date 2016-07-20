@@ -6,7 +6,8 @@ angular.module('funch').directive('fRestaurantQuickpick', function () {
         controllerAs: 'vm',
         bindToController: true,
         scope: {
-            restaurant: '='
+            restaurant: '=',
+            active: '='
         }
     };
 });

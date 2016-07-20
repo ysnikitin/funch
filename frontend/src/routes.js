@@ -29,5 +29,9 @@ angular.module('funch').config(function ($stateProvider, $urlRouterProvider, $lo
             templateUrl: 'src/routes/lunch/lunch.html',
             controller: 'LunchCtrl',
             controllerAs: 'vm'
+        })
+        .state('main.error', {
+            url: '/error',
+            templateUrl: 'src/routes/error/error.html'
         });
 });

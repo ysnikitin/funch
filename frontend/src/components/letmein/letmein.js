@@ -1,5 +1,5 @@
 angular.module('funch').service('LetmeinSvc', function ($uibModal) {
-    this.open = function (lunch) {
+    this.open = function () {
         var m = $uibModal.open({
             animation: true,
             templateUrl: 'components/letmein/letmein.html',
@@ -7,8 +7,6 @@ angular.module('funch').service('LetmeinSvc', function ($uibModal) {
             size: 'md',
             controllerAs: 'vm'
         });
-
-        m.lunch = lunch;
 
         return m;
     };
