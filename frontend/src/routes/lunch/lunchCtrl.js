@@ -1,4 +1,4 @@
-angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interval, $stateParams, $state, $q, Favorites, GuestInvite, YelpSvc, toastr, Suggestions, Order, Lunch, User, Restaurant, HashSvc) {
+angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interval, $stateParams, $state, $q, Favorites, GuestInvite, YelpSvc, toastr, Suggestions, Order, Lunch, User, Resend, Restaurant, HashSvc) {
     var vm = this;
 
     vm.ready = false;
@@ -13,7 +13,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         var s = moment(vm.lunch.stoptime).valueOf() - moment().valueOf();
 
         if (s < 1) {
-            $interval.cancel(vm.countdownInterval)
+            $interval.cancel(vm.countdownInterval);
             vm.locked = true;
         } else {
             vm.locked = false;
@@ -54,6 +54,13 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
                 vm.saveOrder();
             }
         });
+    };
+
+    // open resend modal
+    vm.openResend = function () {
+        var m = Resend.open(vm.restaurant);
+        m.lunch = vm.lunch;
+        m.users = vm.userMap;
     };
 
     // open the suggestions modal
@@ -234,5 +241,7 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         }, 10000);
 
         vm.ready = true;
+    }).catch(function () {
+        $state.go('main.error');
     });
 });

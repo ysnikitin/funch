@@ -166,6 +166,10 @@ router.get('/api/lunch/:lid(\\d+)/user/:uid(\\d+)/hash', function(req, res, next
   db.generateHashForUserLunchDetails(req.params.uid, req.params.lid, next).then(res.json.bind(res));
 });
 
+router.put('/api/lunch/:lid(\\d+)/user/:uid(\\d+)/email', function(req, res, next) {
+  db.lunchResendEmail(req.params.lid, req.params.uid, next).then(res.json.bind(res));
+});
+
 // ------ VOTES
 
 router.get('/api/restaurants/:rid(\\d+)/votes', function(req, res, next) {

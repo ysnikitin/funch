@@ -79,7 +79,7 @@ var emailPromise = function (email, title, body) {
             d.resolve(info.response);
         }
     });
-    return d.promise();
+    return d.promise;
 };
 
 module.exports = {
@@ -213,7 +213,7 @@ module.exports = {
 
     lunchActive : function(next) {
 
-        return query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())").
+        return query("SELECT id FROM funch.lunches WHERE DATE(stoptime) > NOW() ORDER BY DATE(stoptime) DESC LIMIT 1").
         then(function (res) {
             if(res.length === 0) {
                 return {};
@@ -300,6 +300,17 @@ module.exports = {
         }).catch (function(err) {
             next(err);
         });
+
+    },
+
+    lunchResendEmail : function(lid, uid, next) {
+
+        var hash = secure.getHashForUserLunch(uid, lid);
+        return this.user(uid, next).then(function(user) {
+            return emailPromise(user['email'], 'Funch Is Here', 'Please order lunch here!\n' + 'URL: http://' + config.server_ip + '/#/lunch/' + hash)
+        }).catch(function (err) {
+            next(err);
+        })
 
     },
 

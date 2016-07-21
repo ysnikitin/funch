@@ -5,7 +5,9 @@ angular.module('funch').service('Favorites', function ($uibModal) {
             templateUrl: 'components/favorites/favorites.html',
             controller: 'FavoritesCtrl',
             size: 'md',
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            backdrop: 'static',
+            keyboard: false
         });
 
         m.restaurant = restaurant;

@@ -4,7 +4,7 @@
 
 <div class="rt-lunch" ng-show="vm.ready">
     <div class="lunch-orderstatus" ng-if="vm.order.id">
-        <i class="fa fa-check"></i> You have a submitted order for this lunch.
+        <i class="fa fa-check"></i> You have an order submitted as <strong>{{vm.userMap[vm.order.userId].initials}}</strong>.
     </div>
 
     <div class="lunch-title">
@@ -70,16 +70,6 @@
         </div>
     </div>
 
-    <div class="lunch-orderstatus" ng-if="vm.order.id">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12">
-                    <i class="fa fa-check"></i> You're all set for this lunch, you have an order submitted as {{vm.userMap[vm.order.userId].initials}}.
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
         <div class="lunch">
             <div class="row">
@@ -97,8 +87,11 @@
                         <a class="toolbar-item" ng-click="vm.moreTime()" ng-if="vm.isOnDuty">
                             <i class="fa fa-fw fa-clock-o"></i><span>MORE TIME</span>
                         </a>
+                        <a class="toolbar-item" ng-click="vm.openResend()" ng-if="vm.isOnDuty">
+                            <i class="fa fa-fw fa-envelope-o"></i><span>RESEND INVITE</span>
+                        </a>
                         <a class="toolbar-item" ng-click="vm.openInviteGuests()" ng-if="vm.isOnDuty">
-                            <i class="fa fa-fw fa-user"></i><span>INVITE GUESTS</span>
+                            <i class="fa fa-fw fa-user"></i><span>INVITE GUEST</span>
                         </a>
                         <a class="toolbar-item" ng-click="vm.cancelLunch()" ng-if="vm.isOnDuty">
                             <i class="fa fa-fw fa-times" style="color: #d86f6f"></i><span>CANCEL LUNCH</span>
@@ -113,7 +106,7 @@
                         <div>{{vm.lunch.notes}}</div>
                     </div>
                     <div class="order">
-                        <form>
+                        <form class="form-dark">
                             <div class="form-group">
                                 <label>MY ORDER <span class="text-muted">(<strong>{{vm.userMap[vm.user.id].initials}}</strong> / ${{vm.lunch.limit}} limit)</span></label>
                                 <div class="row">

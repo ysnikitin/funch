@@ -17,7 +17,7 @@ app.config(function ($httpProvider) {
         return {
             request: function (config) {
                 if (config.url.charAt(0) === '/') {
-                    config.url = 'http://52.4.25.73:3000/api' + config.url;
+                    config.url = 'http://funchbun.ch:3000/api' + config.url;
                 }
                 return config || $q.when(config);
             }
@@ -25,7 +25,7 @@ app.config(function ($httpProvider) {
     });
 });
 
-app.run(function ($rootScope, $window) {
+app.run(function ($rootScope, $window, BrowserDetectSvc) {
     $rootScope.spinner = {
         lines: 13,
         length: 28,
@@ -49,5 +49,10 @@ app.run(function ($rootScope, $window) {
         position: 'absolute'
     };
 
-    $rootScope.isMobile = false;
+    $rootScope.isMobile = BrowserDetectSvc.isMobile();
+
+    angular.element($window).on('resize', function () {
+        $rootScope.isMobile = BrowserDetectSvc.isMobile();
+        $rootScope.$apply();
+    });
 });
