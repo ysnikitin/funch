@@ -213,7 +213,7 @@ module.exports = {
 
     lunchActive : function(next) {
 
-        return query("SELECT id FROM funch.lunches WHERE DATE(stoptime) = DATE(NOW()) OR DATE(created) = DATE(NOW())").
+        return query("SELECT id FROM funch.lunches ORDER BY DATE(stoptime) DESC LIMIT 1").
         then(function (res) {
             if(res.length === 0) {
                 return {};
