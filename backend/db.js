@@ -291,7 +291,7 @@ module.exports = {
                                     emails.push(self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
                                         var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
                                         var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
-                                        return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash);
+                                        return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
                                     }));
                                 }
                                 return q.all(emails).then(function(result) {
