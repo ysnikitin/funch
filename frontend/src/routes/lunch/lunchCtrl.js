@@ -223,9 +223,14 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
     }).then(function () {
         return getOrders();
     }).then(function () {
-        return getYelp(vm.restaurant).then(function (y) {
+        var dy = $q.defer();
+        getYelp(vm.restaurant).then(function (y) {
             vm.yelp = y;
+            dy.resolve();
+        }, function () {
+            dy.resolve();
         });
+        return dy.promise;
     }).then(function () {
         return getVotes();
     }).then(function () {

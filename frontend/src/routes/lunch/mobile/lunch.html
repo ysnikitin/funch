@@ -44,7 +44,7 @@
                         <div class="name">
                             <span class="title">{{vm.restaurant.name}}</span>
                         </div>
-                        <div class="rating">
+                        <div class="rating" ng-show="vm.yelp && vm.yelp.stars">
                             <span class="stars">
                                 <span ng-style="{ 'width': vm.yelp.stars }"></span>
                             </span>
@@ -102,8 +102,12 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="notes" ng-if="vm.lunch.notes">
-                        <label>NOTES</label>
-                        <div>{{vm.lunch.notes}}</div>
+                        <form class="form-dark">
+                            <div class="form-group">
+                                <label>NOTES</label>
+                                <div>{{vm.lunch.notes}}</div>
+                            </div>
+                        </form>
                     </div>
                     <div class="order">
                         <form class="form-dark">

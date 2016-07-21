@@ -52,12 +52,12 @@
                             <div class="col-xs-9">
                                 <div class="media">
                                     <div class="media-left media-middle">
-                                        <img src="{{vm.yelp.details.image_url}}" style="height: 75px;" />
+                                        <img ng-show="vm.yelp && vm.yelp.details" src="{{vm.yelp.details.image_url}}" style="height: 75px;" />
                                     </div>
                                     <div class="media-body media-middle">
                                         <div class="name">
                                             <span class="title">{{vm.restaurant.name}}</span>
-                                            <span class="rating">
+                                            <span class="rating" ng-show="vm.yelp && vm.yelp.stars">
                                                 <span class="stars">
                                                     <span ng-style="{ 'width': vm.yelp.stars }"></span>
                                                 </span>
@@ -122,8 +122,12 @@
                 <div class="col-xs-1"></div>
                 <div class="col-xs-8">
                     <div class="notes" ng-if="vm.lunch.notes">
-                        <label>NOTES</label>
-                        <div>{{vm.lunch.notes}}</div>
+                        <form class="form-dark">
+                            <div class="form-group">
+                                <label>NOTES</label>
+                                <div>{{vm.lunch.notes}}</div>
+                            </div>
+                        </form>
                     </div>
                     <div class="order">
                         <form class="form-dark">
