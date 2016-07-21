@@ -217,6 +217,9 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
 
             if (~vm.lunch.onduty.indexOf(u.id.toString())) {
                 vm.onduty.push(u);
+            }
+
+            if (~vm.lunch.onduty.indexOf(vm.user.id.toString())) {
                 vm.isOnDuty = true;
             }
         });
