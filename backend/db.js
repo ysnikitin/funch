@@ -28,6 +28,31 @@ connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
     if (err) throw "Cannot connect to MySQL!";
 });
 
+var emailtemplate = '<b style="font-family: Arial, sans-serif; text-decoration: overline; font-size: 30px">FUNCH</b>' +
+    '<br>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif">It\'s time to order your lunch for <%= due_date %>!</span>' +
+    '<br>' +
+    '<br>' +
+    '<b style="font-family: Arial, sans-serif">RESTAURANT...</b>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif"><%= restaurant %></span>' +
+    '<br>' +
+    '<br>' +
+    '<b style="font-family: Arial, sans-serif">ORDERS DUE BY...</b>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif"><%= due_time %></span>' +
+    '<br>' +
+    '<br>' +
+    '<b style="font-family: Arial, sans-serif">ON LUNCH DUTY...</b>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif"><%= onduty_list %></span>' +
+    '<br>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif">Click the link below to get started:</span>' +
+    '<br>' +
+    '<a href="<%= link %>"><%= link %></a>';
+
 var filterOneRow = function(rows) {
     return rows.length > 0 ? rows[0] : {};
 }
@@ -64,12 +89,24 @@ var query = function (sql, args) {
 };
 
 var emailPromise = function (email, title, body) {
+    var template = ejs.compile(emailtemplate, {
+        rmWhitespace: false
+    });
+
+    var body = template({
+        due_date: 'July 22nd',
+        restaurant: 'Pauli\'s',
+        due_time: '10:30 AM',
+        onduty_list: 'MD, JN',
+        link: 'http://funchbun.ch/#/lunch/codehere'
+    });
+
     var d = q.defer();
     var mailOptions = {
         from: "Funch Bunch", // sender address
         to: email, // list of receivers
         subject: title, // Subject line
-        text: body // plaintext body
+        html: body // plaintext body
     };
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
