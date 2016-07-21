@@ -10,9 +10,9 @@ var cfg = {
     'mysql_host' : undefined,
     'mysql_port' : undefined,
     'hmac_secret' : undefined,
-    'email_username' : undefined,
-    'email_password' : undefined,
-    'server_ip' : undefined
+    'server_ip' : undefined,
+    'ses_key' : undefined,
+    'ses_secret' : undefined
 };
 
 var other = {};

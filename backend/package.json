@@ -19,7 +19,8 @@
     "morgan": "~1.7.0",
     "mysql": "2.11.1",
     "nodemailer": "^2.5.0",
-    "serve-favicon": "~2.3.0",
-    "q": "latest"
+    "nodemailer-ses-transport": "^1.4.0",
+    "q": "latest",
+    "serve-favicon": "~2.3.0"
   }
 }
