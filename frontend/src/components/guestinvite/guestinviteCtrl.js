@@ -1,26 +1,21 @@
-angular.module('funch').controller('GuestInviteCtrl', function ($uibModalInstance, $q) {
+angular.module('funch').controller('GuestInviteCtrl', function ($uibModalInstance, $q, toastr) {
     var vm = this;
 
-    vm.guests = [{}];
-
-    vm.newGuest = function () {
-        vm.guests.push({});
-    };
+    vm.name = '';
+    vm.initials = '';
+    vm.email = '';
 
     vm.invite = function () {
-        vm.guests = vm.guests.filter(function (g) {
-            return (g.name && g.initials && g.email);
-        });
-
-        var defers = [];
-
-        vm.guests.forEach(function (g) {
-            defers.push($uibModalInstance.lunch.email(g).$promise);
-        });
-
-        $q.all(defers).then(function () {
-            $uibModalInstance.close(vm.guests);
-        });
+        $uibModalInstance.lunch.inviteGuest({
+            name: vm.name,
+            initials: vm.initials,
+            email: vm.email
+        }).then(function () {
+            toastr.success('Invite sent!');
+            $uibModalInstance.close();
+        }).catch(function () {
+            toastr.error('Could not send the invite!');
+        })
     };
 
     vm.close = function () {

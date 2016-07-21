@@ -1,28 +1,26 @@
 <div class="modal-guestinvite">
     <div class="modal-header">
-        <h3 class="modal-title"><strong>Invite some Guests</strong></h3>
+        <h3 class="modal-title"><strong>Invite a Guest</strong></h3>
     </div>
     <div class="modal-body">
-        <table class="table table-borderless">
-            <tr>
-                <th>Name</th><th>Unique Initials</th><th>E-Mail Address</th>
-            </tr>
-            <tr ng-repeat="guest in vm.guests">
-                <td>
-                    <input class="form-control" ng-model="guest.name">
-                </td>
-                <td>
-                    <input class="form-control" ng-model="guest.initials">
-                </td>
-                <td>
-                    <input class="form-control" ng-model="guest.email">
-                </td>
-            </tr>
-        </table>
-
-        <div class="addmore">
-            <button class="btn btn-default" ng-click="vm.newGuest()"><i class="fa fa-plus"></i></button>
+        <div>
+            If someone isn't on the regular invite list, send them an invite below.
         </div>
+
+        <form>
+            <div class="form-group">
+                <label>Name</label>
+                <input class="form-control" type="text" ng-model="vm.name" />
+            </div>
+            <div class="form-group">
+                <label>Initials</label>
+                <input class="form-control" type="text" ng-model="vm.initials" />
+            </div>
+            <div class="form-group">
+                <label>E-Mail</label>
+                <input class="form-control" type="text" ng-model="vm.email" />
+            </div>
+        </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" type="button" ng-click="vm.close()">Close</button>

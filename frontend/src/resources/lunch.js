@@ -6,9 +6,6 @@ angular.module('funch').factory('Lunch', function ($resource, $http) {
             method: 'GET',
             url: '/lunch/:id/active'
         },
-        email: {
-            method: 'POST'
-        },
         update: {
             method: 'PUT',
             transformRequest: function (a) {
@@ -25,6 +22,14 @@ angular.module('funch').factory('Lunch', function ($resource, $http) {
         return $http.get('/lunch/' + this.id + '/user/' + userId + '/hash').then(function (d) {
             return d.data.hash;
         })
+    };
+
+    l.prototype.resend = function (userId) {
+        return $http.put('/lunch/' + this.id + '/user/' + userId + '/email');
+    };
+
+    l.prototype.inviteGuest = function (guest) {
+        return $http.post('/lunch/' + this.id + '/email', guest);
     };
 
     return l;

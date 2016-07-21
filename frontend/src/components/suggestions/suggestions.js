@@ -5,7 +5,9 @@ angular.module('funch').service('Suggestions', function ($uibModal) {
             templateUrl: 'components/suggestions/suggestions.html',
             controller: 'SuggestionsCtrl',
             size: 'md',
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            backdrop: 'static',
+            keyboard: false
         });
 
         m.restaurant = restaurant;

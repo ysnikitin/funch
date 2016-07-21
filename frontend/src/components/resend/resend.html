@@ -1,0 +1,21 @@
+<div class="modal-resend">
+    <div class="modal-header">
+        <h3 class="modal-title"><strong>Resend Lunch Invite</strong></h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            Someone complaining that they didn't get an invite?  Resend it below.  Make sure they check their spam folder.
+        </div>
+
+        <form>
+            <div class="form-group">
+                <label>E-Mail</label>
+                <input class="form-control" type="text" ng-model="vm.email" />
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" type="button" ng-click="vm.close()">Close</button>
+        <button class="btn btn-primary" type="button" ng-click="vm.resend()">Resend</button>
+    </div>
+</div>

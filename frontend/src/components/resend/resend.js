@@ -1,9 +1,9 @@
-angular.module('funch').service('GuestInvite', function ($uibModal) {
-    this.open = function (lunch) {
+angular.module('funch').service('Resend', function ($uibModal) {
+    this.open = function (lunch, user) {
         var m = $uibModal.open({
             animation: true,
-            templateUrl: 'components/guestinvite/guestinvite.html',
-            controller: 'GuestInviteCtrl',
+            templateUrl: 'components/resend/resend.html',
+            controller: 'ResendCtrl',
             size: 'md',
             controllerAs: 'vm',
             backdrop: 'static',
@@ -11,6 +11,7 @@ angular.module('funch').service('GuestInvite', function ($uibModal) {
         });
 
         m.lunch = lunch;
+        m.user = user;
 
         return m;
     };

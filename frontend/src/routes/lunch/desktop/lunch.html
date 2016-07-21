@@ -108,8 +108,11 @@
                         <a class="toolbar-item" ng-click="vm.moreTime()" ng-if="vm.isOnDuty">
                             <span>MORE TIME</span><i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
                         </a>
+                        <a class="toolbar-item" ng-click="vm.openResend()" ng-if="vm.isOnDuty">
+                            <span>RESEND INVITE</span><i class="fa fa-fw fa-envelope-o" aria-hidden="true"></i>
+                        </a>
                         <a class="toolbar-item" ng-click="vm.openInviteGuests()" ng-if="vm.isOnDuty">
-                            <span>INVITE GUESTS</span><i class="fa fa-fw fa-user" aria-hidden="true"></i>
+                            <span>INVITE GUEST</span><i class="fa fa-fw fa-user" aria-hidden="true"></i>
                         </a>
                         <a class="toolbar-item" ng-click="vm.cancelLunch()" ng-if="vm.isOnDuty">
                             <span>CANCEL LUNCH</span><i class="fa fa-fw fa-times" aria-hidden="true" style="color: #d86f6f"></i>

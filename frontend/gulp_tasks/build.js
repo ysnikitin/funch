@@ -9,6 +9,7 @@ const htmlmin = require('gulp-htmlmin');
 const sourcemaps = require('gulp-sourcemaps');
 const uglifySaveLicense = require('uglify-save-license');
 const inject = require('gulp-inject');
+const replace = require('gulp-replace');
 const ngAnnotate = require('gulp-ng-annotate');
 const conf = require('../conf/gulp.conf');
 
@@ -33,12 +34,15 @@ gulp.task('build', function () {
         .pipe(uglify({
             preserveComments: uglifySaveLicense
         })).on('error', conf.errorHandler('Uglify'))
+        .pipe(replace('.put("src/', '.put("'))
+        .pipe(replace('templateUrl:"src/', 'templateUrl:"'))
         .pipe(rev())
         .pipe(sourcemaps.write('maps'))
         .pipe(jsFilter.restore)
         .pipe(cssFilter)
         .pipe(sourcemaps.init())
         .pipe(cssnano())
+        .pipe(replace('assets/images', '../assets/images'))
         .pipe(rev())
         .pipe(sourcemaps.write('maps'))
         .pipe(cssFilter.restore)
