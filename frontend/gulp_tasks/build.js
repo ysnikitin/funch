@@ -29,7 +29,6 @@ gulp.task('build', function () {
         .pipe(inject(partialsInjectFile, partialsInjectOptions))
         .pipe(useref())
         .pipe(jsFilter)
-        .pipe(sourcemaps.init())
         .pipe(ngAnnotate())
         .pipe(uglify({
             preserveComments: uglifySaveLicense
@@ -37,14 +36,11 @@ gulp.task('build', function () {
         .pipe(replace('.put("src/', '.put("'))
         .pipe(replace('templateUrl:"src/', 'templateUrl:"'))
         .pipe(rev())
-        .pipe(sourcemaps.write('maps'))
         .pipe(jsFilter.restore)
         .pipe(cssFilter)
-        .pipe(sourcemaps.init())
         .pipe(cssnano())
         .pipe(replace('assets/images', '../assets/images'))
         .pipe(rev())
-        .pipe(sourcemaps.write('maps'))
         .pipe(cssFilter.restore)
         .pipe(revReplace())
         .pipe(htmlFilter)
