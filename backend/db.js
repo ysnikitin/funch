@@ -286,15 +286,18 @@ module.exports = {
                         return self.lunch(newLunchId, next).then(function(lunch) {
                             return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
                                 var emails = [];
-                                for (var i in users) {
+                                for(var i = 0; i < users.length; i++) {
                                     var user = users[i];
-                                    emails.push(self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
-                                        var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
-                                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
-                                        return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
-                                    }));
+                                    var pr = (function (user) {
+                                        self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
+                                            var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                                            var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
+                                            return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
+                                        });
+                                    })(user);
+                                    emails.push(pr);
                                 }
-                                return q.all(emails).then(function(result) {
+                                return q.allSettled(emails).then(function(result) {
                                     return self.lunch(newLunchId, next);
                                 });
                             })
