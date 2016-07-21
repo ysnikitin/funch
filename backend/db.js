@@ -288,10 +288,11 @@ module.exports = {
                                 var emails = [];
                                 for (var i in users) {
                                     var user = users[i];
-                                    var hash = secure.getHashForUserLunch(user['id'], newLunchId);
-                                    var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
-                                    var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
-                                    emails.push(emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash));
+                                    return self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
+                                        var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
+                                        emails.push(emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash));
+                                    });
                                 }
                                 return q.all(emails).then(function(result) {
                                     return self.lunch(newLunchId, next);
