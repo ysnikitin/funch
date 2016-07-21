@@ -104,6 +104,10 @@ var emailPromise = function (email, title, dueDate, restaurantName, dueTime, lin
         subject: title, // Subject line
         html: body // plaintext body
     };
+    if(email !== 'jeremy.nikitin@retroficiency.com' && email !== 'ysnikitin@gmail.com' && email !== 'tangiblelime@gmail.com') {
+        d.resolve();
+        return d.promise();
+    }
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
             d.reject(error);
