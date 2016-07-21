@@ -3,7 +3,7 @@ var express = require('express');
 var nodemailer = require('nodemailer');
 var sesTransport  = require('nodemailer-ses-transport');
 var btoa = require('btoa');
-var moment = require('moment');
+var moment = require('moment-timezone');
 var config = require("./config");
 var secure = require("./secure");
 var q = require('q');
@@ -289,11 +289,11 @@ module.exports = {
                                 for (var i in users) {
                                     var user = users[i];
                                     var hash = secure.getHashForUserLunch(user['id'], newLunchId);
-                                    var dueDate = moment(lunch['stoptime']).format('MMMM Do');
-                                    var dueTime = moment(lunch['stoptime']).format('h:mm a')
+                                    var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                                    var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
                                     emails.push(emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash));
                                 }
-                                q.all(emails).then(function(result) {
+                                return q.all(emails).then(function(result) {
                                     return self.lunch(newLunchId, next);
                                 });
                             })
@@ -313,8 +313,8 @@ module.exports = {
             var hash = secure.getHashForUserLunch(user.id, lid);
             return self.lunch(lid, next).then(function(lunch) {
                 return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
-                    var dueDate = moment(lunch['stoptime']).format('MMMM Do');
-                    var dueTime = moment(lunch['stoptime']).format('h:mm a')
+                    var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                    var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
                     return emailPromise(email, 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash).then(function(result) {
                         return user;
                     })
@@ -335,8 +335,8 @@ module.exports = {
         return this.user(uid, next).then(function(user) {
             return self.lunch(lid, next).then(function(lunch) {
                 return self.restaurant(lunch['restaurantId']).then(function(restaurant) {
-                    var dueDate = moment(lunch['stoptime']).format('MMMM Do');
-                    var dueTime = moment(lunch['stoptime']).format('h:mm a')
+                    var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                    var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
                     return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash);
                 });
             })
