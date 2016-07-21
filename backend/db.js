@@ -108,7 +108,7 @@ var emailPromise = function (email, title, dueDate, restaurantName, dueTime, lin
         if (error) {
             d.reject(error);
         } else {
-            console.log('Message sent: ' + info.response);
+            console.log('Message sent to: ' + email);
             d.resolve(info.response);
         }
     });
@@ -318,9 +318,9 @@ module.exports = {
                 return self.lunch(lid, next).then(function(lunch) {
                     return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
                         var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
-                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
+                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
                         return emailPromise(email, 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']).then(function(result) {
-                            return user;
+                            return user; // TODO: fix this, returns nothing !!!!!!!!!!!!!!!!
                         })
                     })
                 });
@@ -428,7 +428,7 @@ module.exports = {
 
     users : function(next) {
 
-        return query("SELECT * FROM funch.users WHERE perm = 1;").then(function (res) {
+        return query("SELECT * FROM funch.users WHERE perm = 1 OR perm = 0;").then(function (res) {
             convertTinyIntToBool(res, 'perm');
             return res;
         }).catch(function (err) {
