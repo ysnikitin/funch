@@ -1,18 +1,20 @@
 var mysql = require('mysql');
 var express = require('express');
 var nodemailer = require('nodemailer');
+var sesTransport  = require('nodemailer-ses-transport');
 var btoa = require('btoa');
-var moment = require('moment');
+var moment = require('moment-timezone');
 var config = require("./config");
 var secure = require("./secure");
 var q = require('q');
+var ejs = require('ejs');
 
 //var transporter = nodemailer.createTransport('smtps://' + config.email_username + '%40gmail.com:' + config.email_password + '@smtp.gmail.com');
-var transporter = nodemailer.createTransport({service: 'Gmail',
-    auth: {
-        user: config.email_username,
-        pass: config.email_password
-    }});
+var transporter = nodemailer.createTransport(sesTransport({
+    accessKeyId: config.ses_key,
+    secretAccessKey: config.ses_secret,
+    rateLimit: 12 // do not send more than 5 messages in a second
+}));
 
 var connection = mysql.createConnection({
     host     : config.mysql_host,
@@ -42,11 +44,6 @@ var emailtemplate = '<b style="font-family: Arial, sans-serif; text-decoration: 
     '<b style="font-family: Arial, sans-serif">ORDERS DUE BY...</b>' +
     '<br>' +
     '<span style="font-family: Arial, sans-serif"><%= due_time %></span>' +
-    '<br>' +
-    '<br>' +
-    '<b style="font-family: Arial, sans-serif">ON LUNCH DUTY...</b>' +
-    '<br>' +
-    '<span style="font-family: Arial, sans-serif"><%= onduty_list %></span>' +
     '<br>' +
     '<br>' +
     '<span style="font-family: Arial, sans-serif">Click the link below to get started:</span>' +
@@ -88,22 +85,21 @@ var query = function (sql, args) {
     return d.promise;
 };
 
-var emailPromise = function (email, title, body) {
+var emailPromise = function (email, title, dueDate, restaurantName, dueTime, link) {
     var template = ejs.compile(emailtemplate, {
         rmWhitespace: false
     });
 
     var body = template({
-        due_date: 'July 22nd',
-        restaurant: 'Pauli\'s',
-        due_time: '10:30 AM',
-        onduty_list: 'MD, JN',
-        link: 'http://funchbun.ch/#/lunch/codehere'
+        due_date: dueDate,
+        restaurant: restaurantName,
+        due_time: dueTime,
+        link: link
     });
 
     var d = q.defer();
     var mailOptions = {
-        from: "Funch Bunch", // sender address
+        from: "munch@funchbun.ch", // sender address
         to: email, // list of receivers
         subject: title, // Subject line
         html: body // plaintext body
@@ -287,30 +283,29 @@ module.exports = {
                 insertQuery += ";";
                 return query(insertQuery, params).then(function(result) {
                     return self.users(next).then(function(users) {
-                        for (var i in users) {
-                            var user = users[i];
-                            var hash = secure.getHashForUserLunch(user['id'], newLunchId);
-                            var mailOptions = {
-                                from: "Funch Bunch", // sender address
-                                to: user['email'], // list of receivers
-                                subject: 'Funch Is Here', // Subject line
-                                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + hash // plaintext body
-                            };
-                            if(user['email'] === 'jeremy.nikitin@retroficiency.com' || user['email'] === 'tangiblelime@gmail.com') {
-                                transporter.sendMail(mailOptions, function (error, info) {
-                                    if (error) {
-                                        next(error);
-                                    } else {
-                                        console.log('Message sent to: ' + user['email'] + ', response: ' + info.response);
-                                    }
-                                })
-                            }
-                        }
-                        return self.lunch(newLunchId, next);
+                        return self.lunch(newLunchId, next).then(function(lunch) {
+                            return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
+                                var emails = [];
+                                for(var i = 0; i < users.length; i++) {
+                                    var user = users[i];
+                                    var pr = (function (user) {
+                                        self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
+                                            var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                                            var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
+                                            return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
+                                        });
+                                    })(user);
+                                    emails.push(pr);
+                                }
+                                return q.allSettled(emails).then(function(result) {
+                                    return self.lunch(newLunchId, next);
+                                });
+                            })
+                        })
                     });
                 });
             }
-        }).catch(function (err) {
+        }).catch(function (err) { // // var emailPromise = function (email, title, dueDate, restaurantName, dueTime, link) {
             next(err);
         });
     },
@@ -319,21 +314,17 @@ module.exports = {
 
         var self = this;
         return self.usersAdd(name, email, false, initials, next).then(function(user) {
-            var hash = secure.getHashForUserLunch(user.id, lid);
-            var mailOptions = {
-                from: "Funch Bunch", // sender address
-                to: email, // list of receivers
-                subject: 'Funch Is Here', // Subject line
-                text: "Please order lunch here!\n" + "URL: http://" + config.server_ip + "/#/lunch/" + hash // plaintext body
-            };
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    next(error);
-                } else {
-                    console.log('Message sent: ' + info.response);
-                }
-            });
-            return user;
+            var hash = self.generateHashForUserLunchDetails(user['userId'], lid, next).then(function(hash) {
+                return self.lunch(lid, next).then(function(lunch) {
+                    return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
+                        var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
+                        return emailPromise(email, 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']).then(function(result) {
+                            return user;
+                        })
+                    })
+                });
+            })
         }).catch (function(err) {
             next(err);
         });
@@ -342,9 +333,18 @@ module.exports = {
 
     lunchResendEmail : function(lid, uid, next) {
 
-        var hash = secure.getHashForUserLunch(uid, lid);
+        // email, title, dueDate, restaurantName, dueTime,, link
+        var self = this;
         return this.user(uid, next).then(function(user) {
-            return emailPromise(user['email'], 'Funch Is Here', 'Please order lunch here!\n' + 'URL: http://' + config.server_ip + '/#/lunch/' + hash)
+            return self.generateHashForUserLunchDetails(user['id'], lid, next).then(function(hash) {
+                return self.lunch(lid, next).then(function (lunch) {
+                    return self.restaurant(lunch['restaurantId']).then(function (restaurant) {
+                        var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
+                        return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash.hash);
+                    });
+                })
+            });
         }).catch(function (err) {
             next(err);
         })
@@ -583,7 +583,7 @@ module.exports = {
     generateHashForUserLunchDetails : function(userId, lunchId, next) {
 
         var hash = secure.getHashForUserLunch(userId, lunchId);
-        return query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
+        return query("INSERT IGNORE INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
             return {"hash":hash};
         }).catch(function (err) {
             next(err);
