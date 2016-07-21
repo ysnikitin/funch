@@ -213,14 +213,14 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
 
             if (u.id === vm.hash.user.id) {
                 vm.user = u;
+
+                if (~vm.lunch.onduty.indexOf(vm.user.id.toString())) {
+                    vm.isOnDuty = true;
+                }
             }
 
             if (~vm.lunch.onduty.indexOf(u.id.toString())) {
                 vm.onduty.push(u);
-            }
-
-            if (~vm.lunch.onduty.indexOf(vm.user.id.toString())) {
-                vm.isOnDuty = true;
             }
         });
     }).then(function () {
