@@ -314,7 +314,7 @@ module.exports = {
 
         var self = this;
         return self.usersAdd(name, email, false, initials, next).then(function(user) {
-            var hash = self.generateHashForUserLunchDetails(user['userId'], lid, next).then(function(hash) {
+            var hash = self.generateHashForUserLunchDetails(user['id'], lid, next).then(function(hash) {
                 return self.lunch(lid, next).then(function(lunch) {
                     return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
                         var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
