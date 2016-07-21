@@ -314,17 +314,17 @@ module.exports = {
 
         var self = this;
         return self.usersAdd(name, email, false, initials, next).then(function(user) {
-            var hash = secure.getHashForUserLunch(user.id, lid);
-            return self.lunch(lid, next).then(function(lunch) {
-                return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
-                    var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
-                    var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
-                    return emailPromise(email, 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash).then(function(result) {
-                        return user;
+            var hash = self.generateHashForUserLunchDetails(user['userId'], lid, next).then(function(hash) {
+                return self.lunch(lid, next).then(function(lunch) {
+                    return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
+                        var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
+                        return emailPromise(email, 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']).then(function(result) {
+                            return user;
+                        })
                     })
-                })
-
-            });
+                });
+            })
         }).catch (function(err) {
             next(err);
         });
@@ -335,15 +335,16 @@ module.exports = {
 
         // email, title, dueDate, restaurantName, dueTime,, link
         var self = this;
-        var hash = secure.getHashForUserLunch(uid, lid);
         return this.user(uid, next).then(function(user) {
-            return self.lunch(lid, next).then(function(lunch) {
-                return self.restaurant(lunch['restaurantId']).then(function(restaurant) {
-                    var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
-                    var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
-                    return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash);
-                });
-            })
+            return self.generateHashForUserLunchDetails(user['id'], lid, next).then(function(hash) {
+                return self.lunch(lid, next).then(function (lunch) {
+                    return self.restaurant(lunch['restaurantId']).then(function (restaurant) {
+                        var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                        var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
+                        return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash.hash);
+                    });
+                })
+            });
         }).catch(function (err) {
             next(err);
         })
@@ -582,7 +583,7 @@ module.exports = {
     generateHashForUserLunchDetails : function(userId, lunchId, next) {
 
         var hash = secure.getHashForUserLunch(userId, lunchId);
-        return query("INSERT INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
+        return query("INSERT IGNORE INTO funch.hashes (userId, lunchId, hash) VALUES(?,?,?)", [userId, lunchId, hash]).then(function(result) {
             return {"hash":hash};
         }).catch(function (err) {
             next(err);
