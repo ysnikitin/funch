@@ -4,7 +4,7 @@
 
 <div class="rt-lunch" ng-show="vm.ready">
     <div class="lunch-orderstatus" ng-if="vm.order.id">
-        <i class="fa fa-check"></i> You have a submitted order for this lunch.
+        <i class="fa fa-check"></i> You have an order submitted as <strong>{{vm.userMap[vm.order.userId].initials}}</strong>.
     </div>
 
     <div class="lunch-title">
@@ -70,16 +70,6 @@
         </div>
     </div>
 
-    <div class="lunch-orderstatus" ng-if="vm.order.id">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12">
-                    <i class="fa fa-check"></i> You're all set for this lunch, you have an order submitted as {{vm.userMap[vm.order.userId].initials}}.
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
         <div class="lunch">
             <div class="row">
@@ -98,7 +88,7 @@
                             <i class="fa fa-fw fa-clock-o"></i><span>MORE TIME</span>
                         </a>
                         <a class="toolbar-item" ng-click="vm.openResend()" ng-if="vm.isOnDuty">
-                            <span>RESEND INVITE</span><i class="fa fa-fw fa-envelope-o" aria-hidden="true"></i>
+                            <i class="fa fa-fw fa-envelope-o"></i><span>RESEND INVITE</span>
                         </a>
                         <a class="toolbar-item" ng-click="vm.openInviteGuests()" ng-if="vm.isOnDuty">
                             <i class="fa fa-fw fa-user"></i><span>INVITE GUEST</span>

@@ -8,7 +8,7 @@ angular.module('funch').controller('CreateCtrl', function ($rootScope, Restauran
 
     // validate password
     var validatePw = function (against) {
-        return md5.createHash(against || '') === 'd48e865a6025ec49f483a0e4aea96e29';
+        return md5.createHash(against || '') === '78d097a14fd5d1ffb7a94c9c90847f08';
     };
 
     // validate restaurant information
@@ -140,7 +140,7 @@ angular.module('funch').controller('CreateCtrl', function ($rootScope, Restauran
 
     vm.ready = false;
     vm.processing = false;
-    vm.step = 1;
+    vm.step = 0;
 
     // slider options
     vm.limit = {
