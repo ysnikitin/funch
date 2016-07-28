@@ -29,9 +29,9 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         var hrs = (s - mins) / 60;
 
         vm.countdown = {
-            h: hrs,
-            m: mins,
-            s: secs
+            h: hrs > 0 ? hrs : 0,
+            m: mins > 0 ? mins : 0,
+            s: secs > 0 ? secs : 0
         };
     };
 
@@ -50,6 +50,11 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         var m = Favorites.open(vm.restaurant);
         m.result.then(function (result) {
             if (result) {
+                if (vm.locked) {
+                    toastr.error('Sorry, time\'s up!');
+                    return;
+                }
+
                 vm.order.order = result;
                 vm.saveOrder();
             }
@@ -68,6 +73,11 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         var m = Suggestions.open(vm.restaurant, vm.user);
         m.result.then(function (result) {
             if (result) {
+                if (vm.locked) {
+                    toastr.error('Sorry, time\'s up!');
+                    return;
+                }
+
                 vm.order.order = result;
                 vm.saveOrder();
             }
@@ -102,6 +112,11 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             return;
         } else {
             vm.processing = true;
+        }
+
+        if (vm.locked) {
+            toastr.error('Sorry, time\'s up!');
+            return;
         }
 
         // make sure the order has the userid
@@ -156,6 +171,16 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
             lunchId: vm.lunch.id
         }).$promise.then(function (orders) {
             vm.orders = _.cloneDeep(orders);
+
+            vm.orders.sort(function (a, b) {
+                var ai = vm.userMap[a.userId].initials;
+                var bi = vm.userMap[b.userId].initials;
+
+                if (ai < bi) return -1;
+                if (ai > bi) return 1;
+                return 0;
+            });
+
             for (var i = 0; i < vm.orders.length; i++) {
                 if (+vm.orders[i].userId === +vm.user.id) {
                     vm.order = _.cloneDeep(vm.orders[i]);

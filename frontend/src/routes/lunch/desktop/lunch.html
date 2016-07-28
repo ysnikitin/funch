@@ -172,7 +172,7 @@
                                 </span>
                             </label>
                             <table class="table table-striped">
-                                <tr ng-repeat="order in vm.orders">
+                                <tr ng-repeat="order in vm.orders" ng-class="{'mine': order.userId === vm.user.id}">
                                     <td class="col-xs-2 text-center">
                                         <strong>{{vm.userMap[order.userId].initials}}</strong>
                                     </td>
