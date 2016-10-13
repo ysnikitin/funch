@@ -256,7 +256,6 @@ module.exports = {
                     for(var i = 0; i < users.length; i++) {
                         var user = users[i];
                         var pr = (function (user) {
-                            console.log("remind on user: " + user['userId']);
                             self.generateHashForUserLunchDetails(user['id'], lunchId, next).then(function(hash) {
                                 var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
                                 var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
