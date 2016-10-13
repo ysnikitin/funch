@@ -228,7 +228,7 @@ module.exports = {
     },
 
     lunchRemind : function(id, next) {
-
+        var self = this;
         return self.users(next).then(function(users) {
             return self.lunch(id, next).then(function(lunch) {
                 return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
