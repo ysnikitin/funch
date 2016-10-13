@@ -261,7 +261,7 @@ module.exports = {
                                 var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
                                 var dueMoment = moment(lunch['stoptime']).tz('America/New_York');
                                 var nowMoment = moment().tz('America/New_York');
-                                var minutesLeft = dueMoment.diff(nowMoment, 'minutes');
+                                var minutesLeft = Math.abs(dueMoment.diff(nowMoment, 'minutes'));
                                 if(user['email'] == 'jeremy.nikitin@retroficiency.com' && minutesLeft <= 15) {
                                     return emailPromise(user['email'], 'Funch Is Open For Another ' + minutesLeft + ' Minutes!', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash'], reminderTemplate);
                                 } else {
