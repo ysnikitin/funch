@@ -54,6 +54,10 @@ router.get('/api/lunch', function(req, res, next) {
   db.lunches(next).then(res.json.bind(res));
 });
 
+router.get('/api/lunch/:id(\\d+)/remind', function(req, res, next) {
+  db.lunchRemind(req.params.id, next).then(res.json.bind(res));
+});
+
 router.get('/api/lunch/:id(\\d+)', function(req, res, next) {
   db.lunch(req.params.id, next).then(res.json.bind(res));
 });

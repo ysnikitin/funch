@@ -227,6 +227,40 @@ module.exports = {
 
     },
 
+    lunchRemind : function(id, next) {
+
+        return self.users(next).then(function(users) {
+            return self.lunch(id, next).then(function(lunch) {
+                return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
+                    var emails = [];
+                    for(var i = 0; i < users.length; i++) {
+                        var user = users[i];
+                        var pr = (function (user) {
+                            self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
+                                var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
+                                var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
+                                var dueMoment = moment(lunch['stoptime']).tz('America/New_York');
+                                var nowMoment = moment().tz('America/New_York');
+                                var minutesLeft = dueMoment.diff(nowMoment, 'minutes');
+                                if(minutesLeft < 15) {
+                                    console.log("minutes left: " + minutesLeft);
+                                    //return emailPromise(user['email'], 'Funch Is Open For Another' + minutesLeft + ' Minutes!', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
+                                } else {
+                                    return q(true);
+                                }
+                            });
+                        })(user);
+                        emails.push(pr);
+                    }
+                    return q.allSettled(emails).then(function(result) {
+                        return self.lunch(newLunchId, next);
+                    });
+                })
+            })
+        })
+
+    },
+
     lunches : function(next) {
 
         return query("SELECT l.*, GROUP_CONCAT(d.userId) AS onduty " +
