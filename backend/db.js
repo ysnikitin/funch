@@ -227,16 +227,16 @@ module.exports = {
 
     },
 
-    lunchRemind : function(id, next) {
+    lunchRemind : function(lunchId, next) {
         var self = this;
         return self.users(next).then(function(users) {
-            return self.lunch(id, next).then(function(lunch) {
+            return self.lunch(lunchId, next).then(function(lunch) {
                 return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
                     var emails = [];
                     for(var i = 0; i < users.length; i++) {
                         var user = users[i];
                         var pr = (function (user) {
-                            self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
+                            self.generateHashForUserLunchDetails(user['id'], lunchId, next).then(function(hash) {
                                 var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
                                 var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
                                 var dueMoment = moment(lunch['stoptime']).tz('America/New_York');
