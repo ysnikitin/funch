@@ -242,12 +242,7 @@ module.exports = {
                                 var dueMoment = moment(lunch['stoptime']).tz('America/New_York');
                                 var nowMoment = moment().tz('America/New_York');
                                 var minutesLeft = dueMoment.diff(nowMoment, 'minutes');
-                                if(minutesLeft < 15) {
-                                    console.log("minutes left: " + minutesLeft);
-                                    //return emailPromise(user['email'], 'Funch Is Open For Another' + minutesLeft + ' Minutes!', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
-                                } else {
-                                    return q(true);
-                                }
+                                return emailPromise(user['email'], 'Funch Is Open For Another ' + minutesLeft + ' Minutes!', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
                             });
                         })(user);
                         emails.push(pr);
