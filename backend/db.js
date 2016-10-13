@@ -30,10 +30,30 @@ connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
     if (err) throw "Cannot connect to MySQL!";
 });
 
-var emailtemplate = '<b style="font-family: Arial, sans-serif; text-decoration: overline; font-size: 30px">FUNCH</b>' +
+var newTemplate = '<b style="font-family: Arial, sans-serif; text-decoration: overline; font-size: 30px">FUNCH</b>' +
     '<br>' +
     '<br>' +
     '<span style="font-family: Arial, sans-serif">It\'s time to order your lunch for <%= due_date %>!</span>' +
+    '<br>' +
+    '<br>' +
+    '<b style="font-family: Arial, sans-serif">RESTAURANT...</b>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif"><%= restaurant %></span>' +
+    '<br>' +
+    '<br>' +
+    '<b style="font-family: Arial, sans-serif">ORDERS DUE BY...</b>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif"><%= due_time %></span>' +
+    '<br>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif">Click the link below to get started:</span>' +
+    '<br>' +
+    '<a href="<%= link %>"><%= link %></a>';
+
+var reminderTemplate = '<b style="font-family: Arial, sans-serif; text-decoration: overline; font-size: 30px">FUNCH</b>' +
+    '<br>' +
+    '<br>' +
+    '<span style="font-family: Arial, sans-serif">Funch is due very soon!</span>' +
     '<br>' +
     '<br>' +
     '<b style="font-family: Arial, sans-serif">RESTAURANT...</b>' +
@@ -85,8 +105,8 @@ var query = function (sql, args) {
     return d.promise;
 };
 
-var emailPromise = function (email, title, dueDate, restaurantName, dueTime, link) {
-    var template = ejs.compile(emailtemplate, {
+var emailPromise = function (email, title, dueDate, restaurantName, dueTime, link, templateToUse) {
+    var template = ejs.compile(templateToUse, {
         rmWhitespace: false
     });
 
@@ -242,7 +262,11 @@ module.exports = {
                                 var dueMoment = moment(lunch['stoptime']).tz('America/New_York');
                                 var nowMoment = moment().tz('America/New_York');
                                 var minutesLeft = dueMoment.diff(nowMoment, 'minutes');
-                                return emailPromise(user['email'], 'Funch Is Open For Another ' + minutesLeft + ' Minutes!', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
+                                if(user['email'] == 'jeremy.nikitin@retroficiency.com') {
+                                    return emailPromise(user['email'], 'Funch Is Open For Another ' + minutesLeft + ' Minutes!', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash'], reminderTemplate);
+                                } else {
+                                    return q(true);
+                                }
                             });
                         })(user);
                         emails.push(pr);
@@ -322,7 +346,7 @@ module.exports = {
                                         self.generateHashForUserLunchDetails(user['id'], newLunchId, next).then(function(hash) {
                                             var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
                                             var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
-                                            return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']);
+                                            return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash'], newTemplate);
                                         });
                                     })(user);
                                     emails.push(pr);
@@ -349,7 +373,7 @@ module.exports = {
                     return self.restaurant(lunch['restaurantId'], next).then(function(restaurant) {
                         var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
                         var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a');
-                        return emailPromise(email, 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash']).then(function(result) {
+                        return emailPromise(email, 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash['hash'], newTemplate).then(function(result) {
                             return user; // TODO: fix this, returns nothing !!!!!!!!!!!!!!!!
                         })
                     })
@@ -371,7 +395,7 @@ module.exports = {
                     return self.restaurant(lunch['restaurantId']).then(function (restaurant) {
                         var dueDate = moment(lunch['stoptime']).tz('America/New_York').format('MMMM Do');
                         var dueTime = moment(lunch['stoptime']).tz('America/New_York').format('h:mm a')
-                        return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash.hash);
+                        return emailPromise(user['email'], 'Funch Is Here', dueDate, restaurant['name'], dueTime, 'http://' + config.server_ip + '/#/lunch/' + hash.hash, newTemplate);
                     });
                 })
             });
