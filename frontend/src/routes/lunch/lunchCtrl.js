@@ -106,6 +106,13 @@ angular.module('funch').controller('LunchCtrl', function ($scope, $http, $interv
         });
     };
 
+    // send reminder
+    vm.remind = function () {
+        vm.lunch.remind().then(function () {
+            toastr.success('Sent everyone a reminder!');
+        });
+    };
+
     // saves the user order
     vm.saveOrder = function () {
         if (vm.processing) {

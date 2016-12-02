@@ -28,6 +28,10 @@ angular.module('funch').factory('Lunch', function ($resource, $http) {
         return $http.put('/lunch/' + this.id + '/user/' + userId + '/email');
     };
 
+    l.prototype.remind = function () {
+        return $http.get('/lunch/' + this.id + '/remind');
+    };
+
     l.prototype.inviteGuest = function (guest) {
         return $http.post('/lunch/' + this.id + '/email', guest);
     };

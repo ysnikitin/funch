@@ -108,6 +108,9 @@
                         <a class="toolbar-item" ng-click="vm.moreTime()" ng-if="vm.isOnDuty">
                             <span>MORE TIME</span><i class="fa fa-fw fa-clock-o" aria-hidden="true"></i>
                         </a>
+                        <a class="toolbar-item" ng-click="vm.remind()" ng-if="vm.isOnDuty">
+                            <span>SEND REMINDER</span><i class="fa fa-fw fa-bullhorn" aria-hidden="true"></i>
+                        </a>
                         <a class="toolbar-item" ng-click="vm.openResend()" ng-if="vm.isOnDuty">
                             <span>RESEND INVITE</span><i class="fa fa-fw fa-envelope-o" aria-hidden="true"></i>
                         </a>
