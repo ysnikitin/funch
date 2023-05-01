@@ -4,6 +4,12 @@ name: Release Sign-In
 # Controls when the workflow will run
 on:
   workflow_dispatch:
+    inputs:
+      Image Tag:
+        required: true
+        type: string
+      Environment:
+        type: environment
   
 jobs:
   Approve-Canary:
