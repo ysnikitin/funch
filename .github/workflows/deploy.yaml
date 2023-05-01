@@ -10,4 +10,9 @@ jobs:
       runs-on: ubuntu-latest
       environment: Dev
       steps:
-        - run: echo asked for approval
+        - run: echo asked for approval 1
+  approveagain:
+    runs-on: ubuntu-latest
+    environment: Dev
+    steps:
+      - run: echo asked for approval 2
