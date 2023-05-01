@@ -6,13 +6,13 @@ on:
   workflow_dispatch:
   
 jobs:
-  approveapp:
+  Approve-Canary:
       runs-on: ubuntu-latest
       environment: Dev
       steps:
         - run: echo asked for approval 1
-  approveagain:
-    needs: approveapp
+  Approve-Full-Deployment:
+    needs: Approve-Canary
     runs-on: ubuntu-latest
     environment: Dev
     steps:
