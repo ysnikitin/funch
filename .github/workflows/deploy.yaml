@@ -36,7 +36,7 @@ jobs:
     name: Rollback
     runs-on: ubuntu-latest
     needs: deploy-stable
-    if: ${{ failure() && && steps.demo.conclusion == 'failure' }}
+    if: ${{ failure() }}
     steps:
       - run: echo doing rollback-canary
   success:
