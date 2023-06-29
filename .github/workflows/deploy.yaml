@@ -17,7 +17,13 @@ jobs:
       environment: Dev
       steps:
         - run: echo asked for approval 1
-  Approve-Full-Deployment:
+  rollback:
+    needs: Approve-Canary
+    runs-on: ubuntu-latest
+    environment: Dev
+    steps:
+      - run: echo asked for approval 2
+  deploy:
     needs: Approve-Canary
     runs-on: ubuntu-latest
     environment: Dev
