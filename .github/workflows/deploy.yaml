@@ -13,16 +13,19 @@ on:
   
 jobs:
   setup:
+      name: Setup Environment
       runs-on: ubuntu-latest
       steps:
         - run: echo doing setup
   deploy-canary:
+      name: Deploy Canary
       runs-on: ubuntu-latest
       needs: setup
       environment: Dev
       steps:
         - run: echo doing deploy-canary
   deploy-stable:
+      name: Deploy Stable
       runs-on: ubuntu-latest
       needs: deploy-canary
       if: ${{ success() }}
@@ -31,7 +34,7 @@ jobs:
         - run: echo doing deploy-stable
   rollback-canary:
     runs-on: ubuntu-latest
-    needs: deploy-canary
+    needs: deploy-stable
     if: ${{ failure() }}
     steps:
       - run: echo doing rollback-canary
