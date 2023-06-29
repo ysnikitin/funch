@@ -16,7 +16,7 @@ jobs:
       name: Setup Environment
       runs-on: ubuntu-latest
       steps:
-        - run: echo doing setup
+        - run: doing setup
   deploy-canary:
       name: Deploy Canary
       runs-on: ubuntu-latest
