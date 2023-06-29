@@ -17,15 +17,15 @@ jobs:
       environment: Dev
       steps:
         - run: echo asked for approval 1
-  rollback:
-    needs: Approve-Canary
-    runs-on: ubuntu-latest
-    environment: Dev
-    steps:
-      - run: echo asked for approval 2
   deploy:
     needs: Approve-Canary
     runs-on: ubuntu-latest
     environment: Dev
     steps:
       - run: echo asked for approval 2
+  back-to-normal:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    steps:
+      - run: echo rollback
