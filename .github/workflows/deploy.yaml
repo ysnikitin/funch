@@ -26,6 +26,6 @@ jobs:
   back-to-normal:
     needs: deploy
     runs-on: ubuntu-latest
-    if: ${{ always() }}
+    if: ${{ failure() }}
     steps:
       - run: echo rollback
