@@ -11,13 +11,16 @@ on:
         type: string
       environment:
         type: environment
+        
+env:
+  proj: hi-${{ inputs.environment }}
   
 jobs:
   setup:
       name: Setup Environment
       runs-on: ubuntu-latest
       steps:
-        - run: echo doing setup
+        - run: echo doing setup ${{env.proj}}
   deploy-canary:
       name: Deploy Canary
       runs-on: ubuntu-latest
