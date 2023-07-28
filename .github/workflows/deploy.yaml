@@ -30,7 +30,7 @@ jobs:
           run: echo "WE ARE DEV"
 
         - name: Determine production build
-          if: inputs.environment == 'staging' || inputs.environment == 'production'
+          if: inputs.environment == 'staging' || inputs.environment == 'prod'
           run: echo "WE ARE NOT DEV"
           
   deploy-canary:
