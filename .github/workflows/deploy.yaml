@@ -26,7 +26,7 @@ jobs:
           run: 'echo THIS IS ENV: [${{inputs.environment}}]'
           
         - name: Determine development build
-          if: inputs.environment == 'dev'
+          if: inputs.environment == dev
           run: echo "WE ARE DEV"
 
         - name: Determine production build
