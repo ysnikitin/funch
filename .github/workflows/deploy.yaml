@@ -21,6 +21,15 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - run: echo doing setup ${{env.proj}}
+      
+        - name: Determine development build
+          if: ${{ inputs.environment == 'dev' }}
+          run: echo "WE ARE DEV"
+
+        - name: Determine production build
+          if: ${{ inputs.environment == 'staging' }} || ${{ inputs.environment == 'production' }}
+          run: echo "WE ARE NOT DEV"
+          
   deploy-canary:
       name: Deploy Canary
       runs-on: ubuntu-latest
